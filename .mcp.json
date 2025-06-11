@@ -2,8 +2,7 @@
     "mcpServers": {
         "echo-server": {
             "command": "node",
-            "args": ["out/index.js"],
-            "cwd": "/home/rinse/w/mcp/template"
+            "args": ["out/index.js"]
         }
     }
 }
