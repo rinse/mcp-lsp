@@ -28,6 +28,7 @@
     "@modelcontextprotocol/sdk": "^1.12.1",
     "fp-ts": "^2.16.10",
     "io-ts": "^2.2.22",
-    "typescript-language-server": "^4.3.4"
+    "typescript-language-server": "^4.3.4",
+    "winston": "^3.17.0"
   }
 }

@@ -5,6 +5,7 @@ import { isResponseMessage, ResponseMessage } from './types/ResponseMessage';
 import { isRequestMessage, RequestMessage } from './types/RequestMessage';
 import { NotificationMessage, isNotificationMessage } from './types/NotificationMessage';
 import { LSPServer } from './LSPServer';
+import { logger } from '../utils/logger.js';
 
 export class LSPServerStdio extends EventEmitter implements LSPServer {
     private process: ChildProcess;
@@ -26,14 +27,14 @@ export class LSPServerStdio extends EventEmitter implements LSPServer {
             this.receiveMessages();
         });
         this.process.stderr?.on('data', (data: Buffer) => {
-            console.error('[LSP stderr]', data.toString());
+            logger.warn('[LSP stderr]', { stderr: data.toString() });
         });
         this.process.on('error', (error) => {
-            console.error('[LSP] Process error:', error);
+            logger.error('[LSP] Process error', { error });
             this.emit('error', error);
         });
         this.process.on('exit', (code, signal) => {
-            console.error(`[LSP] Process exited with code ${code}, signal ${signal}`);
+            logger.info('[LSP] Process exited', { code, signal });
             this.emit('exit', code, signal);
         });
     }
@@ -83,7 +84,7 @@ export class LSPServerStdio extends EventEmitter implements LSPServer {
             const header = this.messageBuffer.substring(0, headerEnd);
             const contentLengthMatch = header.match(/Content-Length: (\d+)/);
             if (!contentLengthMatch) {
-                console.error('[LSP] Invalid header, missing Content-Length');
+                logger.warn('[LSP] Invalid header, missing Content-Length');
                 this.messageBuffer = this.messageBuffer.substring(headerEnd + 4);
                 continue;
             }
@@ -99,13 +100,13 @@ export class LSPServerStdio extends EventEmitter implements LSPServer {
                 const message: Message = JSON.parse(messageContent);
                 this.handleMessage(message);
             } catch (error) {
-                console.error('[LSP] Failed to parse message:', error, messageContent);
+                logger.error('[LSP] Failed to parse message', { error, messageContent });
             }
         }
     }
 
     private handleMessage(message: Message) {
-        console.error('[LSP] Received:', JSON.stringify(message, null, 2));
+        logger.debug('[LSP] Received message', { message });
         if (isResponseMessage(message)) {
             const pending = this.pendingRequests.get(message.id);
             if (pending) {
@@ -115,9 +116,9 @@ export class LSPServerStdio extends EventEmitter implements LSPServer {
         } else if (isRequestMessage(message)) {
             this.emit('request', message);
         } else if (isNotificationMessage(message)) {
-            console.error('[LSP] Received notification:', message);
+            logger.debug('[LSP] Received notification', { message });
         } else {
-            console.error('[LSP] Received unknown message type:', message);
+            logger.warn('[LSP] Received unknown message type', { message });
         }
     }
 
@@ -129,7 +130,7 @@ export class LSPServerStdio extends EventEmitter implements LSPServer {
             await this.sendRequest('shutdown');
             this.sendNotification('exit');
         } catch (error) {
-            console.error('[LSP] Error during shutdown:', error);
+            logger.error('[LSP] Error during shutdown', { error });
         } finally {
             this.process.kill();
         }

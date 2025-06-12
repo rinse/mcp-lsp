@@ -9,20 +9,28 @@ import { LSPServerEx as LSPServerEx } from "./LSPServerEx";
 import { RenameParams } from "./types/RenameRequest";
 import { WorkspaceEdit, WorkspaceEditT } from "./types/WorkspaceEdit";
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult, ApplyWorkspaceEditResultT } from "./types/ApplyWorkspaceEditParams";
+import { logger } from "../utils/logger";
 
 export class LSPServerExImpl implements LSPServerEx {
   constructor(private server: LSPServer) {}
 
   async initialize(params: InitializeParams): Promise<ResponseMessage> {
-    return await this.server.sendRequest('initialize', params);
+    logger.debug("[LSP] Initializing LSP server with params:", params);
+    const result = await this.server.sendRequest('initialize', params);
+    logger.debug("[LSP] Initialization completed with result:", result);
+    return result;
   }
 
   async initialized(params: InitializedParams): Promise<void> {
+    logger.debug("[LSP] Notifying LSP server initialized with params:", params);
     await this.server.sendNotification('initialized', params);
+    logger.debug("[LSP] Notifying LSP server initialized completed");
   }
 
   async hover(params: HoverParams): Promise<Hover | null> {
+    logger.debug("[LSP] Requesting hover information with params:", params);
     const result = await this.server.sendRequest('textDocument/hover', params);
+    logger.debug("[LSP] Hover request completed with result:", result);
     if (HoverT.is(result.result)) {
       return result.result;
     } else {
@@ -31,7 +39,9 @@ export class LSPServerExImpl implements LSPServerEx {
   }
 
   async rename(params: RenameParams): Promise<WorkspaceEdit | null> {
+    logger.debug("[LSP] Requesting rename with params:", params);
     const result = await this.server.sendRequest('textDocument/rename', params);
+    logger.debug("[LSP] Rename request completed with result:", result);
     if (WorkspaceEditT.is(result.result)) {
       return result.result;
     } else {
@@ -39,19 +49,27 @@ export class LSPServerExImpl implements LSPServerEx {
     }
   }
 
-  async didOpen(params: DidOpenTextDocumentParams): Promise<void> {
-    await this.server.sendNotification('textDocument/didOpen', params);
-  }
-
-  async didClose(params: DidCloseTextDocumentParams): Promise<void> {
-    await this.server.sendNotification('textDocument/didClose', params);
-  }
-
   async applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult> {
+    logger.debug("[LSP] Requesting rename with params:", params);
     const result = await this.server.sendRequest('workspace/applyEdit', params);
+    logger.debug("[LSP] Apply edit request completed with result:", result);
     if (ApplyWorkspaceEditResultT.is(result.result)) {
       return result.result;
     }
     throw new Error(`[LSP] Invalid applyEdit result: ${JSON.stringify(result)}`);
+  }
+
+  async didOpen(params: DidOpenTextDocumentParams): Promise<void> {
+    logger.debug("[LSP] Notifying LSP server document opened with params:", params);
+    const result = await this.server.sendNotification('textDocument/didOpen', params);
+    logger.debug("[LSP] Document opened notification completed with result:", result);
+    return result;
+  }
+
+  async didClose(params: DidCloseTextDocumentParams): Promise<void> {
+    logger.debug("[LSP] Notifying LSP server document closed with params:", params);
+    const result = await this.server.sendNotification('textDocument/didClose', params);
+    logger.debug("[LSP] Document closed notification completed with result:", result);
+    return result;
   }
 }

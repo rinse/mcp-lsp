@@ -17,6 +17,7 @@ import { LSPToolRename } from './tools/LSPToolRename.js';
 import { LSPServerExImpl } from './lsp/LSPServerExImpl.js';
 import { LSPTool } from './tools/LSPTool.js';
 import { LSPManager } from './lsp/LSPManager.js';
+import { logger } from './utils/logger.js';
 
 async function main() {
     // Spawn the TypeScript language server process
@@ -49,7 +50,7 @@ async function main() {
         } satisfies ServerResult;
     });
     server.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest, extra) => {
-        console.error("[MCP] CallToolRequest received:", request, "extra:", extra);
+        logger.debug("[MCP] CallToolRequest received", { request, extra });
         const tool = toolMap.get(request.params.name);
         if (tool !== undefined) {
             return await tool.handle(request.params.arguments);
@@ -58,7 +59,7 @@ async function main() {
     });
     const transport = new StdioServerTransport();
     await server.connect(transport);
-    console.error('MCP-LSP server running on stdio');
+    logger.info('MCP-LSP server running on stdio');
     // Start and initialize TypeScript LSP
     try {
         await lspServer.start();
@@ -69,13 +70,13 @@ async function main() {
             trace: 'verbose'
         });
         await lspServerEx.initialized({});
-        console.error('TypeScript LSP initialized successfully');
+        logger.info('TypeScript LSP initialized successfully');
     } catch (error) {
-        console.error('Failed to initialize TypeScript LSP:', error);
+        logger.error('Failed to initialize TypeScript LSP', { error });
     }
 }
 
 main().catch((error) => {
-    console.error('Server error:', error);
+    logger.error('Server error', { error });
     process.exit(1);
 });
