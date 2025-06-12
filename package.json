@@ -10,7 +10,8 @@
     "watch": "tsc --watch",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "typescript-language-server": "typescript-language-server --stdio --log-level 4"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +25,9 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.1"
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "fp-ts": "^2.16.10",
+    "io-ts": "^2.2.22",
+    "typescript-language-server": "^4.3.4"
   }
 }

@@ -8,8 +8,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `npm run build` - Compile TypeScript to JavaScript
 - `npm test` - Run all tests
-- `npm run test:watch` - Run tests in watch mode
-- `npm run test:coverage` - Run tests with coverage report
 
 ### Testing the MCP Server
 
@@ -20,6 +18,37 @@ npm run build
 ```
 
 After rebuilding, the server at `out/index.js` will reflect your changes and can be tested directly.
+
+### Running TypeScript Language Server
+
+TypeScript Language Server starts with the following command.
+
+```bash
+npm run typescript-language-server
+```
+
+It communicates with stdio in [LSP](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/).
+
+## How to communicate with language servers
+
+First, you send an `initialize` request.
+
+```
+Content-Length: 76\r\n
+\r\n
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"capabilities": {}}}
+```
+
+After you received an `initialize` response, you send the `initialized` notification.
+
+```
+Content-Length: 59\r\n
+\r\n
+{"jsonrpc":"2.1","id":1,"method":"initialized","params":{}}
+```
+
+Because it is a notification, the server won't respond to it.
+Now you can send any requests as you want.
 
 ## Architecture
 
@@ -39,4 +68,4 @@ The `docs/` directory contains reference links for:
 - **LSP (Language Server Protocol)**: Specification and implementation guides
 - **MCP (Model Context Protocol)**: Introduction and concept documentation
 
-When implementing LSP or MCP features, refer to these documentation files for the appropriate links and specifications.
+When implementing LSP or MCP features, refer to links in these documentation files for the appropriate specifications.

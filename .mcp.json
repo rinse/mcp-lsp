@@ -1,6 +1,6 @@
 {
     "mcpServers": {
-        "echo-server": {
+        "mcp-lsp": {
             "command": "node",
             "args": ["out/index.js"]
         }
