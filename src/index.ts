@@ -1,20 +1,22 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
-    CallToolRequest,
     CallToolRequestSchema,
-    ErrorCode,
-    ListToolsRequest,
     ListToolsRequestSchema,
+    ErrorCode,
     McpError,
+    type CallToolRequest,
+    type ListToolsRequest,
     type ServerResult,
 } from '@modelcontextprotocol/sdk/types.js';
 import { LSPServerStdio } from './lsp/LSPServerStdio.js';
 import { spawn } from 'child_process';
-import { LSPRequester } from './lsp/LSPRequester.js';
-import { LSPToolHover } from './tools/hover.js';
-import { LSPRequesterImpl } from './lsp/LSPRequesterImpl.js';
+import { LSPServerEx } from './lsp/LSPServerEx.js';
+import { LSPToolHover } from './tools/LSPToolHover.js';
+import { LSPToolRename } from './tools/LSPToolRename.js';
+import { LSPServerExImpl } from './lsp/LSPServerExImpl.js';
 import { LSPTool } from './tools/LSPTool.js';
+import { LSPManager } from './lsp/LSPManager.js';
 
 async function main() {
     // Spawn the TypeScript language server process
@@ -22,10 +24,12 @@ async function main() {
         stdio: ['pipe', 'pipe', 'pipe']
     });
     const lspServer = new LSPServerStdio(lspProcess);
-    const lspRequester: LSPRequester = new LSPRequesterImpl(lspServer);
+    const lspServerEx: LSPServerEx = new LSPServerExImpl(lspServer);
+    const lspManager = new LSPManager(lspServerEx);
     const toolMap = new Map<string, LSPTool>();
     // Register tools
-    toolMap.set('hover', new LSPToolHover(lspRequester));
+    toolMap.set('hover', new LSPToolHover(lspManager));
+    toolMap.set('rename', new LSPToolRename(lspManager));
     // MCP server instance
     const server = new Server(
         {
@@ -58,8 +62,13 @@ async function main() {
     // Start and initialize TypeScript LSP
     try {
         await lspServer.start();
-        const rootUri = `file://${process.cwd()}`;
-        await lspRequester.initialize(rootUri);
+        await lspServerEx.initialize({
+            processId: process.pid,
+            rootUri: `file://${process.cwd()}`,
+            capabilities: {},
+            trace: 'verbose'
+        });
+        await lspServerEx.initialized({});
         console.error('TypeScript LSP initialized successfully');
     } catch (error) {
         console.error('Failed to initialize TypeScript LSP:', error);

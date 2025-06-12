@@ -1,5 +1,6 @@
-import { Position } from "./Position";
-import { TextDocumentIdentifier } from "./TextDocumentIdentifier";
+import { Position, PositionT } from "./Position";
+import { TextDocumentIdentifier, TextDocumentIdentifierT } from "./TextDocumentIdentifier";
+import * as t from "io-ts";
 
 export interface TextDocumentPositionParams {
 	/**
@@ -12,3 +13,8 @@ export interface TextDocumentPositionParams {
 	 */
 	position: Position;
 }
+
+export const TextDocumentPositionParamsT = t.type({
+	textDocument: TextDocumentIdentifierT,
+	position: PositionT,
+});

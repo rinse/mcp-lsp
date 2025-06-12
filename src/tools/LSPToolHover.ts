@@ -6,30 +6,24 @@ import {
     type TextContent,
     type Tool,
 } from "@modelcontextprotocol/sdk/types.js";
+import * as t from "io-ts";
 import { Hover } from "../lsp/types/HoverRequest";
 import { MarkedStringT, markedStringToJsonString } from "../lsp/types/MarkedString";
-import * as t from "io-ts";
 import { MarkupContentT } from "../lsp/types/MarkupContent";
-import { LSPRequester } from "../lsp/LSPRequester";
 import { LSPTool } from "./LSPTool";
+import { LSPManager } from "../lsp/LSPManager";
 
 export class LSPToolHover implements LSPTool {
-    constructor(private requester: LSPRequester) {}
+    constructor(private manager: LSPManager) {}
 
     listItem(): Tool {
         return listItemHover();
     }
 
     async handle(params: CallToolRequest["params"]["arguments"]): Promise<CallToolResult> {
-        return handleHover(this.requester, params)
+        return handleHover(this.manager, params)
     }
 }
-
-const HoverParamsT = t.type({
-    uri: t.string,
-    line: t.number,
-    character: t.number,
-});
 
 function listItemHover(): Tool {
     return {
@@ -56,21 +50,26 @@ function listItemHover(): Tool {
     };
 }
 
+const HoverParamsT = t.type({
+    uri: t.string,
+    line: t.number,
+    character: t.number,
+});
+
 async function handleHover(
-    requester: LSPRequester,
+    manager: LSPManager,
     params: CallToolRequest["params"]["arguments"],
 ): Promise<CallToolResult> {
     const decoded = HoverParamsT.decode(params);
     if (decoded._tag === 'Left') {
         throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for hover tool: ${JSON.stringify(decoded.left)}`);
     }
-    const typed = decoded.right;
-    return await hoverTool(requester, typed.uri, typed.line, typed.character);
-}
-
-async function hoverTool(requester: LSPRequester, uri: string, line: number, character: number): Promise<CallToolResult> {
+    const { uri, line, character } = decoded.right;
     try {
-        const result = await requester.hover(uri, line, character);
+        const result = await manager.hover({
+            textDocument: { uri },
+            position: { line, character },
+        });
         return result !== null
             ? hoverToCallToolResult(result)
             : hoverNothingContent();

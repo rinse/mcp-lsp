@@ -1,4 +1,5 @@
-import { ProgressToken } from "./ProgressToken";
+import { ProgressToken, ProgressTokenT } from "./ProgressToken";
+import * as t from "io-ts";
 
 export interface WorkDoneProgressParams {
 	/**
@@ -6,3 +7,7 @@ export interface WorkDoneProgressParams {
 	 */
 	workDoneToken?: ProgressToken;
 }
+
+export const WorkDoneProgressParamsT = t.partial({
+	workDoneToken: ProgressTokenT,
+});

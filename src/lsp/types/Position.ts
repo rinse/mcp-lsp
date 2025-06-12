@@ -20,7 +20,7 @@ export interface Position {
 export const PositionT = t.type({
 	line: uinteger,
 	character: uinteger,
-});
+});;
 
 /**
  * A type indicating how positions are encoded,

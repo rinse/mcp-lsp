@@ -1,4 +1,5 @@
 import { integer } from "./BaseTypes";
+import * as t from "io-ts";
 
 /**
  * Notification:
@@ -6,6 +7,8 @@ import { integer } from "./BaseTypes";
  *   - params: ProgressParams defined as follows:
  */
 export type ProgressToken = integer | string;
+
+export const ProgressTokenT = t.union([t.number, t.string]);
 
 export interface ProgressParams<T> {
 	/**
@@ -18,3 +21,8 @@ export interface ProgressParams<T> {
 	 */
 	value: T;
 }
+
+export const ProgressParamsT = <T>(type: t.Type<T>) => t.type({
+	token: ProgressTokenT,
+	value: type,
+});

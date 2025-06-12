@@ -1,7 +1,7 @@
 import { integer } from "./BaseTypes";
 import { TextDocumentIdentifier } from "./TextDocumentIdentifier";
 
-interface VersionedTextDocumentIdentifier extends TextDocumentIdentifier {
+export interface VersionedTextDocumentIdentifier extends TextDocumentIdentifier {
 	/**
 	 * The version number of this document.
 	 *
@@ -11,7 +11,7 @@ interface VersionedTextDocumentIdentifier extends TextDocumentIdentifier {
 	version: integer;
 }
 
-interface OptionalVersionedTextDocumentIdentifier extends TextDocumentIdentifier {
+export interface OptionalVersionedTextDocumentIdentifier extends TextDocumentIdentifier {
 	/**
 	 * The version number of this document. If an optional versioned text document
 	 * identifier is sent from the server to the client and the file is not

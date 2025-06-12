@@ -1,6 +1,7 @@
-import { Range } from "./Range";
+import * as t from 'io-ts';
+import { Range, RangeT } from "./Range";
 
-interface TextEdit {
+export interface TextEdit {
 	/**
 	 * The range of the text document to be manipulated. To insert
 	 * text into a document create a range where start === end.
@@ -13,6 +14,11 @@ interface TextEdit {
 	 */
 	newText: string;
 }
+
+export const TextEditT = t.type({
+	range: RangeT,
+	newText: t.string,
+});
 
 /**
  * Additional information that describes document changes.
@@ -38,6 +44,12 @@ export interface ChangeAnnotation {
 	 */
 	description?: string;
 }
+
+export const ChangeAnnotationT = t.type({
+	label: t.string,
+	needsConfirmation: t.union([t.boolean, t.undefined]),
+	description: t.union([t.string, t.undefined]),
+});
 
 /**
  * An identifier referring to a change annotation managed by a workspace
