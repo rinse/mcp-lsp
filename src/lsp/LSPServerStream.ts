@@ -10,26 +10,43 @@ import { StreamEventEmitter } from '../tools/StreamEventEmitter';
 import { logger } from '../utils/logger.js';
 
 export class LSPServerStream implements LSPServer {
-  private streamEventEmitter: StreamEventEmitter<Message> | null = null;
+  private streamEventEmitter: StreamEventEmitter<Message>;
   private requestId = 0;
   private pendingRequests = new Map<number | string | null, (response: ResponseMessage) => void>();
   private requestListeners: ((message: RequestMessage) => void)[] = [];
   private notificationListeners: ((message: NotificationMessage) => void)[] = [];
 
   constructor(private outputStream: Stream.Writable, private inputStream: Stream.Readable) {
+    this.streamEventEmitter = new StreamEventEmitter(this.inputStream, readLSPMessageFromBuffer);
   }
 
   /**
      * Starts the LSP server by listening to its stdout and stderr streams.
      */
   async start(): Promise<void> {
-    this.streamEventEmitter = new StreamEventEmitter(this.inputStream, readLSPMessageFromBuffer);
     this.streamEventEmitter.on('data', (message: Message) => {
       this.handleMessage(message);
     });
     this.streamEventEmitter.on('error', (error: Error) => {
       logger.error('[LSP] Stream parsing error', { error });
     });
+  }
+
+  private handleMessage(message: Message) {
+    logger.debug('[LSP] Received message', { message });
+    if (isResponseMessage(message)) {
+      const pending = this.pendingRequests.get(message.id);
+      if (pending) {
+        pending(message);
+        this.pendingRequests.delete(message.id);
+      }
+    } else if (isRequestMessage(message)) {
+      this.requestListeners.forEach(listener => listener(message));
+    } else if (isNotificationMessage(message)) {
+      this.notificationListeners.forEach(listener => listener(message));
+    } else {
+      logger.warn('[LSP] Received unknown message type', { message });
+    }
   }
 
   /**
@@ -73,23 +90,6 @@ export class LSPServerStream implements LSPServer {
 
   onNotification(callback: (message: NotificationMessage) => void): void {
     this.notificationListeners.push(callback);
-  }
-
-  private handleMessage(message: Message) {
-    logger.debug('[LSP] Received message', { message });
-    if (isResponseMessage(message)) {
-      const pending = this.pendingRequests.get(message.id);
-      if (pending) {
-        pending(message);
-        this.pendingRequests.delete(message.id);
-      }
-    } else if (isRequestMessage(message)) {
-      this.requestListeners.forEach(listener => listener(message));
-    } else if (isNotificationMessage(message)) {
-      this.notificationListeners.forEach(listener => listener(message));
-    } else {
-      logger.warn('[LSP] Received unknown message type', { message });
-    }
   }
 
   /**
