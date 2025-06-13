@@ -38,7 +38,7 @@ export function readLSPMessageFromBuffer(buffer: Buffer): StreamParseResult<Mess
     logger.error('[LSP] Failed to validate message', { content: str });
     return { kind: 'error', consume: messageEnd, message: `Failed to validate message. ${messageContent}` };
   } catch (error) {
-    logger.error('[LSP] Failed to parse message', { content: str });
+    logger.error('[LSP] Failed to parse message', { content: str }, error);
     return { kind: 'error', consume: messageEnd, message: `Failed to parse message. ${messageContent}` };
   }
 }

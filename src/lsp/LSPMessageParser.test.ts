@@ -13,7 +13,7 @@ describe('readLSPMessageFromBuffer', () => {
     expect(result).toEqual({
       kind: 'error',
       consume: 24,
-      message: 'Invalid header, missing Content-Length'
+      message: 'Invalid header, missing Content-Length',
     });
   });
 
@@ -30,8 +30,8 @@ describe('readLSPMessageFromBuffer', () => {
     const result = readLSPMessageFromBuffer(buffer);
     expect(result).toEqual({
       kind: 'success',
-      value: {"jsonrpc":"2.0","id":1,"method":"test"},
-      consume: buffer.length
+      value: {"jsonrpc":"2.0", "id":1, "method":"test"},
+      consume: buffer.length,
     });
   });
 
@@ -54,8 +54,8 @@ describe('readLSPMessageFromBuffer', () => {
     const result = readLSPMessageFromBuffer(buffer);
     expect(result).toEqual({
       kind: 'success',
-      value: {"jsonrpc":"2.0","method":"notification"},
-      consume: buffer.length
+      value: {"jsonrpc":"2.0", "method":"notification"},
+      consume: buffer.length,
     });
   });
 
@@ -68,7 +68,7 @@ describe('readLSPMessageFromBuffer', () => {
     expect(result).toEqual({
       kind: 'success',
       value: {"jsonrpc":"2.0"},
-      consume: headerLength + contentLength
+      consume: headerLength + contentLength,
     });
   });
 
@@ -80,7 +80,7 @@ describe('readLSPMessageFromBuffer', () => {
     expect(result).toEqual({
       kind: 'success',
       value: {"jsonrpc":"2.0"},
-      consume: buffer.length
+      consume: buffer.length,
     });
   });
 });

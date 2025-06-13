@@ -14,7 +14,7 @@ import {
 import { LSPManager } from './lsp/LSPManager.js';
 import { LSPServerEx } from './lsp/LSPServerEx.js';
 import { LSPServerExImpl } from './lsp/LSPServerExImpl.js';
-import { LSPServerStdio } from './lsp/LSPServerStdio.js';
+import { LSPServerStream } from './lsp/LSPServerStream.js';
 import { LSPTool } from './tools/LSPTool.js';
 import { LSPToolHover } from './tools/LSPToolHover.js';
 import { LSPToolRename } from './tools/LSPToolRename.js';
@@ -32,7 +32,7 @@ async function main() {
     logger.info('[LSP] Process exited', { code, signal });
     throw new McpError(ErrorCode.InternalError, `LSP Process exited.`);
   });
-  const lspServer = new LSPServerStdio(lspProcess.stdin, lspProcess.stdout);
+  const lspServer = new LSPServerStream(lspProcess.stdin, lspProcess.stdout);
   const lspServerEx: LSPServerEx = new LSPServerExImpl(lspServer);
   const lspManager = new LSPManager(lspServerEx);
   const toolMap = new Map<string, LSPTool>();

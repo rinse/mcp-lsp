@@ -1,14 +1,15 @@
 import Stream from 'stream';
+
+import { readLSPMessageFromBuffer } from './LSPMessageParser';
 import { LSPServer } from './LSPServer';
 import { Message } from './types/AbstractMessage';
 import { NotificationMessage, isNotificationMessage } from './types/NotificationMessage';
 import { isRequestMessage, RequestMessage } from './types/RequestMessage';
 import { isResponseMessage, ResponseMessage } from './types/ResponseMessage';
-import { logger } from '../utils/logger.js';
 import { StreamEventEmitter } from '../tools/StreamEventEmitter';
-import { readLSPMessageFromBuffer } from './LSPMessageParser';
+import { logger } from '../utils/logger.js';
 
-export class LSPServerStdio implements LSPServer {
+export class LSPServerStream implements LSPServer {
   private streamEventEmitter: StreamEventEmitter<Message> | null = null;
   private requestId = 0;
   private pendingRequests = new Map<number | string | null, (response: ResponseMessage) => void>();
