@@ -27,7 +27,7 @@ export type decimal = t.TypeOf<typeof decimal>;
  *
  * @since 3.17.0
  */
-export type LSPAny = LSPObject | LSPArray | string | integer | uinteger | decimal | boolean | null;
+export type LSPAny = LSPObject | LSPArray | string | integer | boolean | null;
 
 export function isLSPAny(value: unknown): value is LSPAny {
   return (
@@ -51,7 +51,7 @@ export function isLSPObject(value: unknown): value is LSPObject {
   if (typeof value !== 'object' || value === null) {
     return false;
   }
-  const obj = value as object;
+  const obj = value;
   return Object.values(obj).every(isLSPAny);
 }
 
