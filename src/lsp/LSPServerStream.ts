@@ -15,6 +15,7 @@ export class LSPServerStream implements LSPServer {
   private pendingRequests = new Map<number | string | null, (response: ResponseMessage) => void>();
   private requestListeners: ((message: RequestMessage) => void)[] = [];
   private notificationListeners: ((message: NotificationMessage) => void)[] = [];
+  private requestTimeouts = new Map<number | string | null, NodeJS.Timeout>();
 
   constructor(private outputStream: Stream.Writable, private inputStream: Stream.Readable) {
     this.streamEventEmitter = new StreamEventEmitter(this.inputStream, readLSPMessageFromBuffer);
@@ -39,6 +40,11 @@ export class LSPServerStream implements LSPServer {
       if (pending) {
         pending(message);
         this.pendingRequests.delete(message.id);
+        const timeout = this.requestTimeouts.get(message.id);
+        if (timeout) {
+          clearTimeout(timeout);
+          this.requestTimeouts.delete(message.id);
+        }
       }
     } else if (isRequestMessage(message)) {
       this.requestListeners.forEach(listener => listener(message));
@@ -60,13 +66,14 @@ export class LSPServerStream implements LSPServer {
       this.pendingRequests.set(id, (response) => {
         resolve(response);
       });
-      // Set a timeout to reject the request if it takes too long
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         if (this.pendingRequests.has(id)) {
           this.pendingRequests.delete(id);
+          this.requestTimeouts.delete(id);
           reject(new Error(`Request ${method} timed out`));
         }
-      }, 30000); // 30 seconds timeout
+      }, 30000);
+      this.requestTimeouts.set(id, timeout);
     });
   }
 
@@ -101,6 +108,14 @@ export class LSPServerStream implements LSPServer {
       this.sendNotification('exit');
     } catch (error) {
       logger.error('[LSP] Error during shutdown', { error });
+    } finally {
+      this.cleanup();
     }
+  }
+
+  private cleanup(): void {
+    this.requestTimeouts.forEach(timeout => clearTimeout(timeout));
+    this.requestTimeouts.clear();
+    this.pendingRequests.clear();
   }
 }
