@@ -35,7 +35,7 @@ export class StreamEventEmitter<E> extends EventEmitter {
         this.emit('data', result.value);
         this.buffer = this.buffer.subarray(result.consume);
       } else if (result.kind === 'error') {
-        this.emit('error', new Error('Parse error'));
+        this.emit('error', new Error(result.message));
         this.buffer = this.buffer.subarray(result.consume);
       } else if (result.kind === 'waiting') {
         if (endOfStream && this.buffer.length > 0) {

@@ -18,16 +18,22 @@ function createJsonLineParser(): (buffer: Buffer) => StreamParseResult<TestData>
       return { kind: 'waiting' };
     }
     const elem = str.substring(0, separatorIndex);
-    const item = JSON.parse(elem);
+    let item;
+    try {
+      item = JSON.parse(elem);
+    } catch (error) {
+      console.error('Failed to parse JSON:', error);
+      return { kind: 'error', consume: separatorIndex + 1, message: `Invalid JSON object: ${elem}` };
+    }
     const data: TestData | undefined = TestDataT.is(item) ? item : undefined;
     if (data == null) {
-      return { kind: 'error', consume: separatorIndex + 1 };
+      return { kind: 'error', consume: separatorIndex + 1, message: `Invalid JSON object: ${elem}` };
     }
-    return { kind: 'emit', value: data, consume: Buffer.byteLength(elem + '\n', 'utf8') };
+    return { kind: 'success', value: data, consume: Buffer.byteLength(elem + '\n', 'utf8') };
   };
 }
 
-describe('BufferedStreamEventEmitter', () => {
+describe('StreamEventEmitter', () => {
   it('should emit parsed JSON objects from newline-delimited stream', (done) => {
     const stream = new Readable({
       read() {
