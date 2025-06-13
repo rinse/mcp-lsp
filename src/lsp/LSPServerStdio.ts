@@ -7,14 +7,14 @@ import { NotificationMessage, isNotificationMessage } from './types/Notification
 import { LSPServer } from './LSPServer';
 import { logger } from '../utils/logger.js';
 
-export class LSPServerStdio extends EventEmitter implements LSPServer {
+export class LSPServerStdio implements LSPServer {
+    private eventEmitter = new EventEmitter();
     private process: ChildProcess;
     private messageBuffer = '';
     private requestId = 0;
     private pendingRequests = new Map<number | string | null, (response: ResponseMessage) => void>();
 
     constructor(process: ChildProcess) {
-        super();
         this.process = process;
     }
 
@@ -31,11 +31,11 @@ export class LSPServerStdio extends EventEmitter implements LSPServer {
         });
         this.process.on('error', (error) => {
             logger.error('[LSP] Process error', { error });
-            this.emit('error', error);
+            this.eventEmitter.emit('error', error);
         });
         this.process.on('exit', (code, signal) => {
             logger.info('[LSP] Process exited', { code, signal });
-            this.emit('exit', code, signal);
+            this.eventEmitter.emit('exit', code, signal);
         });
     }
 
@@ -114,7 +114,7 @@ export class LSPServerStdio extends EventEmitter implements LSPServer {
                 this.pendingRequests.delete(message.id);
             }
         } else if (isRequestMessage(message)) {
-            this.emit('request', message);
+            this.eventEmitter.emit('request', message);
         } else if (isNotificationMessage(message)) {
             logger.debug('[LSP] Received notification', { message });
         } else {
