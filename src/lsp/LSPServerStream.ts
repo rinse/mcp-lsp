@@ -7,7 +7,7 @@ import { NotificationMessage, isNotificationMessage } from './types/Notification
 import { isRequestMessage, RequestMessage } from './types/RequestMessage';
 import { isResponseMessage, ResponseMessage } from './types/ResponseMessage';
 import { StreamEventEmitter } from '../tools/StreamEventEmitter';
-import { logger } from '../utils/logger.js';
+import { logger } from '../utils/logger';
 
 export class LSPServerStream implements LSPServer {
   private streamEventEmitter: StreamEventEmitter<Message>;
