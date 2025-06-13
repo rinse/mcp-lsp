@@ -14,6 +14,8 @@ export class LSPServerStdio implements LSPServer {
   private messageBuffer = '';
   private requestId = 0;
   private pendingRequests = new Map<number | string | null, (response: ResponseMessage) => void>();
+  private requestListeners: ((message: RequestMessage) => void)[] = [];
+  private notificationListeners: ((message: NotificationMessage) => void)[] = [];
 
   constructor(process: ChildProcess) {
     this.process = process;
@@ -75,6 +77,14 @@ export class LSPServerStdio implements LSPServer {
     this.process?.stdin?.write(header + content);
   }
 
+  onRequest(callback: (message: RequestMessage) => void): void {
+    this.requestListeners.push(callback);
+  }
+
+  onNotification(callback: (message: NotificationMessage) => void): void {
+    this.notificationListeners.push(callback);
+  }
+
   /**
      * Receives messages from the LSP server.
      */
@@ -117,9 +127,9 @@ export class LSPServerStdio implements LSPServer {
         this.pendingRequests.delete(message.id);
       }
     } else if (isRequestMessage(message)) {
-      this.eventEmitter.emit('request', message);
+      this.requestListeners.forEach(listener => listener(message));
     } else if (isNotificationMessage(message)) {
-      logger.debug('[LSP] Received notification', { message });
+      this.notificationListeners.forEach(listener => listener(message));
     } else {
       logger.warn('[LSP] Received unknown message type', { message });
     }
