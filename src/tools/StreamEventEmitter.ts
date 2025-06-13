@@ -2,9 +2,9 @@ import { EventEmitter } from 'events';
 import { Readable } from 'stream';
 
 export type StreamParseResult<E> =
-  | { kind: 'emit'; value: E; consume: number }
+  | { kind: 'success', value: E, consume: number }
   | { kind: 'waiting' }
-  | { kind: 'error'; consume: number };
+  | { kind: 'error', message: string, consume: number };
 
 export type StreamParser<E> = (buffer: Buffer) => StreamParseResult<E>;
 
@@ -31,7 +31,7 @@ export class StreamEventEmitter<E> extends EventEmitter {
   private processBuffer(parser: StreamParser<E>, endOfStream = false) {
     while (this.buffer.length > 0) {
       const result = parser(this.buffer);
-      if (result.kind === 'emit') {
+      if (result.kind === 'success') {
         this.emit('data', result.value);
         this.buffer = this.buffer.subarray(result.consume);
       } else if (result.kind === 'error') {
