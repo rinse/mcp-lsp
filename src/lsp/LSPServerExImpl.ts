@@ -17,7 +17,10 @@ export class LSPServerExImpl implements LSPServerEx {
   async initialize(params: InitializeParams): Promise<ResponseMessage> {
     logger.debug("[LSP] Initializing LSP server with params:", params);
     const result = await this.server.sendRequest('initialize', params);
-    logger.debug("[LSP] Initialization completed with result:", result);
+    if (result.result && typeof result.result === 'object' && 'capabilities' in result.result) {
+      logger.info("[LSP] Server capabilities:", JSON.stringify(result.result.capabilities, null, 2));
+    }
+    logger.debug("[LSP] Full initialization result:", JSON.stringify(result, null, 2));
     return result;
   }
 

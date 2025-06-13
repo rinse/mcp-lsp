@@ -5,12 +5,15 @@ import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from "./types/Appl
 import { Hover, HoverParams } from "./types/HoverRequest";
 import { RenameParams } from "./types/RenameRequest";
 import { WorkspaceEdit } from "./types/WorkspaceEdit";
+import { WorkspaceEditApplier } from "./WorkspaceEditApplier";
 
 export class LSPManager {
   private openDocuments: Set<string>;
+  private workspaceEditApplier: WorkspaceEditApplier;
 
   constructor(private server: LSPServerEx) {
     this.openDocuments = new Set<string>();
+    this.workspaceEditApplier = new WorkspaceEditApplier();
   }
 
   async openDocument(uri: string): Promise<void> {
@@ -52,6 +55,9 @@ export class LSPManager {
   }
 
   async applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult> {
-    return await this.server.applyEdit(params);
+    // Apply the workspace edit locally instead of sending to server
+    // The LSP spec defines workspace/applyEdit as a server-to-client request,
+    // not client-to-server
+    return await this.workspaceEditApplier.applyWorkspaceEdit(params.edit);
   }
 }

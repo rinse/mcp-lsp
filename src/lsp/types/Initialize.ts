@@ -1,6 +1,6 @@
-import { ClientCapabilities, ServerCapabilities } from "@modelcontextprotocol/sdk/types";
-
 import { integer, LSPAny } from "./BaseTypes";
+import { ClientCapabilities } from "./clientcapabilities/ClientCapabilities";
+import { ServerCapabilities } from "./servercapabilities/ServerCapabilities";
 import { TraceValue } from "./TraceValue";
 import { DocumentUri } from "./Uri";
 import { WorkDoneProgressParams } from "./WorkDoneProgressParams";

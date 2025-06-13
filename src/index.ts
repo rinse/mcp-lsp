@@ -15,6 +15,7 @@ import { LSPManager } from './lsp/LSPManager.js';
 import { LSPServerEx } from './lsp/LSPServerEx.js';
 import { LSPServerExImpl } from './lsp/LSPServerExImpl.js';
 import { LSPServerStream } from './lsp/LSPServerStream.js';
+import { ClientCapabilities } from './lsp/types/clientcapabilities/ClientCapabilities.js';
 import { MCPTool } from './tools/MCPTool.js';
 import { MCPToolHover } from './tools/MCPToolHover.js';
 import { MCPToolRename } from './tools/MCPToolRename.js';
@@ -77,12 +78,20 @@ async function main() {
     process.on('exit', () => void cleanup(lspServer, lspProcess));
     // Start and initialize TypeScript LSP
     await lspServer.start();
-    await lspServerEx.initialize({
+    const resultInitialize = await lspServerEx.initialize({
       processId: process.pid,
       rootUri: `file://${process.cwd()}`,
-      capabilities: {},
+      capabilities: {
+        workspace: {
+          workspaceEdit: {
+            documentChanges: false,
+            resourceOperations: ['create', 'rename', 'delete'],
+          },
+        },
+      } satisfies ClientCapabilities,
       trace: 'verbose',
     });
+    logger.info("Result of initialize", resultInitialize)
     await lspServerEx.initialized({});
     logger.info('TypeScript LSP initialized successfully');
   } catch (error) {
