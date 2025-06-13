@@ -27,8 +27,7 @@ export interface HoverClientCapabilities {
   contentFormat?: MarkupKind[];
 }
 
-export interface HoverOptions extends WorkDoneProgressOptions {
-}
+export type HoverOptions = WorkDoneProgressOptions;
 
 export interface HoverRegistrationOptions
   extends TextDocumentRegistrationOptions, HoverOptions {

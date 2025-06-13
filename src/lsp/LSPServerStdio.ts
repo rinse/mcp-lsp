@@ -48,7 +48,9 @@ export class LSPServerStdio implements LSPServer {
     const message: RequestMessage = { jsonrpc: '2.0', id, method, params };
     this.sendMessage(message);
     return new Promise<ResponseMessage>((resolve, reject) => {
-      this.pendingRequests.set(id, (response) => { resolve(response); });
+      this.pendingRequests.set(id, (response) => {
+        resolve(response);
+      });
       // Set a timeout to reject the request if it takes too long
       setTimeout(() => {
         if (this.pendingRequests.has(id)) {

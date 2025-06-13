@@ -27,6 +27,5 @@ export const NotificationMessageT = t.type({
 });
 
 export function isNotificationMessage(value: Message): value is NotificationMessage {
-  const message = value as any;
-  return NotificationMessageT.is(message);
+  return NotificationMessageT.is(value);
 }

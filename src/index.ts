@@ -8,7 +8,6 @@ import {
   ErrorCode,
   McpError,
   type CallToolRequest,
-  type ListToolsRequest,
   type ServerResult,
 } from '@modelcontextprotocol/sdk/types.js';
 
@@ -46,7 +45,7 @@ async function main() {
     },
   );
     // Set up request handlers
-  server.setRequestHandler(ListToolsRequestSchema, async (request: ListToolsRequest) => {
+  server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
       tools: Array.from(toolMap.values()).map(tool => tool.listItem()),
     } satisfies ServerResult;

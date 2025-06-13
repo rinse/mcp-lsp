@@ -7,17 +7,17 @@ import * as t from 'io-ts';
  * Please note that `MarkupKinds` must not start with a `$`. This kinds
  * are reserved for internal usage.
  */
-export namespace MarkupKind {
+export const MarkupKind = {
   /**
 	 * Plain text is supported as a content format
 	 */
-  export const PlainText: 'plaintext' = 'plaintext';
+  PlainText: 'plaintext' as const,
 
   /**
 	 * Markdown is supported as a content format
 	 */
-  export const Markdown: 'markdown' = 'markdown';
-}
+  Markdown: 'markdown' as const,
+} as const;
 
 export type MarkupKind = 'plaintext' | 'markdown';
 

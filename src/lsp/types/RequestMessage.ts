@@ -1,5 +1,5 @@
 import { Message } from "./AbstractMessage";
-import { integer, LSPArray, LSPObject } from "./BaseTypes";
+import { integer } from "./BaseTypes";
 
 /**
  * A request message to describe a request

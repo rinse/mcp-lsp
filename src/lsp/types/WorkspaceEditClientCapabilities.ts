@@ -51,41 +51,41 @@ export interface WorkspaceEditClientCapabilities {
  */
 export type ResourceOperationKind = 'create' | 'rename' | 'delete';
 
-export namespace ResourceOperationKind {
+export const ResourceOperationKind = {
 
   /**
 	 * Supports creating new files and folders.
 	 */
-  export const Create: ResourceOperationKind = 'create';
+  Create: 'create' as const,
 
   /**
 	 * Supports renaming existing files and folders.
 	 */
-  export const Rename: ResourceOperationKind = 'rename';
+  Rename: 'rename' as const,
 
   /**
 	 * Supports deleting existing files and folders.
 	 */
-  export const Delete: ResourceOperationKind = 'delete';
-}
+  Delete: 'delete' as const,
+} as const;
 
 export type FailureHandlingKind = 'abort' | 'transactional' | 'undo'
 	| 'textOnlyTransactional';
 
-export namespace FailureHandlingKind {
+export const FailureHandlingKind = {
 
   /**
 	 * Applying the workspace change is simply aborted if one of the changes
 	 * provided fails. All operations executed before the failing operation
 	 * stay executed.
 	 */
-  export const Abort: FailureHandlingKind = 'abort';
+  Abort: 'abort' as const,
 
   /**
 	 * All operations are executed transactional. That means they either all
 	 * succeed or no changes at all are applied to the workspace.
 	 */
-  export const Transactional: FailureHandlingKind = 'transactional';
+  Transactional: 'transactional' as const,
 
 
   /**
@@ -93,12 +93,11 @@ export namespace FailureHandlingKind {
 	 * executed transactional. If resource changes (create, rename or delete
 	 * file) are part of the change the failure handling strategy is abort.
 	 */
-  export const TextOnlyTransactional: FailureHandlingKind
-		= 'textOnlyTransactional';
+  TextOnlyTransactional: 'textOnlyTransactional' as const,
 
   /**
 	 * The client tries to undo the operations already executed. But there is no
 	 * guarantee that this is succeeding.
 	 */
-  export const Undo: FailureHandlingKind = 'undo';
-}
+  Undo: 'undo' as const,
+} as const;

@@ -66,13 +66,13 @@ export function isLSPError(value: unknown): value is ResponseError {
   );
 }
 
-export namespace ErrorCodes {
+export const ErrorCodes = {
   // Defined by JSON-RPC
-  export const ParseError: integer = -32700;
-  export const InvalidRequest: integer = -32600;
-  export const MethodNotFound: integer = -32601;
-  export const InvalidParams: integer = -32602;
-  export const InternalError: integer = -32603;
+  ParseError: -32700 as const,
+  InvalidRequest: -32600 as const,
+  MethodNotFound: -32601 as const,
+  InvalidParams: -32602 as const,
+  InternalError: -32603 as const,
 
   /**
 	 * This is the start range of JSON-RPC reserved error codes.
@@ -83,18 +83,18 @@ export namespace ErrorCodes {
 	 *
 	 * @since 3.16.0
 	 */
-  export const jsonrpcReservedErrorRangeStart: integer = -32099;
+  jsonrpcReservedErrorRangeStart: -32099 as const,
 
   /** @deprecated use jsonrpcReservedErrorRangeStart */
-  export const serverErrorStart: integer = jsonrpcReservedErrorRangeStart;
+  get serverErrorStart() { return this.jsonrpcReservedErrorRangeStart; },
 
   /**
 	 * Error code indicating that a server received a notification or
 	 * request before the server received the `initialize` request.
 	 */
-  export const ServerNotInitialized: integer = -32002;
+  ServerNotInitialized: -32002 as const,
 
-  export const UnknownErrorCode: integer = -32001;
+  UnknownErrorCode: -32001 as const,
 
   /**
 	 * This is the end range of JSON-RPC reserved error codes.
@@ -102,10 +102,10 @@ export namespace ErrorCodes {
 	 *
 	 * @since 3.16.0
 	 */
-  export const jsonrpcReservedErrorRangeEnd = -32000;
+  jsonrpcReservedErrorRangeEnd: -32000 as const,
 
   /** @deprecated use jsonrpcReservedErrorRangeEnd */
-  export const serverErrorEnd: integer = jsonrpcReservedErrorRangeEnd;
+  get serverErrorEnd() { return this.jsonrpcReservedErrorRangeEnd; },
 
   /**
 	 * This is the start range of LSP reserved error codes.
@@ -113,7 +113,7 @@ export namespace ErrorCodes {
 	 *
 	 * @since 3.16.0
 	 */
-  export const lspReservedErrorRangeStart: integer = -32899;
+  lspReservedErrorRangeStart: -32899 as const,
 
   /**
 	 * A request failed but it was syntactically correct, e.g the
@@ -123,7 +123,7 @@ export namespace ErrorCodes {
 	 *
 	 * @since 3.17.0
 	 */
-  export const RequestFailed: integer = -32803;
+  RequestFailed: -32803 as const,
 
   /**
 	 * The server cancelled the request. This error code should
@@ -132,7 +132,7 @@ export namespace ErrorCodes {
 	 *
 	 * @since 3.17.0
 	 */
-  export const ServerCancelled: integer = -32802;
+  ServerCancelled: -32802 as const,
 
   /**
 	 * The server detected that the content of a document got
@@ -144,13 +144,13 @@ export namespace ErrorCodes {
 	 * If a client decides that a result is not of any use anymore
 	 * the client should cancel the request.
 	 */
-  export const ContentModified: integer = -32801;
+  ContentModified: -32801 as const,
 
   /**
 	 * The client has canceled a request and a server has detected
 	 * the cancel.
 	 */
-  export const RequestCancelled: integer = -32800;
+  RequestCancelled: -32800 as const,
 
   /**
 	 * This is the end range of LSP reserved error codes.
@@ -158,5 +158,5 @@ export namespace ErrorCodes {
 	 *
 	 * @since 3.16.0
 	 */
-  export const lspReservedErrorRangeEnd: integer = -32800;
-}
+  lspReservedErrorRangeEnd: -32800 as const,
+} as const;

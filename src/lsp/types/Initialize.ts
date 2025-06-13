@@ -114,7 +114,7 @@ export interface InitializeResult {
 /**
  * Known error codes for an `InitializeErrorCodes`;
  */
-export namespace InitializeErrorCodes {
+export const InitializeErrorCodes = {
 
   /**
 	 * If the protocol version provided by the client can't be handled by
@@ -123,8 +123,8 @@ export namespace InitializeErrorCodes {
 	 * @deprecated This initialize error got replaced by client capabilities.
 	 * There is no version handshake in version 3.0x
 	 */
-  export const unknownProtocolVersion: 1 = 1;
-}
+  unknownProtocolVersion: 1 as const,
+} as const;
 
 export type InitializeErrorCodes = 1;
 

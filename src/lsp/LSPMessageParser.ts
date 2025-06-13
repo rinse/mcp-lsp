@@ -1,4 +1,5 @@
 import { StreamParser, StreamParseResult } from '../tools/StreamEventEmitter';
+import { logger } from '../utils/logger';
 import { Message } from './types/AbstractMessage';
 
 /**
@@ -28,6 +29,7 @@ export function createLSPMessageParser(): StreamParser<Message> {
       const message: Message = JSON.parse(messageContent);
       return { kind: 'emit', value: message, consume: messageEnd };
     } catch (error) {
+      logger.error('[LSP] Failed to parse message', { error, content: str });
       return { kind: 'error', consume: messageEnd };
     }
   };

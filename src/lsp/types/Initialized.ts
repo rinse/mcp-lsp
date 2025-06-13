@@ -1,2 +1,1 @@
-export interface InitializedParams {
-}
+export type InitializedParams = Record<string, never>;

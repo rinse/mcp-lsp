@@ -1,4 +1,4 @@
-import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
+import { McpError } from '@modelcontextprotocol/sdk/types.js';
 
 import { LSPToolRename } from './LSPToolRename';
 import { LSPManager } from '../lsp/LSPManager';

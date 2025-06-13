@@ -36,11 +36,11 @@ export type PositionEncodingKind = string;
  *
  * @since 3.17.0
  */
-export namespace PositionEncodingKind {
+export const PositionEncodingKind = {
   /**
 	 * Character offsets count UTF-8 code units (e.g bytes).
 	 */
-  export const UTF8: PositionEncodingKind = 'utf-8';
+  UTF8: 'utf-8' as const,
 
   /**
 	 * Character offsets count UTF-16 code units.
@@ -48,7 +48,7 @@ export namespace PositionEncodingKind {
 	 * This is the default and must always be supported
 	 * by servers
 	 */
-  export const UTF16: PositionEncodingKind = 'utf-16';
+  UTF16: 'utf-16' as const,
 
   /**
 	 * Character offsets count UTF-32 code units.
@@ -57,5 +57,5 @@ export namespace PositionEncodingKind {
 	 * so this `PositionEncodingKind` may also be used for an
 	 * encoding-agnostic representation of character offsets.
 	 */
-  export const UTF32: PositionEncodingKind = 'utf-32';
-}
+  UTF32: 'utf-32' as const,
+} as const;
