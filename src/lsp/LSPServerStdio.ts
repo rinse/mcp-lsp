@@ -42,7 +42,7 @@ export class LSPServerStdio implements LSPServer {
     /**
      * Send a request to the LSP server.
      */
-    async sendRequest(method: string, params?: object | unknown[]): Promise<ResponseMessage> {
+    async sendRequest(method: RequestMessage["method"], params?: RequestMessage["params"]): Promise<ResponseMessage> {
         const id = ++this.requestId;
         const message: RequestMessage = { jsonrpc: '2.0', id, method, params };
         this.sendMessage(message);
