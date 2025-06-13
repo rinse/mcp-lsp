@@ -30,14 +30,14 @@ export type decimal = t.TypeOf<typeof decimal>;
 export type LSPAny = LSPObject | LSPArray | string | integer | uinteger | decimal | boolean | null;
 
 export function isLSPAny(value: unknown): value is LSPAny {
-	return (
-        isLSPObject(value)
+  return (
+    isLSPObject(value)
         || isLSPArray(value)
         || typeof value === 'string'
         || typeof value === 'number'
         || typeof value === 'boolean'
         || value === null
-	);
+  );
 }
 
 /**
@@ -45,14 +45,14 @@ export function isLSPAny(value: unknown): value is LSPAny {
  *
  * @since 3.17.0
  */
-export type LSPObject = { [key: string]: LSPAny };
+export interface LSPObject { [key: string]: LSPAny }
 
 export function isLSPObject(value: unknown): value is LSPObject {
-    if (typeof value !== 'object' || value === null) {
-        return false;
-    }
-    const obj = value as object;
-    return Object.values(obj).every(isLSPAny);
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const obj = value as object;
+  return Object.values(obj).every(isLSPAny);
 }
 
 /**
@@ -63,9 +63,9 @@ export function isLSPObject(value: unknown): value is LSPObject {
 export type LSPArray = LSPAny[];
 
 export function isLSPArray(value: unknown): value is LSPArray {
-    if (!Array.isArray(value)) {
-        return false;
-    }
-    const arr = value as unknown[];
-    return arr.every(isLSPAny);
+  if (!Array.isArray(value)) {
+    return false;
+  }
+  const arr = value as unknown[];
+  return arr.every(isLSPAny);
 }

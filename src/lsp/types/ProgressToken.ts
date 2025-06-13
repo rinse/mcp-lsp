@@ -1,5 +1,6 @@
-import { integer } from "./BaseTypes";
 import * as t from "io-ts";
+
+import { integer } from "./BaseTypes";
 
 /**
  * Notification:
@@ -11,18 +12,18 @@ export type ProgressToken = integer | string;
 export const ProgressTokenT = t.union([t.number, t.string]);
 
 export interface ProgressParams<T> {
-	/**
+  /**
 	 * The progress token provided by the client or server.
 	 */
-	token: ProgressToken;
+  token: ProgressToken;
 
-	/**
+  /**
 	 * The progress data.
 	 */
-	value: T;
+  value: T;
 }
 
 export const ProgressParamsT = <T>(type: t.Type<T>) => t.type({
-	token: ProgressTokenT,
-	value: type,
+  token: ProgressTokenT,
+  value: type,
 });

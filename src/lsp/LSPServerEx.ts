@@ -1,12 +1,12 @@
-import { ResponseMessage } from "./types/ResponseMessage";
-import { Hover, HoverParams } from "./types/HoverRequest";
-import { WorkspaceEdit } from "./types/WorkspaceEdit";
-import { RenameParams } from "./types/RenameRequest";
-import { InitializeParams } from "./types/Initialize";
-import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
-import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
-import { InitializedParams } from "./types/Initialized";
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from "./types/ApplyWorkspaceEditParams";
+import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
+import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
+import { Hover, HoverParams } from "./types/HoverRequest";
+import { InitializeParams } from "./types/Initialize";
+import { InitializedParams } from "./types/Initialized";
+import { RenameParams } from "./types/RenameRequest";
+import { ResponseMessage } from "./types/ResponseMessage";
+import { WorkspaceEdit } from "./types/WorkspaceEdit";
 
 export interface LSPServerEx {
   initialize(params: InitializeParams): Promise<ResponseMessage>;

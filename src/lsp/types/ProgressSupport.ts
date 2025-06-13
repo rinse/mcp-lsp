@@ -7,13 +7,13 @@ import { integer } from "./BaseTypes";
 export type ProgressToken = integer | string;
 
 export interface ProgressParams<T> {
-	/**
+  /**
 	 * The progress token provided by the client or server.
 	 */
-	token: ProgressToken;
+  token: ProgressToken;
 
-	/**
+  /**
 	 * The progress data.
 	 */
-	value: T;
+  value: T;
 }

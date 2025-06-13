@@ -1,14 +1,14 @@
 import { LSPServer } from "./LSPServer";
+import { LSPServerEx as LSPServerEx } from "./LSPServerEx";
+import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult, ApplyWorkspaceEditResultT } from "./types/ApplyWorkspaceEditParams";
+import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
+import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
+import { Hover, HoverParams, HoverT } from "./types/HoverRequest";
 import { InitializeParams } from "./types/Initialize";
 import { InitializedParams } from "./types/Initialized";
-import { ResponseMessage } from "./types/ResponseMessage";
-import { Hover, HoverParams, HoverT } from "./types/HoverRequest";
-import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
-import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
-import { LSPServerEx as LSPServerEx } from "./LSPServerEx";
 import { RenameParams } from "./types/RenameRequest";
+import { ResponseMessage } from "./types/ResponseMessage";
 import { WorkspaceEdit, WorkspaceEditT } from "./types/WorkspaceEdit";
-import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult, ApplyWorkspaceEditResultT } from "./types/ApplyWorkspaceEditParams";
 import { logger } from "../utils/logger";
 
 export class LSPServerExImpl implements LSPServerEx {

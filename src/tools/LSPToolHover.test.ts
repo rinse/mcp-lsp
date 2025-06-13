@@ -1,10 +1,11 @@
+import { McpError } from '@modelcontextprotocol/sdk/types.js';
+
 import { LSPToolHover } from './LSPToolHover';
 import { LSPManager } from '../lsp/LSPManager';
 import { LSPServerEx } from '../lsp/LSPServerEx';
 import { Hover } from '../lsp/types/HoverRequest';
-import { MarkupContent, MarkupKind } from '../lsp/types/MarkupContent';
-import { McpError } from '@modelcontextprotocol/sdk/types.js';
 import { MarkedString } from '../lsp/types/MarkedString';
+import { MarkupContent, MarkupKind } from '../lsp/types/MarkupContent';
 
 // Mock the readFileAsync function
 jest.mock('../utils', () => ({

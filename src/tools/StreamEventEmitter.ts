@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { Readable } from 'stream';
 
-export type StreamParseResult<E> = 
+export type StreamParseResult<E> =
   | { kind: 'emit'; value: E; consume: number }
   | { kind: 'waiting' }
   | { kind: 'error'; consume: number };
@@ -28,7 +28,7 @@ export class StreamEventEmitter<E> extends EventEmitter {
     this.emit('end');
   }
 
-  private processBuffer(parser: StreamParser<E>, endOfStream: boolean = false) {
+  private processBuffer(parser: StreamParser<E>, endOfStream = false) {
     while (this.buffer.length > 0) {
       const result = parser(this.buffer);
       if (result.kind === 'emit') {

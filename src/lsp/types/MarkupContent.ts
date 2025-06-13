@@ -8,15 +8,15 @@ import * as t from 'io-ts';
  * are reserved for internal usage.
  */
 export namespace MarkupKind {
-	/**
+  /**
 	 * Plain text is supported as a content format
 	 */
-	export const PlainText: 'plaintext' = 'plaintext';
+  export const PlainText: 'plaintext' = 'plaintext';
 
-	/**
+  /**
 	 * Markdown is supported as a content format
 	 */
-	export const Markdown: 'markdown' = 'markdown';
+  export const Markdown: 'markdown' = 'markdown';
 }
 
 export type MarkupKind = 'plaintext' | 'markdown';
@@ -48,20 +48,20 @@ export type MarkupKind = 'plaintext' | 'markdown';
  * decide to remove HTML from the markdown to avoid script execution.
  */
 export interface MarkupContent {
-	/**
+  /**
 	 * The type of the Markup
 	 */
-	kind: MarkupKind;
+  kind: MarkupKind;
 
-	/**
+  /**
 	 * The content itself
 	 */
-	value: string;
+  value: string;
 }
 
 export const MarkupContentT = t.type({
-	kind: t.union([t.literal(MarkupKind.Markdown), t.literal(MarkupKind.PlainText)]),
-	value: t.string,
+  kind: t.union([t.literal(MarkupKind.Markdown), t.literal(MarkupKind.PlainText)]),
+  value: t.string,
 });
 
 /**
@@ -70,21 +70,21 @@ export const MarkupContentT = t.type({
  * @since 3.16.0
  */
 export interface MarkdownClientCapabilities {
-	/**
+  /**
 	 * The name of the parser.
 	 */
-	parser: string;
+  parser: string;
 
-	/**
+  /**
 	 * The version of the parser.
 	 */
-	version?: string;
+  version?: string;
 
-	/**
+  /**
 	 * A list of HTML tags that the client allows / supports in
 	 * Markdown.
 	 *
 	 * @since 3.17.0
 	 */
-	allowedTags?: string[];
+  allowedTags?: string[];
 }

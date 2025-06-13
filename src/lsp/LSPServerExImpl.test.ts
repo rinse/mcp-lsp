@@ -1,16 +1,17 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { LSPServerExImpl } from './LSPServerExImpl';
+
 import { LSPServer } from './LSPServer';
-import { ResponseMessage } from './types/ResponseMessage';
+import { LSPServerExImpl } from './LSPServerExImpl';
+import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from './types/ApplyWorkspaceEditParams';
+import { DidCloseTextDocumentParams } from './types/DidCloseTextDocument';
+import { DidOpenTextDocumentParams } from './types/DidOpenTextDocument';
+import { HoverParams, Hover } from './types/HoverRequest';
 import { InitializeParams } from './types/Initialize';
 import { InitializedParams } from './types/Initialized';
-import { HoverParams, Hover } from './types/HoverRequest';
-import { RenameParams } from './types/RenameRequest';
-import { DidOpenTextDocumentParams } from './types/DidOpenTextDocument';
-import { DidCloseTextDocumentParams } from './types/DidCloseTextDocument';
-import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from './types/ApplyWorkspaceEditParams';
-import { WorkspaceEdit } from './types/WorkspaceEdit';
 import { MarkupContent } from './types/MarkupContent';
+import { RenameParams } from './types/RenameRequest';
+import { ResponseMessage } from './types/ResponseMessage';
+import { WorkspaceEdit } from './types/WorkspaceEdit';
 
 describe('LSPServerExImpl', () => {
   let mockLSPServer: jest.Mocked<LSPServer>;
@@ -19,7 +20,7 @@ describe('LSPServerExImpl', () => {
   beforeEach(() => {
     mockLSPServer = {
       sendRequest: jest.fn(),
-      sendNotification: jest.fn()
+      sendNotification: jest.fn(),
     };
     lspServerEx = new LSPServerExImpl(mockLSPServer);
   });
@@ -29,7 +30,7 @@ describe('LSPServerExImpl', () => {
       const params: InitializeParams = {
         processId: 12345,
         rootUri: 'file:///workspace',
-        capabilities: {}
+        capabilities: {},
       };
       const expectedResponse: ResponseMessage = {
         jsonrpc: '2.0',
@@ -37,9 +38,9 @@ describe('LSPServerExImpl', () => {
         result: {
           capabilities: {
             hoverProvider: true,
-            renameProvider: true
-          }
-        }
+            renameProvider: true,
+          },
+        },
       };
       mockLSPServer.sendRequest.mockResolvedValue(expectedResponse);
       const result = await lspServerEx.initialize(params);
@@ -51,15 +52,15 @@ describe('LSPServerExImpl', () => {
       const params: InitializeParams = {
         processId: null,
         rootUri: null,
-        capabilities: {}
+        capabilities: {},
       };
       const errorResponse: ResponseMessage = {
         jsonrpc: '2.0',
         id: 1,
         error: {
           code: -32602,
-          message: 'Invalid params'
-        }
+          message: 'Invalid params',
+        },
       };
       mockLSPServer.sendRequest.mockResolvedValue(errorResponse);
       const result = await lspServerEx.initialize(params);
@@ -79,17 +80,17 @@ describe('LSPServerExImpl', () => {
     it('should return hover information for valid response', async () => {
       const params: HoverParams = {
         textDocument: { uri: 'file:///test.ts' },
-        position: { line: 10, character: 5 }
+        position: { line: 10, character: 5 },
       };
       const hoverResult: Hover = {
         contents: {
           kind: 'markdown',
-          value: '```typescript\nconst foo: string\n```'
+          value: '```typescript\nconst foo: string\n```',
         } satisfies MarkupContent,
         range: {
           start: { line: 10, character: 0 },
-          end: { line: 10, character: 10 }
-        }
+          end: { line: 10, character: 10 },
+        },
       };
       const response: ResponseMessage = {
         jsonrpc: '2.0',
@@ -97,13 +98,13 @@ describe('LSPServerExImpl', () => {
         result: {
           contents: {
             kind: 'markdown',
-            value: '```typescript\nconst foo: string\n```'
+            value: '```typescript\nconst foo: string\n```',
           },
           range: {
             start: { line: 10, character: 0 },
-            end: { line: 10, character: 10 }
-          }
-        }
+            end: { line: 10, character: 10 },
+          },
+        },
       };
       mockLSPServer.sendRequest.mockResolvedValue(response);
       const result = await lspServerEx.hover(params);
@@ -114,12 +115,12 @@ describe('LSPServerExImpl', () => {
     it('should return null for null result', async () => {
       const params: HoverParams = {
         textDocument: { uri: 'file:///test.ts' },
-        position: { line: 0, character: 0 }
+        position: { line: 0, character: 0 },
       };
       const response: ResponseMessage = {
         jsonrpc: '2.0',
         id: 1,
-        result: null
+        result: null,
       };
       mockLSPServer.sendRequest.mockResolvedValue(response);
       const result = await lspServerEx.hover(params);
@@ -129,12 +130,12 @@ describe('LSPServerExImpl', () => {
     it('should return null for invalid hover response', async () => {
       const params: HoverParams = {
         textDocument: { uri: 'file:///test.ts' },
-        position: { line: 10, character: 5 }
+        position: { line: 10, character: 5 },
       };
       const response: ResponseMessage = {
         jsonrpc: '2.0',
         id: 1,
-        result: { invalid: 'response' }
+        result: { invalid: 'response' },
       };
       mockLSPServer.sendRequest.mockResolvedValue(response);
       const result = await lspServerEx.hover(params);
@@ -144,15 +145,15 @@ describe('LSPServerExImpl', () => {
     it('should return null for error response', async () => {
       const params: HoverParams = {
         textDocument: { uri: 'file:///test.ts' },
-        position: { line: 10, character: 5 }
+        position: { line: 10, character: 5 },
       };
       const response: ResponseMessage = {
         jsonrpc: '2.0',
         id: 1,
         error: {
           code: -32602,
-          message: 'Invalid params'
-        }
+          message: 'Invalid params',
+        },
       };
       mockLSPServer.sendRequest.mockResolvedValue(response);
       const result = await lspServerEx.hover(params);
@@ -165,7 +166,7 @@ describe('LSPServerExImpl', () => {
       const params: RenameParams = {
         textDocument: { uri: 'file:///test.ts' },
         position: { line: 10, character: 5 },
-        newName: 'newVariableName'
+        newName: 'newVariableName',
       };
       const workspaceEdit: WorkspaceEdit = {
         changes: {
@@ -173,12 +174,12 @@ describe('LSPServerExImpl', () => {
             {
               range: {
                 start: { line: 10, character: 5 },
-                end: { line: 10, character: 15 }
+                end: { line: 10, character: 15 },
               },
-              newText: 'newVariableName'
-            }
-          ]
-        }
+              newText: 'newVariableName',
+            },
+          ],
+        },
       };
       const response: ResponseMessage = {
         jsonrpc: '2.0',
@@ -189,13 +190,13 @@ describe('LSPServerExImpl', () => {
               {
                 range: {
                   start: { line: 10, character: 5 },
-                  end: { line: 10, character: 15 }
+                  end: { line: 10, character: 15 },
                 },
-                newText: 'newVariableName'
-              }
-            ]
-          }
-        }
+                newText: 'newVariableName',
+              },
+            ],
+          },
+        },
       };
       mockLSPServer.sendRequest.mockResolvedValue(response);
       const result = await lspServerEx.rename(params);
@@ -207,12 +208,12 @@ describe('LSPServerExImpl', () => {
       const params: RenameParams = {
         textDocument: { uri: 'file:///test.ts' },
         position: { line: 0, character: 0 },
-        newName: 'newName'
+        newName: 'newName',
       };
       const response: ResponseMessage = {
         jsonrpc: '2.0',
         id: 1,
-        result: null
+        result: null,
       };
       mockLSPServer.sendRequest.mockResolvedValue(response);
       const result = await lspServerEx.rename(params);
@@ -223,7 +224,7 @@ describe('LSPServerExImpl', () => {
       const params: RenameParams = {
         textDocument: { uri: 'file:///test.ts' },
         position: { line: 10, character: 5 },
-        newName: 'renamedFunction'
+        newName: 'renamedFunction',
       };
       const workspaceEdit: WorkspaceEdit = {
         changes: {
@@ -231,28 +232,28 @@ describe('LSPServerExImpl', () => {
             {
               range: {
                 start: { line: 10, character: 5 },
-                end: { line: 10, character: 15 }
+                end: { line: 10, character: 15 },
               },
-              newText: 'renamedFunction'
+              newText: 'renamedFunction',
             },
             {
               range: {
                 start: { line: 20, character: 10 },
-                end: { line: 20, character: 20 }
+                end: { line: 20, character: 20 },
               },
-              newText: 'renamedFunction'
-            }
+              newText: 'renamedFunction',
+            },
           ],
           'file:///other.ts': [
             {
               range: {
                 start: { line: 5, character: 0 },
-                end: { line: 5, character: 10 }
+                end: { line: 5, character: 10 },
               },
-              newText: 'renamedFunction'
-            }
-          ]
-        }
+              newText: 'renamedFunction',
+            },
+          ],
+        },
       };
       const response: ResponseMessage = {
         jsonrpc: '2.0',
@@ -263,29 +264,29 @@ describe('LSPServerExImpl', () => {
               {
                 range: {
                   start: { line: 10, character: 5 },
-                  end: { line: 10, character: 15 }
+                  end: { line: 10, character: 15 },
                 },
-                newText: 'renamedFunction'
+                newText: 'renamedFunction',
               },
               {
                 range: {
                   start: { line: 20, character: 10 },
-                  end: { line: 20, character: 20 }
+                  end: { line: 20, character: 20 },
                 },
-                newText: 'renamedFunction'
-              }
+                newText: 'renamedFunction',
+              },
             ],
             'file:///other.ts': [
               {
                 range: {
                   start: { line: 5, character: 0 },
-                  end: { line: 5, character: 10 }
+                  end: { line: 5, character: 10 },
                 },
-                newText: 'renamedFunction'
-              }
-            ]
-          }
-        }
+                newText: 'renamedFunction',
+              },
+            ],
+          },
+        },
       };
       mockLSPServer.sendRequest.mockResolvedValue(response);
       const result = await lspServerEx.rename(params);
@@ -296,12 +297,12 @@ describe('LSPServerExImpl', () => {
       const params: RenameParams = {
         textDocument: { uri: 'file:///test.ts' },
         position: { line: 10, character: 5 },
-        newName: 'newName'
+        newName: 'newName',
       };
       const response: ResponseMessage = {
         jsonrpc: '2.0',
         id: 1,
-        result: { changes: 'invalid_type_not_object' }
+        result: { changes: 'invalid_type_not_object' },
       };
       mockLSPServer.sendRequest.mockResolvedValue(response);
       const result = await lspServerEx.rename(params);
@@ -316,8 +317,8 @@ describe('LSPServerExImpl', () => {
           uri: 'file:///test.ts',
           languageId: 'typescript',
           version: 1,
-          text: 'const foo = "bar";'
-        }
+          text: 'const foo = "bar";',
+        },
       };
       await lspServerEx.didOpen(params);
       expect(mockLSPServer.sendNotification).toHaveBeenCalledWith('textDocument/didOpen', params);
@@ -328,8 +329,8 @@ describe('LSPServerExImpl', () => {
     it('should send didClose notification', async () => {
       const params: DidCloseTextDocumentParams = {
         textDocument: {
-          uri: 'file:///test.ts'
-        }
+          uri: 'file:///test.ts',
+        },
       };
       await lspServerEx.didClose(params);
       expect(mockLSPServer.sendNotification).toHaveBeenCalledWith('textDocument/didClose', params);
@@ -345,13 +346,13 @@ describe('LSPServerExImpl', () => {
               {
                 range: {
                   start: { line: 0, character: 0 },
-                  end: { line: 0, character: 5 }
+                  end: { line: 0, character: 5 },
                 },
-                newText: 'hello'
-              }
-            ]
-          }
-        }
+                newText: 'hello',
+              },
+            ],
+          },
+        },
       };
       const expectedResult: ApplyWorkspaceEditResult = {
         applied: true,
@@ -363,7 +364,7 @@ describe('LSPServerExImpl', () => {
         id: 1,
         result: {
           applied: true,
-        }
+        },
       };
       mockLSPServer.sendRequest.mockResolvedValue(response);
       const result = await lspServerEx.applyEdit(params);
@@ -379,18 +380,18 @@ describe('LSPServerExImpl', () => {
               {
                 range: {
                   start: { line: 0, character: 0 },
-                  end: { line: 0, character: 5 }
+                  end: { line: 0, character: 5 },
                 },
-                newText: 'hello'
-              }
-            ]
-          }
-        }
+                newText: 'hello',
+              },
+            ],
+          },
+        },
       };
       const expectedResult: ApplyWorkspaceEditResult = {
         applied: false,
         failureReason: 'File is read-only',
-        failedChange: undefined
+        failedChange: undefined,
       };
       const response: ResponseMessage = {
         jsonrpc: '2.0',
@@ -398,8 +399,8 @@ describe('LSPServerExImpl', () => {
         result: {
           applied: false,
           failureReason: 'File is read-only',
-          ...{}
-        }
+          ...{},
+        },
       };
       mockLSPServer.sendRequest.mockResolvedValue(response);
       const result = await lspServerEx.applyEdit(params);
@@ -409,13 +410,13 @@ describe('LSPServerExImpl', () => {
     it('should throw error for invalid apply edit response', async () => {
       const params: ApplyWorkspaceEditParams = {
         edit: {
-          changes: {}
-        }
+          changes: {},
+        },
       };
       const response: ResponseMessage = {
         jsonrpc: '2.0',
         id: 1,
-        result: { invalid: 'response' }
+        result: { invalid: 'response' },
       };
       mockLSPServer.sendRequest.mockResolvedValue(response);
       await expect(lspServerEx.applyEdit(params)).rejects.toThrow('[LSP] Invalid applyEdit result:');
@@ -424,16 +425,16 @@ describe('LSPServerExImpl', () => {
     it('should throw error for error response', async () => {
       const params: ApplyWorkspaceEditParams = {
         edit: {
-          changes: {}
-        }
+          changes: {},
+        },
       };
       const response: ResponseMessage = {
         jsonrpc: '2.0',
         id: 1,
         error: {
           code: -32602,
-          message: 'Invalid workspace edit'
-        }
+          message: 'Invalid workspace edit',
+        },
       };
       mockLSPServer.sendRequest.mockResolvedValue(response);
       await expect(lspServerEx.applyEdit(params)).rejects.toThrow('Invalid workspace edit');

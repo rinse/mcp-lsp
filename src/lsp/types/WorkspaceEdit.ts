@@ -1,4 +1,5 @@
 import * as t from 'io-ts';
+
 import { CreateFile } from "./CreateFileOptions";
 import { DeleteFile } from "./DeleteFileOptions";
 import { RenameFile } from "./RenameFileOptions";
@@ -7,12 +8,12 @@ import { ChangeAnnotation, TextEdit, TextEditT } from "./TextEdit";
 import { DocumentUri } from "./Uri";
 
 export interface WorkspaceEdit {
-	/**
+  /**
 	 * Holds changes to existing resources.
 	 */
-	changes?: { [uri: DocumentUri]: TextEdit[]; };
+  changes?: Record<DocumentUri, TextEdit[]>;
 
-	/**
+  /**
 	 * Depending on the client capability
 	 * `workspace.workspaceEdit.resourceOperations` document changes are either
 	 * an array of `TextDocumentEdit`s to express changes to n different text
@@ -27,12 +28,12 @@ export interface WorkspaceEdit {
 	 * `workspace.workspaceEdit.resourceOperations` then only plain `TextEdit`s
 	 * using the `changes` property are supported.
 	 */
-	documentChanges?: (
+  documentChanges?: (
 		TextDocumentEdit[] |
 		(TextDocumentEdit | CreateFile | RenameFile | DeleteFile)[]
-	);
+  );
 
-	/**
+  /**
 	 * A map of change annotations that can be referenced in
 	 * `AnnotatedTextEdit`s or create, rename and delete file / folder
 	 * operations.
@@ -42,9 +43,7 @@ export interface WorkspaceEdit {
 	 *
 	 * @since 3.16.0
 	 */
-	changeAnnotations?: {
-		[id: string /* ChangeAnnotationIdentifier */]: ChangeAnnotation;
-	};
+  changeAnnotations?: Record<string, ChangeAnnotation>;
 }
 
 // WorkspaceEdit - simplified version with just changes

@@ -19,15 +19,15 @@ import * as t from "io-ts";
 export type MarkedString = string | { language: string; value: string };
 
 export const MarkedStringT = t.union([
-    t.string,
-    t.type({
-        language: t.string,
-        value: t.string
-    }),
-])
+  t.string,
+  t.type({
+    language: t.string,
+    value: t.string,
+  }),
+]);
 
 export function markedStringToJsonString(markedString: MarkedString): string {
-    return typeof markedString === "string"
-        ? markedString
-        : JSON.stringify(markedString);
+  return typeof markedString === "string"
+    ? markedString
+    : JSON.stringify(markedString);
 }

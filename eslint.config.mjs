@@ -48,6 +48,7 @@ export default eslintTs.config({
       },
     ],
     "@stylistic/comma-spacing": ["error", { "before": false, "after": true }],
+    "@stylistic/comma-dangle": ["error", "always-multiline"],
     "@stylistic/indent": ["error", 2],
     "@stylistic/semi": ["error", "always"],
     "@stylistic/max-statements-per-line": ["error", { "max": 1 }],

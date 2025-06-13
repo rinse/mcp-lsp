@@ -8,28 +8,28 @@ import { integer, LSPArray, LSPObject } from "./BaseTypes";
  * back to the sender of the request.
  */
 export interface RequestMessage extends Message {
-	/**
+  /**
 	 * The request id.
 	 */
-	id: integer | string;
+  id: integer | string;
 
-	/**
+  /**
 	 * The method to be invoked.
 	 */
-	method: string;
+  method: string;
 
-	/**
+  /**
 	 * The method's params.
 	 */
-	params?: Array<unknown> | object;
+  params?: unknown[] | object;
 }
 
 export function isRequestMessage(value: Message): value is RequestMessage {
-	const message = value as RequestMessage;
-	const hasId = typeof message.id === "number" || typeof message.id === "string";
-	const hasMethod = typeof message.method === "string";
-	const isParams = message.params === undefined
+  const message = value as RequestMessage;
+  const hasId = typeof message.id === "number" || typeof message.id === "string";
+  const hasMethod = typeof message.method === "string";
+  const isParams = message.params === undefined
 		|| Array.isArray(message.params)
 		|| (typeof message.params === "object" && message.params !== null);
-	return hasId && hasMethod && isParams;
+  return hasId && hasMethod && isParams;
 }

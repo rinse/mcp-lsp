@@ -1,10 +1,10 @@
 import { getLanguageIdentifier } from "./LanguageIdentifiers";
 import { LSPServerEx as LSPServerEx } from "./LSPServerEx";
-import { Hover, HoverParams } from "./types/HoverRequest";
-import { WorkspaceEdit } from "./types/WorkspaceEdit";
-import { RenameParams } from "./types/RenameRequest";
-import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from "./types/ApplyWorkspaceEditParams";
 import { readFileAsync } from "../utils";
+import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from "./types/ApplyWorkspaceEditParams";
+import { Hover, HoverParams } from "./types/HoverRequest";
+import { RenameParams } from "./types/RenameRequest";
+import { WorkspaceEdit } from "./types/WorkspaceEdit";
 
 export class LSPManager {
   private openDocuments: Set<string>;
@@ -25,8 +25,8 @@ export class LSPManager {
         uri,
         languageId,
         version: 1,
-        text: fileContent
-      }
+        text: fileContent,
+      },
     });
     this.openDocuments.add(uri);
   }

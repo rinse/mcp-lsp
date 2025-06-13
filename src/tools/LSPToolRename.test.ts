@@ -1,9 +1,10 @@
+import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
+
 import { LSPToolRename } from './LSPToolRename';
 import { LSPManager } from '../lsp/LSPManager';
 import { LSPServerEx } from '../lsp/LSPServerEx';
-import { WorkspaceEdit } from '../lsp/types/WorkspaceEdit';
 import { ApplyWorkspaceEditResult } from '../lsp/types/ApplyWorkspaceEditParams';
-import { McpError, ErrorCode } from '@modelcontextprotocol/sdk/types.js';
+import { WorkspaceEdit } from '../lsp/types/WorkspaceEdit';
 
 // Mock the readFileAsync function
 jest.mock('../utils', () => ({

@@ -1,15 +1,15 @@
 export interface DocumentFilter {
-	/**
+  /**
 	 * A language id, like `typescript`.
 	 */
-	language?: string;
+  language?: string;
 
-	/**
+  /**
 	 * A Uri scheme, like `file` or `untitled`.
 	 */
-	scheme?: string;
+  scheme?: string;
 
-	/**
+  /**
 	 * A glob pattern, like `*.{ts,js}`.
 	 *
 	 * Glob patterns can have the following syntax:
@@ -24,7 +24,7 @@ export interface DocumentFilter {
 	 *   (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but
 	 *   not `example.0`)
 	 */
-	pattern?: string;
+  pattern?: string;
 }
 
 export type DocumentSelector = DocumentFilter[];

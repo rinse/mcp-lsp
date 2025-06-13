@@ -1,6 +1,8 @@
 import { Readable } from 'stream';
-import { StreamEventEmitter, StreamParseResult } from './StreamEventEmitter';
+
 import * as t from 'io-ts';
+
+import { StreamEventEmitter, StreamParseResult } from './StreamEventEmitter';
 
 const TestDataT = t.type({
   type: t.string,
@@ -32,7 +34,7 @@ describe('BufferedStreamEventEmitter', () => {
         this.push('{"type":"test","value":1}\n');
         this.push('{"type":"test","value":2}\n');
         this.push(null);
-      }
+      },
     });
     const emitter = new StreamEventEmitter<TestData>(stream, createJsonLineParser());
     const results: TestData[] = [];
@@ -42,7 +44,7 @@ describe('BufferedStreamEventEmitter', () => {
     emitter.on('end', () => {
       expect(results).toEqual([
         { type: 'test', value: 1 },
-        { type: 'test', value: 2 }
+        { type: 'test', value: 2 },
       ]);
       done();
     });
@@ -54,7 +56,7 @@ describe('BufferedStreamEventEmitter', () => {
         this.push('{"type"');
         this.push(':"test","value":3}\n');
         this.push(null);
-      }
+      },
     });
     const emitter = new StreamEventEmitter<TestData>(stream, createJsonLineParser());
     const results: TestData[] = [];
@@ -73,7 +75,7 @@ describe('BufferedStreamEventEmitter', () => {
         this.push('invalid json\n');
         this.push('{"type":"test","value":4}\n');
         this.push(null);
-      }
+      },
     });
     const emitter = new StreamEventEmitter<TestData>(stream, createJsonLineParser());
     const results: TestData[] = [];
@@ -97,7 +99,7 @@ describe('BufferedStreamEventEmitter', () => {
         this.push('{"type":"test","value":5}\n');
         this.push('{"incomplete":');
         this.push(null);
-      }
+      },
     });
     const emitter = new StreamEventEmitter<TestData>(stream, createJsonLineParser());
     const results: TestData[] = [];
@@ -120,7 +122,7 @@ describe('BufferedStreamEventEmitter', () => {
     const stream = new Readable({
       read() {
         this.push(null);
-      }
+      },
     });
     const emitter = new StreamEventEmitter<TestData>(stream, createJsonLineParser());
     const results: TestData[] = [];
@@ -137,7 +139,7 @@ describe('BufferedStreamEventEmitter', () => {
     const stream = new Readable({
       read() {
         this.emit('error', new Error('Stream error'));
-      }
+      },
     });
     const emitter = new StreamEventEmitter<TestData>(stream, createJsonLineParser());
     emitter.on('error', (error: Error) => {
