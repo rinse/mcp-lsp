@@ -25,7 +25,14 @@ async function main() {
   const lspProcess = spawn('npx', ['typescript-language-server', '--stdio'], {
     stdio: ['pipe', 'pipe', 'pipe'],
   });
-  const lspServer = new LSPServerStdio(lspProcess);
+  lspProcess.on('error', (error) => {
+    logger.error('[LSP] Process error', { error });
+  });
+  lspProcess.on('exit', (code, signal) => {
+    logger.info('[LSP] Process exited', { code, signal });
+    throw new McpError(ErrorCode.InternalError, `LSP Process exited.`);
+  });
+  const lspServer = new LSPServerStdio(lspProcess.stdin, lspProcess.stdout);
   const lspServerEx: LSPServerEx = new LSPServerExImpl(lspServer);
   const lspManager = new LSPManager(lspServerEx);
   const toolMap = new Map<string, LSPTool>();
@@ -44,7 +51,7 @@ async function main() {
       },
     },
   );
-    // Set up request handlers
+  // Set up request handlers
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
       tools: Array.from(toolMap.values()).map(tool => tool.listItem()),
@@ -74,6 +81,7 @@ async function main() {
     logger.info('TypeScript LSP initialized successfully');
   } catch (error) {
     logger.error('Failed to initialize TypeScript LSP', { error });
+    lspProcess.kill();
   }
 }
 

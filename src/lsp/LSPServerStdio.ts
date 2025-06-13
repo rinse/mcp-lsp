@@ -1,44 +1,33 @@
-import { ChildProcess } from 'child_process';
-import { EventEmitter } from 'events';
-
+import Stream from 'stream';
 import { LSPServer } from './LSPServer';
 import { Message } from './types/AbstractMessage';
 import { NotificationMessage, isNotificationMessage } from './types/NotificationMessage';
 import { isRequestMessage, RequestMessage } from './types/RequestMessage';
 import { isResponseMessage, ResponseMessage } from './types/ResponseMessage';
 import { logger } from '../utils/logger.js';
+import { StreamEventEmitter } from '../tools/StreamEventEmitter';
+import { readLSPMessageFromBuffer } from './LSPMessageParser';
 
 export class LSPServerStdio implements LSPServer {
-  private eventEmitter = new EventEmitter();
-  private process: ChildProcess;
-  private messageBuffer = '';
+  private streamEventEmitter: StreamEventEmitter<Message> | null = null;
   private requestId = 0;
   private pendingRequests = new Map<number | string | null, (response: ResponseMessage) => void>();
   private requestListeners: ((message: RequestMessage) => void)[] = [];
   private notificationListeners: ((message: NotificationMessage) => void)[] = [];
 
-  constructor(process: ChildProcess) {
-    this.process = process;
+  constructor(private outputStream: Stream.Writable, private inputStream: Stream.Readable) {
   }
 
   /**
      * Starts the LSP server by listening to its stdout and stderr streams.
      */
   async start(): Promise<void> {
-    this.process.stdout?.on('data', (data: Buffer) => {
-      this.messageBuffer += data.toString();
-      this.receiveMessages();
+    this.streamEventEmitter = new StreamEventEmitter(this.inputStream, readLSPMessageFromBuffer);
+    this.streamEventEmitter.on('data', (message: Message) => {
+      this.handleMessage(message);
     });
-    this.process.stderr?.on('data', (data: Buffer) => {
-      logger.warn('[LSP stderr]', { stderr: data.toString() });
-    });
-    this.process.on('error', (error) => {
-      logger.error('[LSP] Process error', { error });
-      this.eventEmitter.emit('error', error);
-    });
-    this.process.on('exit', (code, signal) => {
-      logger.info('[LSP] Process exited', { code, signal });
-      this.eventEmitter.emit('exit', code, signal);
+    this.streamEventEmitter.on('error', (error: Error) => {
+      logger.error('[LSP] Stream parsing error', { error });
     });
   }
 
@@ -74,7 +63,7 @@ export class LSPServerStdio implements LSPServer {
   private sendMessage(message: Message): void {
     const content = JSON.stringify(message);
     const header = `Content-Length: ${Buffer.byteLength(content)}\r\n\r\n`;
-    this.process?.stdin?.write(header + content);
+    this.outputStream.write(header + content);
   }
 
   onRequest(callback: (message: RequestMessage) => void): void {
@@ -83,39 +72,6 @@ export class LSPServerStdio implements LSPServer {
 
   onNotification(callback: (message: NotificationMessage) => void): void {
     this.notificationListeners.push(callback);
-  }
-
-  /**
-     * Receives messages from the LSP server.
-     */
-  private receiveMessages() {
-    while (true) {
-      const headerEnd = this.messageBuffer.indexOf('\r\n\r\n');
-      if (headerEnd === -1) {
-        break;
-      }
-      const header = this.messageBuffer.substring(0, headerEnd);
-      const contentLengthMatch = header.match(/Content-Length: (\d+)/);
-      if (!contentLengthMatch) {
-        logger.warn('[LSP] Invalid header, missing Content-Length');
-        this.messageBuffer = this.messageBuffer.substring(headerEnd + 4);
-        continue;
-      }
-      const contentLength = parseInt(contentLengthMatch[1]);
-      const messageStart = headerEnd + 4;
-      const messageEnd = messageStart + contentLength;
-      if (this.messageBuffer.length < messageEnd) {
-        break; // Not enough data for a complete message
-      }
-      const messageContent = this.messageBuffer.substring(messageStart, messageEnd);
-      this.messageBuffer = this.messageBuffer.substring(messageEnd);
-      try {
-        const message: Message = JSON.parse(messageContent);
-        this.handleMessage(message);
-      } catch (error) {
-        logger.error('[LSP] Failed to parse message', { error, messageContent });
-      }
-    }
   }
 
   private handleMessage(message: Message) {
@@ -144,8 +100,6 @@ export class LSPServerStdio implements LSPServer {
       this.sendNotification('exit');
     } catch (error) {
       logger.error('[LSP] Error during shutdown', { error });
-    } finally {
-      this.process.kill();
     }
   }
 }
