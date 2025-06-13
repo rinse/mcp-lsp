@@ -92,7 +92,7 @@ async function main() {
       } satisfies ClientCapabilities,
       trace: 'verbose',
     });
-    logger.info(`Result of initialize: ${resultInitialize}`);
+    logger.info('Result of initialize:', resultInitialize);
     await lspServerEx.initialized({});
     logger.info('TypeScript LSP initialized successfully');
   } catch (error) {
