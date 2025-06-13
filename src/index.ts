@@ -1,4 +1,4 @@
-import { spawn } from 'child_process';
+import { spawn, type ChildProcess } from 'child_process';
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
@@ -20,6 +20,8 @@ import { LSPToolHover } from './tools/LSPToolHover.js';
 import { LSPToolRename } from './tools/LSPToolRename.js';
 import { logger } from './utils/logger.js';
 
+main();
+
 async function main() {
   // Spawn the TypeScript language server process
   const lspProcess = spawn('npx', ['typescript-language-server', '--stdio'], {
@@ -33,43 +35,47 @@ async function main() {
     throw new McpError(ErrorCode.InternalError, `LSP Process exited.`);
   });
   const lspServer = new LSPServerStream(lspProcess.stdin, lspProcess.stdout);
-  const lspServerEx: LSPServerEx = new LSPServerExImpl(lspServer);
-  const lspManager = new LSPManager(lspServerEx);
-  const toolMap = new Map<string, LSPTool>();
-  // Register tools
-  toolMap.set('hover', new LSPToolHover(lspManager));
-  toolMap.set('rename', new LSPToolRename(lspManager));
-  // MCP server instance
-  const server = new Server(
-    {
-      name: 'mcp-lsp',
-      version: '0.1.0',
-    },
-    {
-      capabilities: {
-        tools: {},
-      },
-    },
-  );
-  // Set up request handlers
-  server.setRequestHandler(ListToolsRequestSchema, async () => {
-    return {
-      tools: Array.from(toolMap.values()).map(tool => tool.listItem()),
-    } satisfies ServerResult;
-  });
-  server.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest, extra) => {
-    logger.debug("[MCP] CallToolRequest received", { request, extra });
-    const tool = toolMap.get(request.params.name);
-    if (tool !== undefined) {
-      return await tool.handle(request.params.arguments);
-    }
-    throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${request.params.name}`);
-  });
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  logger.info('MCP-LSP server running on stdio');
-  // Start and initialize TypeScript LSP
   try {
+    const lspServerEx: LSPServerEx = new LSPServerExImpl(lspServer);
+    const lspManager = new LSPManager(lspServerEx);
+    const toolMap = new Map<string, LSPTool>();
+    // Register tools
+    toolMap.set('hover', new LSPToolHover(lspManager));
+    toolMap.set('rename', new LSPToolRename(lspManager));
+    // MCP server instance
+    const server = new Server(
+      {
+        name: 'mcp-lsp',
+        version: '0.1.0',
+      },
+      {
+        capabilities: {
+          tools: {},
+        },
+      },
+    );
+    // Set up request handlers
+    server.setRequestHandler(ListToolsRequestSchema, async () => {
+      return {
+        tools: Array.from(toolMap.values()).map(tool => tool.listItem()),
+      } satisfies ServerResult;
+    });
+    server.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest, extra) => {
+      logger.debug("[MCP] CallToolRequest received", { request, extra });
+      const tool = toolMap.get(request.params.name);
+      if (tool !== undefined) {
+        return await tool.handle(request.params.arguments);
+      }
+      throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${request.params.name}`);
+    });
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    logger.info('MCP-LSP server running on stdio');
+    // Register cleanup handlers
+    process.on('SIGINT', () => cleanup(lspServer, lspProcess));
+    process.on('SIGTERM', () => cleanup(lspServer, lspProcess));
+    process.on('exit', () => cleanup(lspServer, lspProcess));
+    // Start and initialize TypeScript LSP
     await lspServer.start();
     await lspServerEx.initialize({
       processId: process.pid,
@@ -81,11 +87,16 @@ async function main() {
     logger.info('TypeScript LSP initialized successfully');
   } catch (error) {
     logger.error('Failed to initialize TypeScript LSP', { error });
-    lspProcess.kill();
+    await cleanup(lspServer, lspProcess);
+    process.exit(1);
   }
 }
 
-main().catch((error) => {
-  logger.error('Server error', { error });
-  process.exit(1);
-});
+async function cleanup(lspServer: LSPServerStream, lspProcess: ChildProcess) {
+  try {
+    await lspServer.close();
+  } catch (error) {
+    logger.error('[LSP] Error during server close', { error });
+  }
+  lspProcess.kill();
+};
