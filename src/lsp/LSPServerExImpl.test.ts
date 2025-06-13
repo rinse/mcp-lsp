@@ -21,6 +21,8 @@ describe('LSPServerExImpl', () => {
     mockLSPServer = {
       sendRequest: jest.fn(),
       sendNotification: jest.fn(),
+      onRequest: jest.fn(),
+      onNotification: jest.fn(),
     };
     lspServerEx = new LSPServerExImpl(mockLSPServer);
   });
