@@ -8,13 +8,13 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import * as t from "io-ts";
 
-import { LSPTool } from "./LSPTool";
+import { MCPTool } from "./MCPTool";
 import { LSPManager } from "../lsp/LSPManager";
 import { Hover } from "../lsp/types/HoverRequest";
 import { MarkedStringT, markedStringToJsonString } from "../lsp/types/MarkedString";
 import { MarkupContentT } from "../lsp/types/MarkupContent";
 
-export class LSPToolHover implements LSPTool {
+export class MCPToolHover implements MCPTool {
   constructor(private manager: LSPManager) {}
 
   listItem(): Tool {

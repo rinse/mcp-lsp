@@ -79,7 +79,7 @@ This MCP server bridges TypeScript Language Server Protocol (LSP) capabilities t
 - **LSPManager**: Central coordinator for LSP operations
 - **LSPServerStream**: Manages stdio communication with TypeScript language server
 - **LSPMessageParser**: Parses LSP's Content-Length message format
-- **LSPTool**: Base interface for MCP tools that wrap LSP capabilities
+- **MCPTool**: Base interface for MCP tools that wrap LSP capabilities
 - **StreamEventEmitter**: Event-driven communication layer
 
 ### Code Organization

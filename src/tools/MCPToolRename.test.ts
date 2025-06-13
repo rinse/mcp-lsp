@@ -1,6 +1,6 @@
 import { McpError } from '@modelcontextprotocol/sdk/types.js';
 
-import { LSPToolRename } from './LSPToolRename';
+import { MCPToolRename } from './MCPToolRename';
 import { LSPManager } from '../lsp/LSPManager';
 import { LSPServerEx } from '../lsp/LSPServerEx';
 import { ApplyWorkspaceEditResult } from '../lsp/types/ApplyWorkspaceEditParams';
@@ -11,10 +11,10 @@ jest.mock('../utils', () => ({
   readFileAsync: jest.fn().mockResolvedValue('mock file content'),
 }));
 
-describe('LSPToolRename', () => {
+describe('MCPToolRename', () => {
   let mockLSPServerEx: jest.Mocked<LSPServerEx>;
   let lspManager: LSPManager;
-  let lspToolRename: LSPToolRename;
+  let mcpToolRename: MCPToolRename;
   let renameSpy: jest.MockedFunction<LSPServerEx['rename']>;
   let applyEditSpy: jest.MockedFunction<LSPServerEx['applyEdit']>;
 
@@ -31,7 +31,7 @@ describe('LSPToolRename', () => {
       applyEdit: applyEditSpy,
     };
     lspManager = new LSPManager(mockLSPServerEx);
-    lspToolRename = new LSPToolRename(lspManager);
+    mcpToolRename = new MCPToolRename(lspManager);
   });
 
   describe('handle', () => {
@@ -61,7 +61,7 @@ describe('LSPToolRename', () => {
       };
       renameSpy.mockResolvedValue(workspaceEdit);
       applyEditSpy.mockResolvedValue(applyResult);
-      const result = await lspToolRename.handle(validParams);
+      const result = await mcpToolRename.handle(validParams);
       expect(result).toEqual({
         content: [{
           type: 'text',
@@ -84,7 +84,7 @@ describe('LSPToolRename', () => {
       };
       renameSpy.mockResolvedValue(null);
       applyEditSpy.mockResolvedValue(applyResult);
-      const result = await lspToolRename.handle(validParams);
+      const result = await mcpToolRename.handle(validParams);
       expect(result).toEqual({
         content: [{
           type: 'text',
@@ -116,7 +116,7 @@ describe('LSPToolRename', () => {
       };
       renameSpy.mockResolvedValue(workspaceEdit);
       applyEditSpy.mockResolvedValue(applyResult);
-      const result = await lspToolRename.handle(validParams);
+      const result = await mcpToolRename.handle(validParams);
       expect(result).toEqual({
         content: [{
           type: 'text',
@@ -134,7 +134,7 @@ describe('LSPToolRename', () => {
       };
       renameSpy.mockResolvedValue(workspaceEdit);
       applyEditSpy.mockResolvedValue(applyResult);
-      const result = await lspToolRename.handle(validParams);
+      const result = await mcpToolRename.handle(validParams);
       expect(result).toEqual({
         content: [{
           type: 'text',
@@ -150,8 +150,8 @@ describe('LSPToolRename', () => {
         character: 5,
         newName: 'newSymbolName',
       };
-      await expect(lspToolRename.handle(invalidParams)).rejects.toThrow(McpError);
-      await expect(lspToolRename.handle(invalidParams)).rejects.toThrow('Invalid parameters for rename tool');
+      await expect(mcpToolRename.handle(invalidParams)).rejects.toThrow(McpError);
+      await expect(mcpToolRename.handle(invalidParams)).rejects.toThrow('Invalid parameters for rename tool');
     });
 
     it('should throw error when missing required parameters', async () => {
@@ -161,15 +161,15 @@ describe('LSPToolRename', () => {
         character: 5,
         // Missing newName
       };
-      await expect(lspToolRename.handle(missingParams)).rejects.toThrow(McpError);
-      await expect(lspToolRename.handle(missingParams)).rejects.toThrow('Invalid parameters for rename tool');
+      await expect(mcpToolRename.handle(missingParams)).rejects.toThrow(McpError);
+      await expect(mcpToolRename.handle(missingParams)).rejects.toThrow('Invalid parameters for rename tool');
     });
 
     it('should handle errors from LSP server during rename', async () => {
       const serverError = new Error('LSP server rename error');
       mockLSPServerEx.rename.mockRejectedValue(serverError);
-      await expect(lspToolRename.handle(validParams)).rejects.toThrow(McpError);
-      await expect(lspToolRename.handle(validParams)).rejects.toThrow('Failed to rename symbol: Error: LSP server rename error');
+      await expect(mcpToolRename.handle(validParams)).rejects.toThrow(McpError);
+      await expect(mcpToolRename.handle(validParams)).rejects.toThrow('Failed to rename symbol: Error: LSP server rename error');
     });
 
     it('should handle errors from LSP server during applyEdit', async () => {
@@ -178,8 +178,8 @@ describe('LSPToolRename', () => {
       };
       renameSpy.mockResolvedValue(workspaceEdit);
       mockLSPServerEx.applyEdit.mockRejectedValue(new Error('Apply edit error'));
-      await expect(lspToolRename.handle(validParams)).rejects.toThrow(McpError);
-      await expect(lspToolRename.handle(validParams)).rejects.toThrow('Failed to rename symbol: Error: Apply edit error');
+      await expect(mcpToolRename.handle(validParams)).rejects.toThrow(McpError);
+      await expect(mcpToolRename.handle(validParams)).rejects.toThrow('Failed to rename symbol: Error: Apply edit error');
     });
 
     it('should handle complex workspace edit with multiple files', async () => {
@@ -217,7 +217,7 @@ describe('LSPToolRename', () => {
       };
       renameSpy.mockResolvedValue(workspaceEdit);
       applyEditSpy.mockResolvedValue(applyResult);
-      const result = await lspToolRename.handle(validParams);
+      const result = await mcpToolRename.handle(validParams);
       expect(result).toEqual({
         content: [{
           type: 'text',

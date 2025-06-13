@@ -8,11 +8,11 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import * as t from "io-ts";
 
-import { LSPTool } from "./LSPTool";
+import { MCPTool } from "./MCPTool";
 import { LSPManager } from "../lsp/LSPManager";
 import { WorkspaceEdit } from "../lsp/types/WorkspaceEdit";
 
-export class LSPToolRename implements LSPTool {
+export class MCPToolRename implements MCPTool {
   constructor(private manager: LSPManager) {}
 
   listItem(): Tool {

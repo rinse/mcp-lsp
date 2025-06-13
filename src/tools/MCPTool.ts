@@ -4,7 +4,7 @@ import {
   type Tool,
 } from "@modelcontextprotocol/sdk/types.js";
 
-export interface LSPTool {
+export interface MCPTool {
   listItem(): Tool,
   handle(params: CallToolRequest["params"]["arguments"]): Promise<CallToolResult>,
 }

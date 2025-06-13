@@ -1,6 +1,6 @@
 import { McpError } from '@modelcontextprotocol/sdk/types.js';
 
-import { LSPToolHover } from './LSPToolHover';
+import { MCPToolHover } from './MCPToolHover';
 import { LSPManager } from '../lsp/LSPManager';
 import { LSPServerEx } from '../lsp/LSPServerEx';
 import { Hover } from '../lsp/types/HoverRequest';
@@ -12,10 +12,10 @@ jest.mock('../utils', () => ({
   readFileAsync: jest.fn().mockResolvedValue('mock file content'),
 }));
 
-describe('LSPToolHover', () => {
+describe('MCPToolHover', () => {
   let mockLSPServerEx: jest.Mocked<LSPServerEx>;
   let lspManager: LSPManager;
-  let lspToolHover: LSPToolHover;
+  let mcpToolHover: MCPToolHover;
   let hoverSpy: jest.MockedFunction<LSPServerEx['hover']>;
 
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('LSPToolHover', () => {
       applyEdit: jest.fn(),
     };
     lspManager = new LSPManager(mockLSPServerEx);
-    lspToolHover = new LSPToolHover(lspManager);
+    mcpToolHover = new MCPToolHover(lspManager);
   });
 
   describe('handle', () => {
@@ -45,7 +45,7 @@ describe('LSPToolHover', () => {
         contents: 'Test hover content',
       };
       hoverSpy.mockResolvedValue(hoverResult);
-      const result = await lspToolHover.handle(validParams);
+      const result = await mcpToolHover.handle(validParams);
       expect(result).toEqual({
         content: [{
           type: 'text',
@@ -66,7 +66,7 @@ describe('LSPToolHover', () => {
         } satisfies MarkedString,
       };
       hoverSpy.mockResolvedValue(hoverResult);
-      const result = await lspToolHover.handle(validParams);
+      const result = await mcpToolHover.handle(validParams);
       expect(result).toEqual({
         content: [{
           type: 'text',
@@ -85,7 +85,7 @@ describe('LSPToolHover', () => {
         ],
       };
       hoverSpy.mockResolvedValue(hoverResult);
-      const result = await lspToolHover.handle(validParams);
+      const result = await mcpToolHover.handle(validParams);
       expect(result).toEqual({
         content: [
           {
@@ -104,7 +104,7 @@ describe('LSPToolHover', () => {
         } as MarkupContent,
       };
       hoverSpy.mockResolvedValue(hoverResult);
-      const result = await lspToolHover.handle(validParams);
+      const result = await mcpToolHover.handle(validParams);
       expect(result).toEqual({
         content: [{
           type: 'text',
@@ -115,7 +115,7 @@ describe('LSPToolHover', () => {
 
     it('should handle hover returning null', async () => {
       hoverSpy.mockResolvedValue(null);
-      const result = await lspToolHover.handle(validParams);
+      const result = await mcpToolHover.handle(validParams);
       expect(result).toEqual({
         content: [{
           type: 'text',
@@ -130,8 +130,8 @@ describe('LSPToolHover', () => {
         line: 'not a number', // Invalid type
         character: 5,
       };
-      await expect(lspToolHover.handle(invalidParams)).rejects.toThrow(McpError);
-      await expect(lspToolHover.handle(invalidParams)).rejects.toThrow('Invalid parameters for hover tool');
+      await expect(mcpToolHover.handle(invalidParams)).rejects.toThrow(McpError);
+      await expect(mcpToolHover.handle(invalidParams)).rejects.toThrow('Invalid parameters for hover tool');
     });
 
     it('should throw error when missing required parameters', async () => {
@@ -139,15 +139,15 @@ describe('LSPToolHover', () => {
         uri: 'file:///test/file.ts',
         // Missing line and character
       };
-      await expect(lspToolHover.handle(missingParams)).rejects.toThrow(McpError);
-      await expect(lspToolHover.handle(missingParams)).rejects.toThrow('Invalid parameters for hover tool');
+      await expect(mcpToolHover.handle(missingParams)).rejects.toThrow(McpError);
+      await expect(mcpToolHover.handle(missingParams)).rejects.toThrow('Invalid parameters for hover tool');
     });
 
     it('should handle errors from LSP server', async () => {
       const serverError = new Error('LSP server error');
       mockLSPServerEx.hover.mockRejectedValue(serverError);
-      await expect(lspToolHover.handle(validParams)).rejects.toThrow(McpError);
-      await expect(lspToolHover.handle(validParams)).rejects.toThrow('Failed to get hover information: Error: LSP server error');
+      await expect(mcpToolHover.handle(validParams)).rejects.toThrow(McpError);
+      await expect(mcpToolHover.handle(validParams)).rejects.toThrow('Failed to get hover information: Error: LSP server error');
     });
 
     it('should handle hover with range', async () => {
@@ -159,7 +159,7 @@ describe('LSPToolHover', () => {
         },
       };
       hoverSpy.mockResolvedValue(hoverResult);
-      const result = await lspToolHover.handle(validParams);
+      const result = await mcpToolHover.handle(validParams);
       expect(result).toEqual({
         content: [{
           type: 'text',
