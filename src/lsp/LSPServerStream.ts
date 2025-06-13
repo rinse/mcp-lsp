@@ -31,6 +31,7 @@ export class LSPServerStream implements LSPServer {
     this.streamEventEmitter.on('error', (error: Error) => {
       logger.error('[LSP] Stream parsing error', { error });
     });
+    await Promise.resolve();
   }
 
   private handleMessage(message: Message) {
@@ -83,6 +84,7 @@ export class LSPServerStream implements LSPServer {
   async sendNotification(method: string, params?: object | unknown[]): Promise<void> {
     const message: NotificationMessage = { jsonrpc: '2.0', method, params };
     this.sendMessage(message);
+    await Promise.resolve();
   }
 
   private sendMessage(message: Message): void {
@@ -105,7 +107,7 @@ export class LSPServerStream implements LSPServer {
   async close(): Promise<void> {
     try {
       await this.sendRequest('shutdown');
-      this.sendNotification('exit');
+      await this.sendNotification('exit');
     } catch (error) {
       logger.error('[LSP] Error during shutdown', { error });
     } finally {

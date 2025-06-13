@@ -75,7 +75,7 @@ async function handleHover(
       ? hoverToCallToolResult(result)
       : hoverNothingContent();
   } catch (error) {
-    throw new McpError(ErrorCode.InternalError, `Failed to get hover information: ${error}`);
+    throw new McpError(ErrorCode.InternalError, `Failed to get hover information: ${String(error)}`);
   }
 }
 

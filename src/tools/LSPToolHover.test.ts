@@ -16,14 +16,16 @@ describe('LSPToolHover', () => {
   let mockLSPServerEx: jest.Mocked<LSPServerEx>;
   let lspManager: LSPManager;
   let lspToolHover: LSPToolHover;
+  let hoverSpy: jest.MockedFunction<LSPServerEx['hover']>;
 
   beforeEach(() => {
+    hoverSpy = jest.fn();
     mockLSPServerEx = {
       initialize: jest.fn(),
       initialized: jest.fn(),
       didOpen: jest.fn().mockResolvedValue(undefined),
       didClose: jest.fn().mockResolvedValue(undefined),
-      hover: jest.fn(),
+      hover: hoverSpy,
       rename: jest.fn(),
       applyEdit: jest.fn(),
     };
@@ -42,7 +44,7 @@ describe('LSPToolHover', () => {
       const hoverResult: Hover = {
         contents: 'Test hover content',
       };
-      mockLSPServerEx.hover.mockResolvedValue(hoverResult);
+      hoverSpy.mockResolvedValue(hoverResult);
       const result = await lspToolHover.handle(validParams);
       expect(result).toEqual({
         content: [{
@@ -50,7 +52,7 @@ describe('LSPToolHover', () => {
           text: 'Test hover content',
         }],
       });
-      expect(mockLSPServerEx.hover).toHaveBeenCalledWith({
+      expect(hoverSpy).toHaveBeenCalledWith({
         textDocument: { uri: validParams.uri },
         position: { line: validParams.line, character: validParams.character },
       });
@@ -63,7 +65,7 @@ describe('LSPToolHover', () => {
           value: 'function test() { return 42; }',
         } satisfies MarkedString,
       };
-      mockLSPServerEx.hover.mockResolvedValue(hoverResult);
+      hoverSpy.mockResolvedValue(hoverResult);
       const result = await lspToolHover.handle(validParams);
       expect(result).toEqual({
         content: [{
@@ -82,7 +84,7 @@ describe('LSPToolHover', () => {
           { language: 'typescript', value: 'const x = 5;' } satisfies MarkedString,
         ],
       };
-      mockLSPServerEx.hover.mockResolvedValue(hoverResult);
+      hoverSpy.mockResolvedValue(hoverResult);
       const result = await lspToolHover.handle(validParams);
       expect(result).toEqual({
         content: [
@@ -101,7 +103,7 @@ describe('LSPToolHover', () => {
           value: '# Header\n\nSome **markdown** content',
         } as MarkupContent,
       };
-      mockLSPServerEx.hover.mockResolvedValue(hoverResult);
+      hoverSpy.mockResolvedValue(hoverResult);
       const result = await lspToolHover.handle(validParams);
       expect(result).toEqual({
         content: [{
@@ -112,7 +114,7 @@ describe('LSPToolHover', () => {
     });
 
     it('should handle hover returning null', async () => {
-      mockLSPServerEx.hover.mockResolvedValue(null);
+      hoverSpy.mockResolvedValue(null);
       const result = await lspToolHover.handle(validParams);
       expect(result).toEqual({
         content: [{
@@ -156,7 +158,7 @@ describe('LSPToolHover', () => {
           end: { line: 10, character: 10 },
         },
       };
-      mockLSPServerEx.hover.mockResolvedValue(hoverResult);
+      hoverSpy.mockResolvedValue(hoverResult);
       const result = await lspToolHover.handle(validParams);
       expect(result).toEqual({
         content: [{

@@ -87,6 +87,6 @@ async function handleRename(
       ],
     };
   } catch (error) {
-    throw new McpError(ErrorCode.InternalError, `Failed to rename symbol: ${error}`);
+    throw new McpError(ErrorCode.InternalError, `Failed to rename symbol: ${String(error)}`);
   }
 }

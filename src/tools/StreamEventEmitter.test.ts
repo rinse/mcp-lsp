@@ -18,7 +18,7 @@ function createJsonLineParser(): (buffer: Buffer) => StreamParseResult<TestData>
       return { kind: 'waiting' };
     }
     const elem = str.substring(0, separatorIndex);
-    let item;
+    let item: unknown;
     try {
       item = JSON.parse(elem);
     } catch (error) {

@@ -20,7 +20,7 @@ import { LSPToolHover } from './tools/LSPToolHover.js';
 import { LSPToolRename } from './tools/LSPToolRename.js';
 import { logger } from './utils/logger.js';
 
-main();
+void main();
 
 async function main() {
   // Spawn the TypeScript language server process
@@ -55,7 +55,7 @@ async function main() {
       },
     );
     // Set up request handlers
-    server.setRequestHandler(ListToolsRequestSchema, async () => {
+    server.setRequestHandler(ListToolsRequestSchema, () => {
       return {
         tools: Array.from(toolMap.values()).map(tool => tool.listItem()),
       } satisfies ServerResult;
@@ -72,9 +72,9 @@ async function main() {
     await server.connect(transport);
     logger.info('MCP-LSP server running on stdio');
     // Register cleanup handlers
-    process.on('SIGINT', () => cleanup(lspServer, lspProcess));
-    process.on('SIGTERM', () => cleanup(lspServer, lspProcess));
-    process.on('exit', () => cleanup(lspServer, lspProcess));
+    process.on('SIGINT', () => void cleanup(lspServer, lspProcess));
+    process.on('SIGTERM', () => void cleanup(lspServer, lspProcess));
+    process.on('exit', () => void cleanup(lspServer, lspProcess));
     // Start and initialize TypeScript LSP
     await lspServer.start();
     await lspServerEx.initialize({

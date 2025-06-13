@@ -17,12 +17,21 @@ describe('LSPServerExImpl', () => {
   let mockLSPServer: jest.Mocked<LSPServer>;
   let lspServerEx: LSPServerExImpl;
 
+  let sendRequestSpy: jest.MockedFunction<LSPServer['sendRequest']>;
+  let sendNotificationSpy: jest.MockedFunction<LSPServer['sendNotification']>;
+  let onRequestSpy: jest.MockedFunction<LSPServer['onRequest']>;
+  let onNotificationSpy: jest.MockedFunction<LSPServer['onNotification']>;
+
   beforeEach(() => {
+    sendRequestSpy = jest.fn();
+    sendNotificationSpy = jest.fn();
+    onRequestSpy = jest.fn();
+    onNotificationSpy = jest.fn();
     mockLSPServer = {
-      sendRequest: jest.fn(),
-      sendNotification: jest.fn(),
-      onRequest: jest.fn(),
-      onNotification: jest.fn(),
+      sendRequest: sendRequestSpy,
+      sendNotification: sendNotificationSpy,
+      onRequest: onRequestSpy,
+      onNotification: onNotificationSpy,
     };
     lspServerEx = new LSPServerExImpl(mockLSPServer);
   });
@@ -44,9 +53,9 @@ describe('LSPServerExImpl', () => {
           },
         },
       };
-      mockLSPServer.sendRequest.mockResolvedValue(expectedResponse);
+      sendRequestSpy.mockResolvedValue(expectedResponse);
       const result = await lspServerEx.initialize(params);
-      expect(mockLSPServer.sendRequest).toHaveBeenCalledWith('initialize', params);
+      expect(sendRequestSpy).toHaveBeenCalledWith('initialize', params);
       expect(result).toEqual(expectedResponse);
     });
 
@@ -64,7 +73,7 @@ describe('LSPServerExImpl', () => {
           message: 'Invalid params',
         },
       };
-      mockLSPServer.sendRequest.mockResolvedValue(errorResponse);
+      sendRequestSpy.mockResolvedValue(errorResponse);
       const result = await lspServerEx.initialize(params);
       expect(result).toEqual(errorResponse);
     });
@@ -74,7 +83,7 @@ describe('LSPServerExImpl', () => {
     it('should send initialized notification', async () => {
       const params: InitializedParams = {};
       await lspServerEx.initialized(params);
-      expect(mockLSPServer.sendNotification).toHaveBeenCalledWith('initialized', params);
+      expect(sendNotificationSpy).toHaveBeenCalledWith('initialized', params);
     });
   });
 
@@ -108,9 +117,9 @@ describe('LSPServerExImpl', () => {
           },
         },
       };
-      mockLSPServer.sendRequest.mockResolvedValue(response);
+      sendRequestSpy.mockResolvedValue(response);
       const result = await lspServerEx.hover(params);
-      expect(mockLSPServer.sendRequest).toHaveBeenCalledWith('textDocument/hover', params);
+      expect(sendRequestSpy).toHaveBeenCalledWith('textDocument/hover', params);
       expect(result).toEqual(hoverResult);
     });
 
@@ -124,7 +133,7 @@ describe('LSPServerExImpl', () => {
         id: 1,
         result: null,
       };
-      mockLSPServer.sendRequest.mockResolvedValue(response);
+      sendRequestSpy.mockResolvedValue(response);
       const result = await lspServerEx.hover(params);
       expect(result).toBeNull();
     });
@@ -139,7 +148,7 @@ describe('LSPServerExImpl', () => {
         id: 1,
         result: { invalid: 'response' },
       };
-      mockLSPServer.sendRequest.mockResolvedValue(response);
+      sendRequestSpy.mockResolvedValue(response);
       const result = await lspServerEx.hover(params);
       expect(result).toBeNull();
     });
@@ -157,7 +166,7 @@ describe('LSPServerExImpl', () => {
           message: 'Invalid params',
         },
       };
-      mockLSPServer.sendRequest.mockResolvedValue(response);
+      sendRequestSpy.mockResolvedValue(response);
       const result = await lspServerEx.hover(params);
       expect(result).toBeNull();
     });
@@ -200,9 +209,9 @@ describe('LSPServerExImpl', () => {
           },
         },
       };
-      mockLSPServer.sendRequest.mockResolvedValue(response);
+      sendRequestSpy.mockResolvedValue(response);
       const result = await lspServerEx.rename(params);
-      expect(mockLSPServer.sendRequest).toHaveBeenCalledWith('textDocument/rename', params);
+      expect(sendRequestSpy).toHaveBeenCalledWith('textDocument/rename', params);
       expect(result).toEqual(workspaceEdit);
     });
 
@@ -217,7 +226,7 @@ describe('LSPServerExImpl', () => {
         id: 1,
         result: null,
       };
-      mockLSPServer.sendRequest.mockResolvedValue(response);
+      sendRequestSpy.mockResolvedValue(response);
       const result = await lspServerEx.rename(params);
       expect(result).toBeNull();
     });
@@ -290,7 +299,7 @@ describe('LSPServerExImpl', () => {
           },
         },
       };
-      mockLSPServer.sendRequest.mockResolvedValue(response);
+      sendRequestSpy.mockResolvedValue(response);
       const result = await lspServerEx.rename(params);
       expect(result).toEqual(workspaceEdit);
     });
@@ -306,7 +315,7 @@ describe('LSPServerExImpl', () => {
         id: 1,
         result: { changes: 'invalid_type_not_object' },
       };
-      mockLSPServer.sendRequest.mockResolvedValue(response);
+      sendRequestSpy.mockResolvedValue(response);
       const result = await lspServerEx.rename(params);
       expect(result).toBeNull();
     });
@@ -323,7 +332,7 @@ describe('LSPServerExImpl', () => {
         },
       };
       await lspServerEx.didOpen(params);
-      expect(mockLSPServer.sendNotification).toHaveBeenCalledWith('textDocument/didOpen', params);
+      expect(sendNotificationSpy).toHaveBeenCalledWith('textDocument/didOpen', params);
     });
   });
 
@@ -335,7 +344,7 @@ describe('LSPServerExImpl', () => {
         },
       };
       await lspServerEx.didClose(params);
-      expect(mockLSPServer.sendNotification).toHaveBeenCalledWith('textDocument/didClose', params);
+      expect(sendNotificationSpy).toHaveBeenCalledWith('textDocument/didClose', params);
     });
   });
 
@@ -368,9 +377,9 @@ describe('LSPServerExImpl', () => {
           applied: true,
         },
       };
-      mockLSPServer.sendRequest.mockResolvedValue(response);
+      sendRequestSpy.mockResolvedValue(response);
       const result = await lspServerEx.applyEdit(params);
-      expect(mockLSPServer.sendRequest).toHaveBeenCalledWith('workspace/applyEdit', params);
+      expect(sendRequestSpy).toHaveBeenCalledWith('workspace/applyEdit', params);
       expect(result).toEqual(expectedResult);
     });
 
@@ -404,7 +413,7 @@ describe('LSPServerExImpl', () => {
           ...{},
         },
       };
-      mockLSPServer.sendRequest.mockResolvedValue(response);
+      sendRequestSpy.mockResolvedValue(response);
       const result = await lspServerEx.applyEdit(params);
       expect(result).toEqual(expectedResult);
     });
@@ -420,7 +429,7 @@ describe('LSPServerExImpl', () => {
         id: 1,
         result: { invalid: 'response' },
       };
-      mockLSPServer.sendRequest.mockResolvedValue(response);
+      sendRequestSpy.mockResolvedValue(response);
       await expect(lspServerEx.applyEdit(params)).rejects.toThrow('[LSP] Invalid applyEdit result:');
     });
 
@@ -438,7 +447,7 @@ describe('LSPServerExImpl', () => {
           message: 'Invalid workspace edit',
         },
       };
-      mockLSPServer.sendRequest.mockResolvedValue(response);
+      sendRequestSpy.mockResolvedValue(response);
       await expect(lspServerEx.applyEdit(params)).rejects.toThrow('Invalid workspace edit');
     });
   });

@@ -31,7 +31,7 @@ export function readLSPMessageFromBuffer(buffer: Buffer): StreamParseResult<Mess
   }
   const messageContent = str.substring(messageStart, messageEnd);
   try {
-    const message = JSON.parse(messageContent);
+    const message: unknown = JSON.parse(messageContent);
     if (MessageT.is(message)) {
       return { kind: 'success', value: message, consume: messageEnd };
     }

@@ -13,7 +13,7 @@ export const logger = winston.createLogger({
     winston.format.json(),
     winston.format.combine(
       winston.format.printf(({ timestamp, level, message, stack }) => {
-        return `${timestamp} [${level}]: ${message}${stack ? '\n' + stack : ''}`;
+        return `${String(timestamp)} [${String(level)}]: ${String(message)}${typeof stack === 'string' ? '\n' + stack : ''}`;
       }),
     ),
   ),

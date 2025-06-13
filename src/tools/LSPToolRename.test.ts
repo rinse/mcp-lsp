@@ -15,16 +15,20 @@ describe('LSPToolRename', () => {
   let mockLSPServerEx: jest.Mocked<LSPServerEx>;
   let lspManager: LSPManager;
   let lspToolRename: LSPToolRename;
+  let renameSpy: jest.MockedFunction<LSPServerEx['rename']>;
+  let applyEditSpy: jest.MockedFunction<LSPServerEx['applyEdit']>;
 
   beforeEach(() => {
+    renameSpy = jest.fn();
+    applyEditSpy = jest.fn();
     mockLSPServerEx = {
       initialize: jest.fn(),
       initialized: jest.fn(),
       didOpen: jest.fn().mockResolvedValue(undefined),
       didClose: jest.fn().mockResolvedValue(undefined),
       hover: jest.fn(),
-      rename: jest.fn(),
-      applyEdit: jest.fn(),
+      rename: renameSpy,
+      applyEdit: applyEditSpy,
     };
     lspManager = new LSPManager(mockLSPServerEx);
     lspToolRename = new LSPToolRename(lspManager);
@@ -55,8 +59,8 @@ describe('LSPToolRename', () => {
       const applyResult: ApplyWorkspaceEditResult = {
         applied: true,
       };
-      mockLSPServerEx.rename.mockResolvedValue(workspaceEdit);
-      mockLSPServerEx.applyEdit.mockResolvedValue(applyResult);
+      renameSpy.mockResolvedValue(workspaceEdit);
+      applyEditSpy.mockResolvedValue(applyResult);
       const result = await lspToolRename.handle(validParams);
       expect(result).toEqual({
         content: [{
@@ -64,12 +68,12 @@ describe('LSPToolRename', () => {
           text: 'Successfully renamed symbol to "newSymbolName"',
         }],
       });
-      expect(mockLSPServerEx.rename).toHaveBeenCalledWith({
+      expect(renameSpy).toHaveBeenCalledWith({
         textDocument: { uri: validParams.uri },
         position: { line: validParams.line, character: validParams.character },
         newName: validParams.newName,
       });
-      expect(mockLSPServerEx.applyEdit).toHaveBeenCalledWith({
+      expect(applyEditSpy).toHaveBeenCalledWith({
         edit: workspaceEdit,
       });
     });
@@ -78,8 +82,8 @@ describe('LSPToolRename', () => {
       const applyResult: ApplyWorkspaceEditResult = {
         applied: true,
       };
-      mockLSPServerEx.rename.mockResolvedValue(null);
-      mockLSPServerEx.applyEdit.mockResolvedValue(applyResult);
+      renameSpy.mockResolvedValue(null);
+      applyEditSpy.mockResolvedValue(applyResult);
       const result = await lspToolRename.handle(validParams);
       expect(result).toEqual({
         content: [{
@@ -87,7 +91,7 @@ describe('LSPToolRename', () => {
           text: 'Successfully renamed symbol to "newSymbolName"',
         }],
       });
-      expect(mockLSPServerEx.applyEdit).toHaveBeenCalledWith({
+      expect(applyEditSpy).toHaveBeenCalledWith({
         edit: {},
       });
     });
@@ -110,8 +114,8 @@ describe('LSPToolRename', () => {
         applied: false,
         failureReason: 'File is read-only',
       };
-      mockLSPServerEx.rename.mockResolvedValue(workspaceEdit);
-      mockLSPServerEx.applyEdit.mockResolvedValue(applyResult);
+      renameSpy.mockResolvedValue(workspaceEdit);
+      applyEditSpy.mockResolvedValue(applyResult);
       const result = await lspToolRename.handle(validParams);
       expect(result).toEqual({
         content: [{
@@ -128,8 +132,8 @@ describe('LSPToolRename', () => {
       const applyResult: ApplyWorkspaceEditResult = {
         applied: false,
       };
-      mockLSPServerEx.rename.mockResolvedValue(workspaceEdit);
-      mockLSPServerEx.applyEdit.mockResolvedValue(applyResult);
+      renameSpy.mockResolvedValue(workspaceEdit);
+      applyEditSpy.mockResolvedValue(applyResult);
       const result = await lspToolRename.handle(validParams);
       expect(result).toEqual({
         content: [{
@@ -172,7 +176,7 @@ describe('LSPToolRename', () => {
       const workspaceEdit: WorkspaceEdit = {
         changes: {},
       };
-      mockLSPServerEx.rename.mockResolvedValue(workspaceEdit);
+      renameSpy.mockResolvedValue(workspaceEdit);
       mockLSPServerEx.applyEdit.mockRejectedValue(new Error('Apply edit error'));
       await expect(lspToolRename.handle(validParams)).rejects.toThrow(McpError);
       await expect(lspToolRename.handle(validParams)).rejects.toThrow('Failed to rename symbol: Error: Apply edit error');
@@ -211,8 +215,8 @@ describe('LSPToolRename', () => {
       const applyResult: ApplyWorkspaceEditResult = {
         applied: true,
       };
-      mockLSPServerEx.rename.mockResolvedValue(workspaceEdit);
-      mockLSPServerEx.applyEdit.mockResolvedValue(applyResult);
+      renameSpy.mockResolvedValue(workspaceEdit);
+      applyEditSpy.mockResolvedValue(applyResult);
       const result = await lspToolRename.handle(validParams);
       expect(result).toEqual({
         content: [{
@@ -220,7 +224,7 @@ describe('LSPToolRename', () => {
           text: 'Successfully renamed symbol to "newSymbolName"',
         }],
       });
-      expect(mockLSPServerEx.applyEdit).toHaveBeenCalledWith({
+      expect(applyEditSpy).toHaveBeenCalledWith({
         edit: workspaceEdit,
       });
     });
