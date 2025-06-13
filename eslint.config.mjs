@@ -14,7 +14,7 @@ export default eslintTs.config({
   },
   extends: [
     eslintJs.configs.recommended,
-    ...eslintTs.configs.strict,
+    ...eslintTs.configs.recommendedTypeChecked,
     ...eslintTs.configs.stylistic,
   ],
   languageOptions: {
@@ -25,6 +25,8 @@ export default eslintTs.config({
       ecmaFeatures: {
         impliedStrict: true,
       },
+      projectService: true,
+      tsconfigRootDir: import.meta.dirname,
     },
   },
   rules: {
