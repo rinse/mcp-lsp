@@ -21,6 +21,7 @@ import { MCPToolHover } from './tools/MCPToolHover.js';
 import { MCPToolRename } from './tools/MCPToolRename.js';
 import { logger } from './utils/logger.js';
 
+// Call the main function, disregarding a returned promise object.
 void main();
 
 async function main() {
@@ -44,7 +45,7 @@ async function main() {
     toolMap.set('hover', new MCPToolHover(lspManager));
     toolMap.set('rename', new MCPToolRename(lspManager));
     // MCP server instance
-    const server = new Server(
+    const mcpServer = new Server(
       {
         name: 'mcp-lsp',
         version: '0.1.0',
@@ -56,12 +57,12 @@ async function main() {
       },
     );
     // Set up request handlers
-    server.setRequestHandler(ListToolsRequestSchema, () => {
+    mcpServer.setRequestHandler(ListToolsRequestSchema, () => {
       return {
         tools: Array.from(toolMap.values()).map(tool => tool.listItem()),
       } satisfies ServerResult;
     });
-    server.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest, extra) => {
+    mcpServer.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest, extra) => {
       logger.debug("[MCP] CallToolRequest received", { request, extra });
       const tool = toolMap.get(request.params.name);
       if (tool !== undefined) {
@@ -70,7 +71,7 @@ async function main() {
       throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${request.params.name}`);
     });
     const transport = new StdioServerTransport();
-    await server.connect(transport);
+    await mcpServer.connect(transport);
     logger.info('MCP-LSP server running on stdio');
     // Register cleanup handlers
     process.on('SIGINT', () => void cleanup(lspServer, lspProcess));
@@ -91,7 +92,7 @@ async function main() {
       } satisfies ClientCapabilities,
       trace: 'verbose',
     });
-    logger.info("Result of initialize", resultInitialize)
+    logger.info(`Result of initialize: ${resultInitialize}`);
     await lspServerEx.initialized({});
     logger.info('TypeScript LSP initialized successfully');
   } catch (error) {
