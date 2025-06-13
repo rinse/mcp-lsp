@@ -2,18 +2,26 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Overview
+
+This is an MCP (Model Context Protocol) server that bridges TypeScript Language Server Protocol (LSP) capabilities to MCP tools. The server enables Claude Code to interact with TypeScript projects through LSP features like hover information and symbol renaming.
+
 ## Commands
 
 ### Development Commands
 
 - `npm run build` - Compile TypeScript to JavaScript
+- `npm run watch` - Compile TypeScript in watch mode
 - `npm test` - Run all tests
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Run ESLint with auto-fix
 
 ### Code Quality
 
 After editing code, always run:
 - `npm run build` - Ensure code compiles without errors
 - `npm test` - Verify all tests pass
+- `npm run lint` - Check code style compliance
 
 ### Testing the MCP Server
 
@@ -58,20 +66,29 @@ Now you can send any requests as you want.
 
 ## Architecture
 
-This is a Model Context Protocol (MCP) server implementation that bridges LSP (Language Server Protocol) capabilities to MCP tools. The server:
+This MCP server bridges TypeScript Language Server Protocol (LSP) capabilities to MCP tools. The server:
 
-- Runs on stdio transport (standard input/output)
-- Uses the `@modelcontextprotocol/sdk` for MCP protocol implementation
-- Spawns and communicates with TypeScript Language Server via stdio
-- Bridges LSP capabilities as MCP tools
+- **Transport**: Runs on stdio using `@modelcontextprotocol/sdk`
+- **LSP Integration**: Spawns and communicates with TypeScript Language Server via stdio
+- **Tool Registry**: Exposes LSP capabilities as MCP tools (hover, rename)
+- **Message Parsing**: Handles LSP's Content-Length HTTP-style message format
+- **Document Lifecycle**: Manages opening/closing documents for LSP operations
 
-Key architectural patterns:
-- **Interface-based design**: Clear separation between interfaces (`LSPServer`, `LSPRequester`, `LSPTool`) and implementations
-- **Tool Registry**: Uses a Map to register LSP tools that can be exposed via MCP
-- **Message-based communication**: Both MCP and LSP use JSON-RPC 2.0 over stdio
-- Request handlers are registered for `tools/list` and `tools/call` methods
-- All logging goes to stderr to avoid interfering with stdio communication
-- Document lifecycle management (open/close tracking)
+### Key Components
+
+- **LSPManager**: Central coordinator for LSP operations
+- **LSPServerStream**: Manages stdio communication with TypeScript language server
+- **LSPMessageParser**: Parses LSP's Content-Length message format
+- **LSPTool**: Base interface for MCP tools that wrap LSP capabilities
+- **StreamEventEmitter**: Event-driven communication layer
+
+### Code Organization
+
+- `src/index.ts` - MCP server entry point
+- `src/lsp/` - LSP client implementation and type definitions
+- `src/tools/` - MCP tool implementations (hover, rename)
+- `src/utils/` - Logging and utility functions
+- `out/` - Compiled JavaScript output
 
 ## Coding Standards
 

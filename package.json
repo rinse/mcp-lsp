@@ -9,8 +9,6 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typescript-language-server": "typescript-language-server --stdio --log-level 4"
