@@ -9,6 +9,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build` - Compile TypeScript to JavaScript
 - `npm test` - Run all tests
 
+### Code Quality
+
+After editing code, always run:
+- `npm run build` - Ensure code compiles without errors
+- `npm test` - Verify all tests pass
+
 ### Testing the MCP Server
 
 The MCP server is already configured and accessible. To test changes:
@@ -85,6 +91,8 @@ Key architectural patterns:
 
 ### hover
 Get hover information for a position in a TypeScript file.
+
+**Finding precise positions:** Use `grep -n` or `rg -n` to get exact line numbers for hovering over specific symbols.
 
 **Parameters:**
 - `uri` (string): File URI (e.g., file:///path/to/file.ts)
