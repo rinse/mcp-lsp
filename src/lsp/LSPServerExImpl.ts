@@ -85,35 +85,6 @@ export class LSPServerExImpl implements LSPServerEx {
     }
   }
 
-  async implementation(params: ImplementationParams): Promise<Implementation> {
-    logger.debug("[LSP] Requesting implementation with params:", params);
-    const result = await this.server.sendRequest('textDocument/implementation', params);
-    logger.debug("[LSP] Implementation request completed with result:", result);
-    return ImplementationT.is(result.result) ? result.result : null;
-  }
-
-  async references(params: ReferenceParams): Promise<References> {
-    logger.debug("[LSP] Requesting references with params:", params);
-    const result = await this.server.sendRequest('textDocument/references', params);
-    logger.debug("[LSP] References request completed with result:", result);
-    if (ReferencesT.is(result.result)) {
-      return result.result;
-    } else {
-      return null;
-    }
-  }
-
-  async typeDefinition(params: TypeDefinitionParams): Promise<TypeDefinition> {
-    logger.debug("[LSP] Requesting typeDefinition with params:", params);
-    const result = await this.server.sendRequest('textDocument/typeDefinition', params);
-    logger.debug("[LSP] TypeDefinition request completed with result:", result);
-    if (TypeDefinitionT.is(result.result)) {
-      return result.result;
-    } else {
-      return null;
-    }
-  }
-
   async rename(params: RenameParams): Promise<WorkspaceEdit | null> {
     logger.debug("[LSP] Requesting rename with params:", params);
     const result = await this.server.sendRequest('textDocument/rename', params);
