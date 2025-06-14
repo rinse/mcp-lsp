@@ -11,6 +11,7 @@ import { InitializedParams } from "./types/Initialized";
 import { References, ReferenceParams, ReferencesT } from "./types/ReferencesRequest";
 import { RenameParams } from "./types/RenameRequest";
 import { ResponseMessage } from "./types/ResponseMessage";
+import { TypeDefinition, TypeDefinitionParams, TypeDefinitionT } from "./types/TypeDefinitionRequest";
 import { WorkspaceEdit, WorkspaceEditT } from "./types/WorkspaceEdit";
 import { logger } from "../utils/logger";
 
@@ -67,6 +68,17 @@ export class LSPServerExImpl implements LSPServerEx {
     const result = await this.server.sendRequest('textDocument/references', params);
     logger.debug("[LSP] References request completed with result:", result);
     if (ReferencesT.is(result.result)) {
+      return result.result;
+    } else {
+      return null;
+    }
+  }
+
+  async typeDefinition(params: TypeDefinitionParams): Promise<TypeDefinition> {
+    logger.debug("[LSP] Requesting typeDefinition with params:", params);
+    const result = await this.server.sendRequest('textDocument/typeDefinition', params);
+    logger.debug("[LSP] TypeDefinition request completed with result:", result);
+    if (TypeDefinitionT.is(result.result)) {
       return result.result;
     } else {
       return null;

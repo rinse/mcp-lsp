@@ -9,6 +9,7 @@ import { InitializedParams } from "./types/Initialized";
 import { References, ReferenceParams } from "./types/ReferencesRequest";
 import { RenameParams } from "./types/RenameRequest";
 import { ResponseMessage } from "./types/ResponseMessage";
+import { TypeDefinition, TypeDefinitionParams } from "./types/TypeDefinitionRequest";
 import { WorkspaceEdit } from "./types/WorkspaceEdit";
 
 export interface LSPServerEx {
@@ -20,6 +21,7 @@ export interface LSPServerEx {
   definition(params: DefinitionParams): Promise<Definition>;
   implementation(params: ImplementationParams): Promise<Implementation>;
   references(params: ReferenceParams): Promise<References>;
+  typeDefinition(params: TypeDefinitionParams): Promise<TypeDefinition>;
   rename(params: RenameParams): Promise<WorkspaceEdit | null>;
   applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult>;
 }

@@ -27,6 +27,7 @@ describe('MCPToolReferences', () => {
       definition: jest.fn(),
       implementation: jest.fn(),
       references: referencesSpy,
+      typeDefinition: jest.fn(),
       rename: jest.fn(),
       applyEdit: jest.fn(),
     };

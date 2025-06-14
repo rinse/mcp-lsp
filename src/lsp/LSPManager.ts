@@ -7,6 +7,7 @@ import { Hover, HoverParams } from "./types/HoverRequest";
 import { Implementation, ImplementationParams } from "./types/ImplementationRequest";
 import { References, ReferenceParams } from "./types/ReferencesRequest";
 import { RenameParams } from "./types/RenameRequest";
+import { TypeDefinition, TypeDefinitionParams } from "./types/TypeDefinitionRequest";
 import { WorkspaceEdit } from "./types/WorkspaceEdit";
 import { WorkspaceEditApplier } from "./WorkspaceEditApplier";
 
@@ -65,6 +66,11 @@ export class LSPManager {
   async references(params: ReferenceParams): Promise<References> {
     await this.openDocument(params.textDocument.uri);
     return await this.server.references(params);
+  }
+
+  async typeDefinition(params: TypeDefinitionParams): Promise<TypeDefinition> {
+    await this.openDocument(params.textDocument.uri);
+    return await this.server.typeDefinition(params);
   }
 
   async rename(params: RenameParams): Promise<WorkspaceEdit | null> {

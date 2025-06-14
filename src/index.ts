@@ -22,6 +22,7 @@ import { MCPToolHover } from './tools/MCPToolHover.js';
 import { MCPToolImplementation } from './tools/MCPToolImplementation.js';
 import { MCPToolReferences } from './tools/MCPToolReferences.js';
 import { MCPToolRename } from './tools/MCPToolRename.js';
+import { MCPToolTypeDefinition } from './tools/MCPToolTypeDefinition.js';
 import { logger } from './utils/logger.js';
 
 // Call the main function, disregarding a returned promise object.
@@ -49,6 +50,7 @@ async function main() {
     toolMap.set('definition', new MCPToolDefinition(lspManager));
     toolMap.set('implementation', new MCPToolImplementation(lspManager));
     toolMap.set('references', new MCPToolReferences(lspManager));
+    toolMap.set('typeDefinition', new MCPToolTypeDefinition(lspManager));
     toolMap.set('rename', new MCPToolRename(lspManager));
     // MCP server instance
     const mcpServer = new Server(
