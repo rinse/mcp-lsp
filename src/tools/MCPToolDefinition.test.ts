@@ -25,6 +25,7 @@ describe('MCPToolDefinition', () => {
       didClose: jest.fn().mockResolvedValue(undefined),
       hover: jest.fn(),
       definition: definitionSpy,
+      references: jest.fn(),
       rename: jest.fn(),
       applyEdit: jest.fn(),
     };

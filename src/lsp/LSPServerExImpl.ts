@@ -7,6 +7,7 @@ import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
 import { Hover, HoverParams, HoverT } from "./types/HoverRequest";
 import { InitializeParams } from "./types/Initialize";
 import { InitializedParams } from "./types/Initialized";
+import { References, ReferenceParams, ReferencesT } from "./types/ReferencesRequest";
 import { RenameParams } from "./types/RenameRequest";
 import { ResponseMessage } from "./types/ResponseMessage";
 import { WorkspaceEdit, WorkspaceEditT } from "./types/WorkspaceEdit";
@@ -47,6 +48,17 @@ export class LSPServerExImpl implements LSPServerEx {
     const result = await this.server.sendRequest('textDocument/definition', params);
     logger.debug("[LSP] Definition request completed with result:", result);
     if (DefinitionT.is(result.result)) {
+      return result.result;
+    } else {
+      return null;
+    }
+  }
+
+  async references(params: ReferenceParams): Promise<References> {
+    logger.debug("[LSP] Requesting references with params:", params);
+    const result = await this.server.sendRequest('textDocument/references', params);
+    logger.debug("[LSP] References request completed with result:", result);
+    if (ReferencesT.is(result.result)) {
       return result.result;
     } else {
       return null;

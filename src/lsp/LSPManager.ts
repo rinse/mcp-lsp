@@ -4,6 +4,7 @@ import { readFileAsync } from "../utils";
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from "./types/ApplyWorkspaceEditParams";
 import { Definition, DefinitionParams } from "./types/DefinitionRequest";
 import { Hover, HoverParams } from "./types/HoverRequest";
+import { References, ReferenceParams } from "./types/ReferencesRequest";
 import { RenameParams } from "./types/RenameRequest";
 import { WorkspaceEdit } from "./types/WorkspaceEdit";
 import { WorkspaceEditApplier } from "./WorkspaceEditApplier";
@@ -53,6 +54,11 @@ export class LSPManager {
   async definition(params: DefinitionParams): Promise<Definition> {
     await this.openDocument(params.textDocument.uri);
     return await this.server.definition(params);
+  }
+
+  async references(params: ReferenceParams): Promise<References> {
+    await this.openDocument(params.textDocument.uri);
+    return await this.server.references(params);
   }
 
   async rename(params: RenameParams): Promise<WorkspaceEdit | null> {
