@@ -25,6 +25,7 @@ describe('MCPToolTypeDefinition', () => {
       didClose: jest.fn().mockResolvedValue(undefined),
       hover: jest.fn(),
       definition: jest.fn(),
+      implementation: jest.fn(),
       typeDefinition: typeDefinitionSpy,
       rename: jest.fn(),
       applyEdit: jest.fn(),
@@ -86,7 +87,7 @@ describe('MCPToolTypeDefinition', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Type definition: /src/test.ts:1:1',
+        text: '/src/test.ts:1:1',
       });
     });
 
@@ -111,14 +112,29 @@ describe('MCPToolTypeDefinition', () => {
 
       const result = await mcpToolTypeDefinition.handle(validParams);
 
-      expect(result.content).toHaveLength(2);
+      expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Type definition 1: /src/test1.ts:1:1',
+        text: 'Found 2 type definitions:\n  /src/test1.ts:1:1\n  /src/test2.ts:6:3',
       });
-      expect(result.content[1]).toEqual({
+    });
+
+    it('should return single type definition location for single array result', async () => {
+      const mockLocation: Location = {
+        uri: 'file:///src/test.ts',
+        range: {
+          start: { line: 0, character: 0 },
+          end: { line: 0, character: 0 },
+        },
+      };
+      typeDefinitionSpy.mockResolvedValue([mockLocation]);
+
+      const result = await mcpToolTypeDefinition.handle(validParams);
+
+      expect(result.content).toHaveLength(1);
+      expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Type definition 2: /src/test2.ts:6:3',
+        text: '/src/test.ts:1:1',
       });
     });
 
@@ -163,7 +179,7 @@ describe('MCPToolTypeDefinition', () => {
 
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Type definition: /src/test.ts:1:1 to 3:6',
+        text: '/src/test.ts:1:1-3:6',
       });
     });
   });
