@@ -1,4 +1,5 @@
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from "./types/ApplyWorkspaceEditParams";
+import { Definition, DefinitionParams } from "./types/DefinitionRequest";
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
 import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
 import { Hover, HoverParams } from "./types/HoverRequest";
@@ -14,6 +15,7 @@ export interface LSPServerEx {
   didOpen(params: DidOpenTextDocumentParams): Promise<void>;
   didClose(params: DidCloseTextDocumentParams): Promise<void>;
   hover(params: HoverParams): Promise<Hover | null>;
+  definition(params: DefinitionParams): Promise<Definition>;
   rename(params: RenameParams): Promise<WorkspaceEdit | null>;
   applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult>;
 }

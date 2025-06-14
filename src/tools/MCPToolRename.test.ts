@@ -34,6 +34,7 @@ describe('MCPToolRename', () => {
       didOpen: jest.fn().mockResolvedValue(undefined),
       didClose: jest.fn().mockResolvedValue(undefined),
       hover: jest.fn(),
+      definition: jest.fn(),
       rename: renameSpy,
       applyEdit: jest.fn(),
     };
