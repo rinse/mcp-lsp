@@ -5,6 +5,7 @@ import { CodeActionParams, CodeActionResult } from "./types/CodeActionRequest";
 import { Definition, DefinitionParams, DefinitionT } from "./types/DefinitionRequest";
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
 import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
+import { ExecuteCommandParams, ExecuteCommandResult } from "./types/ExecuteCommandRequest";
 import { Hover, HoverParams, HoverT } from "./types/HoverRequest";
 import { Implementation, ImplementationParams, ImplementationT } from "./types/ImplementationRequest";
 import { InitializeParams } from "./types/Initialize";
@@ -108,6 +109,13 @@ export class LSPServerExImpl implements LSPServerEx {
       return result.result as unknown as CodeActionResult;
     }
     return null;
+  }
+
+  async executeCommand(params: ExecuteCommandParams): Promise<ExecuteCommandResult> {
+    logger.debug("[LSP] Executing command with params:", params);
+    const result = await this.server.sendRequest('workspace/executeCommand', params);
+    logger.debug("[LSP] Execute command request completed with result:", result);
+    return result.result as ExecuteCommandResult;
   }
 
   async applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult> {

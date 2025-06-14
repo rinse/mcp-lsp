@@ -19,6 +19,7 @@ import { ClientCapabilities } from './lsp/types/clientcapabilities/ClientCapabil
 import { MCPTool } from './tools/MCPTool.js';
 import { MCPToolCodeAction } from './tools/MCPToolCodeAction.js';
 import { MCPToolDefinition } from './tools/MCPToolDefinition.js';
+import { MCPToolExecuteCodeAction } from './tools/MCPToolExecuteCodeAction.js';
 import { MCPToolHover } from './tools/MCPToolHover.js';
 import { MCPToolImplementation } from './tools/MCPToolImplementation.js';
 import { MCPToolReferences } from './tools/MCPToolReferences.js';
@@ -54,6 +55,7 @@ async function main(): Promise<void> {
     toolMap.set('typeDefinition', new MCPToolTypeDefinition(lspManager));
     toolMap.set('rename', new MCPToolRename(lspManager));
     toolMap.set('codeAction', new MCPToolCodeAction(lspManager));
+    toolMap.set('executeCodeAction', new MCPToolExecuteCodeAction(lspManager));
     // MCP server instance
     const mcpServer = new Server(
       {
