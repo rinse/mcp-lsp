@@ -20,6 +20,9 @@ import { MCPTool } from './tools/MCPTool.js';
 import { MCPToolDefinition } from './tools/MCPToolDefinition.js';
 import { MCPToolHover } from './tools/MCPToolHover.js';
 import { MCPToolImplementation } from './tools/MCPToolImplementation.js';
+import { MCPToolIncomingCalls } from './tools/MCPToolIncomingCalls.js';
+import { MCPToolOutgoingCalls } from './tools/MCPToolOutgoingCalls.js';
+import { MCPToolPrepareCallHierarchy } from './tools/MCPToolPrepareCallHierarchy.js';
 import { MCPToolReferences } from './tools/MCPToolReferences.js';
 import { MCPToolRename } from './tools/MCPToolRename.js';
 import { MCPToolTypeDefinition } from './tools/MCPToolTypeDefinition.js';
@@ -52,6 +55,9 @@ async function main(): Promise<void> {
     toolMap.set('references', new MCPToolReferences(lspManager));
     toolMap.set('typeDefinition', new MCPToolTypeDefinition(lspManager));
     toolMap.set('rename', new MCPToolRename(lspManager));
+    toolMap.set('prepareCallHierarchy', new MCPToolPrepareCallHierarchy(lspManager));
+    toolMap.set('incomingCalls', new MCPToolIncomingCalls(lspManager));
+    toolMap.set('outgoingCalls', new MCPToolOutgoingCalls(lspManager));
     // MCP server instance
     const mcpServer = new Server(
       {

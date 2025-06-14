@@ -40,6 +40,9 @@ describe('MCPToolRename', () => {
       typeDefinition: jest.fn(),
       rename: renameSpy,
       applyEdit: jest.fn(),
+      prepareCallHierarchy: jest.fn(),
+      incomingCalls: jest.fn(),
+      outgoingCalls: jest.fn(),
     };
     lspManager = new LSPManager(mockLSPServerEx);
     // Access the WorkspaceEditApplier instance and mock its method

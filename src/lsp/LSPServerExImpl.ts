@@ -1,6 +1,7 @@
 import { LSPServer } from "./LSPServer";
 import { LSPServerEx as LSPServerEx } from "./LSPServerEx";
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult, ApplyWorkspaceEditResultT } from "./types/ApplyWorkspaceEditParams";
+import { CallHierarchyItem, CallHierarchyIncomingCall, CallHierarchyIncomingCallsParams, CallHierarchyOutgoingCall, CallHierarchyOutgoingCallsParams, CallHierarchyPrepareParams, CallHierarchyItemArrayT, CallHierarchyIncomingCallArrayT, CallHierarchyOutgoingCallArrayT } from "./types/CallHierarchyRequest";
 import { Definition, DefinitionParams, DefinitionT } from "./types/DefinitionRequest";
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
 import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
@@ -94,6 +95,36 @@ export class LSPServerExImpl implements LSPServerEx {
     }
     return null;
 
+  }
+
+  async prepareCallHierarchy(params: CallHierarchyPrepareParams): Promise<CallHierarchyItem[] | null> {
+    logger.debug("[LSP] Requesting prepareCallHierarchy with params:", params);
+    const result = await this.server.sendRequest('textDocument/prepareCallHierarchy', params);
+    logger.debug("[LSP] PrepareCallHierarchy request completed with result:", result);
+    if (CallHierarchyItemArrayT.is(result.result)) {
+      return result.result;
+    }
+    return null;
+  }
+
+  async incomingCalls(params: CallHierarchyIncomingCallsParams): Promise<CallHierarchyIncomingCall[] | null> {
+    logger.debug("[LSP] Requesting incomingCalls with params:", params);
+    const result = await this.server.sendRequest('callHierarchy/incomingCalls', params);
+    logger.debug("[LSP] IncomingCalls request completed with result:", result);
+    if (CallHierarchyIncomingCallArrayT.is(result.result)) {
+      return result.result;
+    }
+    return null;
+  }
+
+  async outgoingCalls(params: CallHierarchyOutgoingCallsParams): Promise<CallHierarchyOutgoingCall[] | null> {
+    logger.debug("[LSP] Requesting outgoingCalls with params:", params);
+    const result = await this.server.sendRequest('callHierarchy/outgoingCalls', params);
+    logger.debug("[LSP] OutgoingCalls request completed with result:", result);
+    if (CallHierarchyOutgoingCallArrayT.is(result.result)) {
+      return result.result;
+    }
+    return null;
   }
 
   async applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult> {

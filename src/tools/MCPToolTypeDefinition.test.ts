@@ -30,6 +30,9 @@ describe('MCPToolTypeDefinition', () => {
       typeDefinition: typeDefinitionSpy,
       rename: jest.fn(),
       applyEdit: jest.fn(),
+      prepareCallHierarchy: jest.fn(),
+      incomingCalls: jest.fn(),
+      outgoingCalls: jest.fn(),
     };
     lspManager = new LSPManager(mockLSPServerEx);
     mcpToolTypeDefinition = new MCPToolTypeDefinition(lspManager);
