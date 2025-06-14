@@ -29,6 +29,7 @@ describe('MCPToolReferences', () => {
       references: referencesSpy,
       typeDefinition: jest.fn(),
       rename: jest.fn(),
+      codeAction: jest.fn(),
       applyEdit: jest.fn(),
     };
     lspManager = new LSPManager(mockLSPServerEx);

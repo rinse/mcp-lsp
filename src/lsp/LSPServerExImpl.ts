@@ -1,6 +1,7 @@
 import { LSPServer } from "./LSPServer";
 import { LSPServerEx as LSPServerEx } from "./LSPServerEx";
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult, ApplyWorkspaceEditResultT } from "./types/ApplyWorkspaceEditParams";
+import { CodeActionParams, CodeActionResult } from "./types/CodeActionRequest";
 import { Definition, DefinitionParams, DefinitionT } from "./types/DefinitionRequest";
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
 import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
@@ -94,6 +95,19 @@ export class LSPServerExImpl implements LSPServerEx {
     }
     return null;
 
+  }
+
+  async codeAction(params: CodeActionParams): Promise<CodeActionResult> {
+    logger.debug("[LSP] Requesting code action with params:", params);
+    const result = await this.server.sendRequest('textDocument/codeAction', params);
+    logger.debug("[LSP] Code action request completed with result:", result);
+    if (result.result === null || result.result === undefined) {
+      return null;
+    }
+    if (Array.isArray(result.result)) {
+      return result.result as unknown as CodeActionResult;
+    }
+    return null;
   }
 
   async applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult> {

@@ -1,4 +1,5 @@
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from "./types/ApplyWorkspaceEditParams";
+import { CodeActionParams, CodeActionResult } from "./types/CodeActionRequest";
 import { Definition, DefinitionParams } from "./types/DefinitionRequest";
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
 import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
@@ -23,5 +24,6 @@ export interface LSPServerEx {
   references(params: ReferenceParams): Promise<References>;
   typeDefinition(params: TypeDefinitionParams): Promise<TypeDefinition>;
   rename(params: RenameParams): Promise<WorkspaceEdit | null>;
+  codeAction(params: CodeActionParams): Promise<CodeActionResult>;
   applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult>;
 }
