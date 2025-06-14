@@ -27,6 +27,9 @@ describe('MCPToolHover', () => {
       didClose: jest.fn().mockResolvedValue(undefined),
       hover: hoverSpy,
       definition: jest.fn(),
+      implementation: jest.fn(),
+      references: jest.fn(),
+      typeDefinition: jest.fn(),
       rename: jest.fn(),
       applyEdit: jest.fn(),
     };

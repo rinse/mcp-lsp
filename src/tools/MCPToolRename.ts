@@ -82,7 +82,7 @@ async function handleRename(
                   type: 'text',
                   text: applyResult.applied
                     ? `Successfully renamed symbol to "${newName}"`
-                    : `Failed to apply rename: ${applyResult.failureReason ?? 'Unknown error'}`,
+                    : `Failed to apply rename: ${applyResult.failureReason || 'Unknown error'}`,
                 } satisfies TextContent,
       ],
     };
