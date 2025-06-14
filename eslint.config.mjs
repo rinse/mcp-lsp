@@ -16,7 +16,7 @@ export default eslintTs.config(
     extends: [
       eslintJs.configs.recommended,
       ...eslintTs.configs.recommendedTypeChecked,
-      ...eslintTs.configs.stylistic,
+      ...eslintTs.configs.stylisticTypeChecked,
     ],
     languageOptions: {
       globals: globals.node,
@@ -60,6 +60,8 @@ export default eslintTs.config(
         "skipBlankLines": false,
         "ignoreComments": false
       }],
+      "@typescript-eslint/explicit-function-return-type": ["error", { allowHigherOrderFunctions: true }],
+      "@typescript-eslint/method-signature-style": ["error", "method"],
     },
   }
 );
