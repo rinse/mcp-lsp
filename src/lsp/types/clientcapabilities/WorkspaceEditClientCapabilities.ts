@@ -87,7 +87,6 @@ export const FailureHandlingKind = {
 	 */
   Transactional: 'transactional' as const,
 
-
   /**
 	 * If the workspace edit contains only textual file changes they are
 	 * executed transactional. If resource changes (create, rename or delete

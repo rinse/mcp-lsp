@@ -2,8 +2,8 @@ import path from 'path';
 
 import winston from 'winston';
 
-const logDir = process.env.LOG_DIR || path.join(process.cwd(), 'logs');
-const logLevel = process.env.LOG_LEVEL || 'info';
+const logDir = process.env.LOG_DIR ?? path.join(process.cwd(), 'logs');
+const logLevel = process.env.LOG_LEVEL ?? 'info';
 
 export const logger = winston.createLogger({
   level: logLevel,

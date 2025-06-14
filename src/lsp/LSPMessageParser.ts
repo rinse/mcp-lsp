@@ -19,7 +19,7 @@ export function readLSPMessageFromBuffer(buffer: Buffer): StreamParseResult<Mess
     return { kind: 'waiting' };
   }
   const header = str.substring(0, headerEnd);
-  const contentLengthMatch = header.match(/Content-Length: (\d+)/);
+  const contentLengthMatch = /Content-Length: (\d+)/.exec(header);
   if (!contentLengthMatch) {
     return { kind: 'error', consume: headerEnd + lengthOfSeparator, message: 'Invalid header, missing Content-Length' };
   }

@@ -34,7 +34,7 @@ export class LSPServerStream implements LSPServer {
     await Promise.resolve();
   }
 
-  private handleMessage(message: Message) {
+  private handleMessage(message: Message): void {
     logger.debug('[LSP] Received message', { message });
     if (isResponseMessage(message)) {
       const pending = this.pendingRequests.get(message.id);

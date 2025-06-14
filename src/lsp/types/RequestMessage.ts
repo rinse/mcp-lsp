@@ -30,6 +30,6 @@ export function isRequestMessage(value: Message): value is RequestMessage {
   const hasMethod = typeof message.method === "string";
   const isParams = message.params === undefined
 		|| Array.isArray(message.params)
-		|| (typeof message.params === "object" && message.params !== null);
+		|| typeof message.params === "object";
   return hasId && hasMethod && isParams;
 }

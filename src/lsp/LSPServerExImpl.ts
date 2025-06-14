@@ -40,9 +40,9 @@ export class LSPServerExImpl implements LSPServerEx {
     logger.debug("[LSP] Hover request completed with result:", result);
     if (HoverT.is(result.result)) {
       return result.result;
-    } else {
-      return null;
     }
+    return null;
+
   }
 
   async definition(params: DefinitionParams): Promise<Definition> {
@@ -51,9 +51,9 @@ export class LSPServerExImpl implements LSPServerEx {
     logger.debug("[LSP] Definition request completed with result:", result);
     if (DefinitionT.is(result.result)) {
       return result.result;
-    } else {
-      return null;
     }
+    return null;
+
   }
 
   async implementation(params: ImplementationParams): Promise<Implementation> {
@@ -91,9 +91,9 @@ export class LSPServerExImpl implements LSPServerEx {
     logger.debug("[LSP] Rename request completed with result:", result);
     if (WorkspaceEditT.is(result.result)) {
       return result.result;
-    } else {
-      return null;
     }
+    return null;
+
   }
 
   async applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult> {

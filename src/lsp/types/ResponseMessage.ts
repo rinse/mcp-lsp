@@ -30,7 +30,7 @@ export interface ResponseMessage extends Message {
 
 export function isResponseMessage(value: Message): value is ResponseMessage {
   const message = value as ResponseMessage;
-  const hasId = typeof message.id  == "number" || typeof message.id  == "string" || message.id === null;
+  const hasId = message.id === null || typeof message.id  === "number" || typeof message.id  === "string";
   const hasResult = message.result === undefined || isLSPAny(message.result);
   const hasError = message.error === undefined || isLSPError(message.error);
   return hasId && (hasResult || hasError);
