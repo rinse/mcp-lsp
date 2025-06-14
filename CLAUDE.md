@@ -198,7 +198,7 @@ Get code actions (quick fixes, refactorings, source actions) for a range in a Ty
 - `diagnostics` (optional): Array of diagnostic objects to filter code actions
 - `only` (optional): Array of CodeActionKind strings to filter by action type
 
-**Returns:** List of available code actions with their metadata, commands, and workspace edits.
+**Returns:** List of available code actions with both human-readable descriptions and structured JSON objects that can be directly copied and passed to the `executeCodeAction` tool.
 
 ### executeCodeAction
 Execute a code action by applying its WorkspaceEdit or running its Command.
@@ -224,9 +224,9 @@ Execute a code action by applying its WorkspaceEdit or running its Command.
 
 **Example Usage:**
 ```
-1. Get code actions: codeAction tool → returns list of actions
-2. Pick action from results: { "title": "Add missing semicolon", "edit": {...} }
-3. Execute: executeCodeAction tool with the full action object
+1. Get code actions: codeAction tool → returns list of actions with structured JSON
+2. Copy JSON from "📋 For executeCodeAction tool:" section
+3. Execute: executeCodeAction tool with the copied JSON object
 4. Verification: Action is applied and files are modified
 ```
 
