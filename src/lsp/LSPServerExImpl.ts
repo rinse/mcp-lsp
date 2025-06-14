@@ -5,6 +5,7 @@ import { Definition, DefinitionParams, DefinitionT } from "./types/DefinitionReq
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
 import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
 import { Hover, HoverParams, HoverT } from "./types/HoverRequest";
+import { Implementation, ImplementationParams, ImplementationT } from "./types/ImplementationRequest";
 import { InitializeParams } from "./types/Initialize";
 import { InitializedParams } from "./types/Initialized";
 import { RenameParams } from "./types/RenameRequest";
@@ -47,6 +48,17 @@ export class LSPServerExImpl implements LSPServerEx {
     const result = await this.server.sendRequest('textDocument/definition', params);
     logger.debug("[LSP] Definition request completed with result:", result);
     if (DefinitionT.is(result.result)) {
+      return result.result;
+    } else {
+      return null;
+    }
+  }
+
+  async implementation(params: ImplementationParams): Promise<Implementation> {
+    logger.debug("[LSP] Requesting implementation with params:", params);
+    const result = await this.server.sendRequest('textDocument/implementation', params);
+    logger.debug("[LSP] Implementation request completed with result:", result);
+    if (ImplementationT.is(result.result)) {
       return result.result;
     } else {
       return null;
