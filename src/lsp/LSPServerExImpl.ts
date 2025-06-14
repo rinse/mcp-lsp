@@ -1,11 +1,11 @@
 import { LSPServer } from "./LSPServer";
 import { LSPServerEx as LSPServerEx } from "./LSPServerEx";
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult, ApplyWorkspaceEditResultT } from "./types/ApplyWorkspaceEditParams";
-import { CodeActionParams, CodeActionResult } from "./types/CodeActionRequest";
+import { CodeActionParams, CodeActionResult, CodeActionResultT } from "./types/CodeActionRequest";
 import { Definition, DefinitionParams, DefinitionT } from "./types/DefinitionRequest";
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
 import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
-import { ExecuteCommandParams, ExecuteCommandResult } from "./types/ExecuteCommandRequest";
+import { ExecuteCommandParams, ExecuteCommandResult, ExecuteCommandResultT } from "./types/ExecuteCommandRequest";
 import { Hover, HoverParams, HoverT } from "./types/HoverRequest";
 import { Implementation, ImplementationParams, ImplementationT } from "./types/ImplementationRequest";
 import { InitializeParams } from "./types/Initialize";
@@ -102,12 +102,10 @@ export class LSPServerExImpl implements LSPServerEx {
     logger.debug("[LSP] Requesting code action with params:", params);
     const result = await this.server.sendRequest('textDocument/codeAction', params);
     logger.debug("[LSP] Code action request completed with result:", result);
-    if (result.result === null || result.result === undefined) {
-      return null;
+    if (CodeActionResultT.is(result.result)) {
+      return result.result;
     }
-    if (Array.isArray(result.result)) {
-      return result.result as unknown as CodeActionResult;
-    }
+    logger.warn("[LSP] Invalid code action result type:", result.result);
     return null;
   }
 
@@ -115,7 +113,14 @@ export class LSPServerExImpl implements LSPServerEx {
     logger.debug("[LSP] Executing command with params:", params);
     const result = await this.server.sendRequest('workspace/executeCommand', params);
     logger.debug("[LSP] Execute command request completed with result:", result);
-    return result.result as ExecuteCommandResult;
+    if (result.result === undefined) {
+      return null;
+    }
+    if (ExecuteCommandResultT.is(result.result)) {
+      return result.result;
+    }
+    logger.warn("[LSP] Invalid execute command result type:", result.result);
+    return null;
   }
 
   async applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult> {

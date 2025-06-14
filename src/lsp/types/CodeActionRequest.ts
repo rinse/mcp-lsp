@@ -385,3 +385,8 @@ export const CodeActionParamsT = t.intersection([
 ]);
 
 export type CodeActionResult = (CodeAction | Command)[] | null;
+
+export const CodeActionResultT = t.union([
+  t.array(t.union([CodeActionT, CommandT])),
+  t.null,
+]);

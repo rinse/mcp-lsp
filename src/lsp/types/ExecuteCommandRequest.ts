@@ -27,3 +27,8 @@ export const ExecuteCommandParamsT = t.intersection([
  * The result of a workspace/executeCommand request.
  */
 export type ExecuteCommandResult = LSPAny | null;
+
+export const ExecuteCommandResultT = t.union([
+  t.any,
+  t.null,
+]);
