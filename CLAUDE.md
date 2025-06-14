@@ -6,6 +6,45 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is an MCP (Model Context Protocol) server that bridges TypeScript Language Server Protocol (LSP) capabilities to MCP tools. The server enables Claude Code to interact with TypeScript projects through LSP features like hover information and symbol renaming.
 
+## IMPORTANT: Preferred Workflow
+
+**ALWAYS use the MCP-LSP tools instead of manual editing when possible.** This is significantly more efficient and saves tokens while ensuring accuracy.
+
+### Primary Tools to Use (in order of preference):
+
+1. **`mcp__mcp-lsp__rename`** - For renaming symbols across the entire project
+   - **USE THIS instead of Edit tool for renaming variables, functions, classes, etc.**
+   - Automatically updates all references across all files
+   - Ensures type safety and prevents broken references
+   - Much more efficient than manual find-and-replace operations
+
+2. **`mcp__mcp-lsp__definition`** - For finding where symbols are defined
+   - **USE THIS instead of Grep/Read when looking for symbol definitions**
+   - Instantly locates the exact definition of any symbol
+   - More accurate than text-based searching
+
+3. **`mcp__mcp-lsp__hover`** - For understanding symbol types and documentation
+   - **USE THIS instead of reading multiple files to understand types**
+   - Provides complete type information and JSDoc comments
+   - Shows function signatures and return types
+
+### Workflow Guidelines:
+
+1. **Before making changes**: Use `definition` and `hover` tools to understand the code
+2. **For renaming**: ALWAYS use `rename` tool instead of manual editing
+3. **After using MCP-LSP tools**: Always run verification:
+   ```bash
+   npm test        # Verify functionality
+   npm run lint    # Check code style
+   npm run build   # Ensure compilation
+   ```
+
+**Why this approach is better:**
+- **Token efficiency**: LSP tools provide precise information without reading entire files
+- **Accuracy**: TypeScript-aware operations prevent errors
+- **Speed**: Direct symbol operations vs manual text manipulation
+- **Safety**: Automatic reference updating across the entire project
+
 ## Commands
 
 ### Development Commands
@@ -70,7 +109,7 @@ This MCP server bridges TypeScript Language Server Protocol (LSP) capabilities t
 
 - **Transport**: Runs on stdio using `@modelcontextprotocol/sdk`
 - **LSP Integration**: Spawns and communicates with TypeScript Language Server via stdio
-- **Tool Registry**: Exposes LSP capabilities as MCP tools (hover, rename)
+- **Tool Registry**: Exposes LSP capabilities as MCP tools (hover, definition, rename)
 - **Message Parsing**: Handles LSP's Content-Length HTTP-style message format
 - **Document Lifecycle**: Manages opening/closing documents for LSP operations
 
@@ -86,7 +125,7 @@ This MCP server bridges TypeScript Language Server Protocol (LSP) capabilities t
 
 - `src/index.ts` - MCP server entry point
 - `src/lsp/` - LSP client implementation and type definitions
-- `src/tools/` - MCP tool implementations (hover, rename)
+- `src/tools/` - MCP tool implementations (hover, definition, rename)
 - `src/utils/` - Logging and utility functions
 - `out/` - Compiled JavaScript output
 
@@ -116,16 +155,36 @@ Get hover information for a position in a TypeScript file.
 - `line` (number): Line number (0-based)
 - `character` (number): Character position (0-based)
 
+### definition
+Get definition location for a symbol at a specific position in a TypeScript file.
+
+**Finding precise positions:** Use `grep -n` or `rg -n` to get exact line numbers for finding definitions of specific symbols.
+
+**Parameters:**
+- `uri` (string): File URI (e.g., file:///path/to/file.ts)
+- `line` (number): Line number (0-based)
+- `character` (number): Character position (0-based)
+
+**Returns:** The location(s) where the symbol is defined, including file path and line/character positions.
+
 ### rename
 Rename a symbol at a specific position in a TypeScript file.
 
+**IMPORTANT:** When working on code improvements or refactoring, you should actively use the rename tool to rename symbols for better code clarity and consistency. This is preferred over manual find-and-replace operations as it ensures all references are updated correctly across the entire project.
+
+**When to use rename:**
+- Improving variable, function, or class names for better readability
+- Standardizing naming conventions across the codebase
+- Refactoring code to use more descriptive names
+- Any time you want to change a symbol name throughout the project
+
 **Parameters:**
-- `uri` (string): File URI (e.g., file:///path/to/file.ts)  
+- `uri` (string): File URI (e.g., file:///path/to/file.ts)
 - `line` (number): Line number (0-based)
 - `character` (number): Character position (0-based)
 - `newName` (string): The new name for the symbol
 
-**Returns:** A formatted list of file changes showing what would be renamed across the project.
+**Returns:** Successfully applies the rename across all files and reports the changes made.
 
 ## Documentation Resources
 
