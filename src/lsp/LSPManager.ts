@@ -2,7 +2,9 @@ import { getLanguageIdentifier } from "./LanguageIdentifiers";
 import { LSPServerEx as LSPServerEx } from "./LSPServerEx";
 import { readFileAsync } from "../utils";
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from "./types/ApplyWorkspaceEditParams";
+import { CodeActionParams, CodeActionResult } from "./types/CodeActionRequest";
 import { Definition, DefinitionParams } from "./types/DefinitionRequest";
+import { ExecuteCommandParams, ExecuteCommandResult } from "./types/ExecuteCommandRequest";
 import { Hover, HoverParams } from "./types/HoverRequest";
 import { Implementation, ImplementationParams } from "./types/ImplementationRequest";
 import { References, ReferenceParams } from "./types/ReferencesRequest";
@@ -76,6 +78,15 @@ export class LSPManager {
   async rename(params: RenameParams): Promise<WorkspaceEdit | null> {
     await this.openDocument(params.textDocument.uri);
     return await this.server.rename(params);
+  }
+
+  async codeAction(params: CodeActionParams): Promise<CodeActionResult> {
+    await this.openDocument(params.textDocument.uri);
+    return await this.server.codeAction(params);
+  }
+
+  async executeCommand(params: ExecuteCommandParams): Promise<ExecuteCommandResult> {
+    return await this.server.executeCommand(params);
   }
 
   async applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult> {

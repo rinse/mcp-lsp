@@ -186,6 +186,50 @@ Rename a symbol at a specific position in a TypeScript file.
 
 **Returns:** Successfully applies the rename across all files and reports the changes made.
 
+### codeAction
+Get code actions (quick fixes, refactorings, source actions) for a range in a TypeScript file.
+
+**Parameters:**
+- `uri` (string): File URI (e.g., file:///path/to/file.ts)
+- `line` (number): Start line number (0-based)
+- `character` (number): Start character position (0-based)
+- `endLine` (number): End line number (0-based)
+- `endCharacter` (number): End character position (0-based)
+- `diagnostics` (optional): Array of diagnostic objects to filter code actions
+- `only` (optional): Array of CodeActionKind strings to filter by action type
+
+**Returns:** List of available code actions with both human-readable descriptions and structured JSON objects that can be directly copied and passed to the `executeCodeAction` tool.
+
+### executeCodeAction
+Execute a code action by applying its WorkspaceEdit or running its Command.
+
+**IMPORTANT:** This tool should be used AFTER the `codeAction` tool to actually apply the suggested fixes, refactorings, or source actions.
+
+**Typical Workflow:**
+1. Use `codeAction` tool to get available code actions for a range
+2. Choose a code action from the results 
+3. Use `executeCodeAction` tool to apply the selected code action
+
+**Parameters:**
+- `codeAction` (object): The complete CodeAction object from codeAction tool results
+  - Must include the `title` field
+  - Can contain `edit` (WorkspaceEdit) and/or `command` (Command) fields
+  - Other metadata fields like `kind`, `diagnostics` are preserved
+
+**Returns:** 
+- Success/failure status for WorkspaceEdit application
+- Success/failure status for Command execution  
+- Any command results returned by the language server
+- Clear error messages if execution fails
+
+**Example Usage:**
+```
+1. Get code actions: codeAction tool → returns list of actions with structured JSON
+2. Copy JSON from "📋 For executeCodeAction tool:" section
+3. Execute: executeCodeAction tool with the copied JSON object
+4. Verification: Action is applied and files are modified
+```
+
 ## Documentation Resources
 
 The `docs/` directory contains reference links for:
