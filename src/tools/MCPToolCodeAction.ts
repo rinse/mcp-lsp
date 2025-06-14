@@ -178,25 +178,28 @@ function codeActionToTextContents(result: CodeActionResult): TextContent[] {
       text: 'No code actions available.',
     }];
   }
-  const contents: TextContent[] = [];
-  contents.push({
+  const headerContent: TextContent = {
     type: 'text',
     text: `Found ${result.length} code action(s):`,
-  });
-  result.forEach((action, index) => {
+  };
+  const actionContents: TextContent[] = result.map((action, index) => {
     if (isCodeAction(action)) {
-      contents.push({
+      return {
         type: 'text',
         text: formatCodeAction(action, index + 1),
-      });
+      };
     } else if (isCommand(action)) {
-      contents.push({
+      return {
         type: 'text',
         text: formatCommand(action, index + 1),
-      });
+      };
     }
+    return {
+      type: 'text',
+      text: `${index + 1}. Unknown action type: ${(action as { title?: string }).title ?? 'No title'}`,
+    };
   });
-  return contents;
+  return [headerContent, ...actionContents];
 }
 
 function isCodeAction(action: CodeAction | Command): action is CodeAction {
