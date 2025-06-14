@@ -211,6 +211,19 @@ function isCommand(action: CodeAction | Command): action is Command {
 }
 
 function formatCodeAction(action: CodeAction, index: number): string {
+  // Create clean object for executeCodeAction tool (remove undefined fields)
+  const cleanAction: Partial<CodeAction> = {
+    title: action.title,
+  };
+  if (action.kind) cleanAction.kind = action.kind;
+  if (action.isPreferred) cleanAction.isPreferred = action.isPreferred;
+  if (action.disabled) cleanAction.disabled = action.disabled;
+  if (action.edit) cleanAction.edit = action.edit;
+  if (action.command) cleanAction.command = action.command;
+  if (action.diagnostics) cleanAction.diagnostics = action.diagnostics;
+
+  const actionJson = JSON.stringify(cleanAction, null, 2);
+
   let result = `\n${index}. ${action.title}`;
   if (action.kind) {
     result += ` (${action.kind})`;
@@ -221,8 +234,11 @@ function formatCodeAction(action: CodeAction, index: number): string {
   if (action.disabled) {
     result += ` [DISABLED: ${action.disabled.reason}]`;
   }
+  result += `\n   📋 For executeCodeAction tool:\n${actionJson}`;
+
+  // Add human-readable summary
   if (action.diagnostics && action.diagnostics.length > 0) {
-    result += '\n   Addresses diagnostics:';
+    result += '\n   📝 Addresses diagnostics:';
     action.diagnostics.forEach(diagnostic => {
       const severity = getSeverityString(diagnostic.severity);
       result += `\n   - ${severity}: ${diagnostic.message}`;
@@ -232,22 +248,32 @@ function formatCodeAction(action: CodeAction, index: number): string {
     });
   }
   if (action.edit?.changes) {
-    result += '\n   Changes:';
+    result += '\n   📄 File changes:';
     Object.entries(action.edit.changes).forEach(([uri, edits]) => {
       result += `\n   - ${uri}: ${edits.length} edit(s)`;
     });
   }
   if (action.command) {
-    result += `\n   Command: ${action.command.title} (${action.command.command})`;
+    result += `\n   ⚡ Command: ${action.command.title} (${action.command.command})`;
   }
   return result;
 }
 
 function formatCommand(command: Command, index: number): string {
+  // Create clean object for executeCodeAction tool (remove undefined fields)
+  const cleanCommand: Partial<Command> = {
+    title: command.title,
+    command: command.command,
+  };
+  if (command.arguments) cleanCommand.arguments = command.arguments;
+
+  const commandJson = JSON.stringify(cleanCommand, null, 2);
+
   let result = `\n${index}. ${command.title}`;
-  result += `\n   Command: ${command.command}`;
+  result += `\n   📋 For executeCodeAction tool:\n${commandJson}`;
+  result += `\n   ⚡ Command: ${command.command}`;
   if (command.arguments && command.arguments.length > 0) {
-    result += `\n   Arguments: ${command.arguments.length} argument(s)`;
+    result += `\n   📝 Arguments: ${command.arguments.length} argument(s)`;
   }
   return result;
 }

@@ -76,7 +76,7 @@ describe('MCPToolCodeAction', () => {
           },
           {
             type: 'text',
-            text: '\n1. Fix missing semicolon (quickfix)\n   Changes:\n   - file:///test/file.ts: 1 edit(s)',
+            text: '\n1. Fix missing semicolon (quickfix)\n   📋 For executeCodeAction tool:\n{\n  "title": "Fix missing semicolon",\n  "kind": "quickfix",\n  "edit": {\n    "changes": {\n      "file:///test/file.ts": [\n        {\n          "range": {\n            "start": {\n              "line": 10,\n              "character": 15\n            },\n            "end": {\n              "line": 10,\n              "character": 15\n            }\n          },\n          "newText": ";"\n        }\n      ]\n    }\n  }\n}\n   📄 File changes:\n   - file:///test/file.ts: 1 edit(s)',
           },
         ],
       });
@@ -135,7 +135,7 @@ describe('MCPToolCodeAction', () => {
           },
           {
             type: 'text',
-            text: '\n1. Add missing semicolon (quickfix)\n   Addresses diagnostics:\n   - Error: Missing semicolon (typescript)',
+            text: '\n1. Add missing semicolon (quickfix)\n   📋 For executeCodeAction tool:\n{\n  "title": "Add missing semicolon",\n  "kind": "quickfix",\n  "diagnostics": [\n    {\n      "range": {\n        "start": {\n          "line": 10,\n          "character": 5\n        },\n        "end": {\n          "line": 10,\n          "character": 15\n        }\n      },\n      "message": "Missing semicolon",\n      "severity": 1,\n      "source": "typescript"\n    }\n  ]\n}\n   📝 Addresses diagnostics:\n   - Error: Missing semicolon (typescript)',
           },
         ],
       });
@@ -163,7 +163,7 @@ describe('MCPToolCodeAction', () => {
           },
           {
             type: 'text',
-            text: '\n1. Organize imports (source.organizeImports)\n   Command: Organize imports (typescript.organizeImports)',
+            text: '\n1. Organize imports (source.organizeImports)\n   📋 For executeCodeAction tool:\n{\n  "title": "Organize imports",\n  "kind": "source.organizeImports",\n  "command": {\n    "title": "Organize imports",\n    "command": "typescript.organizeImports",\n    "arguments": [\n      {\n        "uri": "file:///test/file.ts"\n      }\n    ]\n  }\n}\n   ⚡ Command: Organize imports (typescript.organizeImports)',
           },
         ],
       });
@@ -187,7 +187,7 @@ describe('MCPToolCodeAction', () => {
           },
           {
             type: 'text',
-            text: '\n1. Extract to function (refactor.extract) [PREFERRED]',
+            text: '\n1. Extract to function (refactor.extract) [PREFERRED]\n   📋 For executeCodeAction tool:\n{\n  "title": "Extract to function",\n  "kind": "refactor.extract",\n  "isPreferred": true\n}',
           },
         ],
       });
@@ -213,7 +213,7 @@ describe('MCPToolCodeAction', () => {
           },
           {
             type: 'text',
-            text: '\n1. Refactor not available (refactor) [DISABLED: No refactoring available for this selection]',
+            text: '\n1. Refactor not available (refactor) [DISABLED: No refactoring available for this selection]\n   📋 For executeCodeAction tool:\n{\n  "title": "Refactor not available",\n  "kind": "refactor",\n  "disabled": {\n    "reason": "No refactoring available for this selection"\n  }\n}',
           },
         ],
       });
@@ -235,7 +235,7 @@ describe('MCPToolCodeAction', () => {
           },
           {
             type: 'text',
-            text: '\n1. Run TypeScript compiler\n   Command: typescript.build',
+            text: '\n1. Run TypeScript compiler\n   📋 For executeCodeAction tool:\n{\n  "title": "Run TypeScript compiler",\n  "command": "typescript.build"\n}\n   ⚡ Command: typescript.build',
           },
         ],
       });
@@ -262,11 +262,11 @@ describe('MCPToolCodeAction', () => {
           },
           {
             type: 'text',
-            text: '\n1. Quick fix 1 (quickfix)',
+            text: '\n1. Quick fix 1 (quickfix)\n   📋 For executeCodeAction tool:\n{\n  "title": "Quick fix 1",\n  "kind": "quickfix"\n}',
           },
           {
             type: 'text',
-            text: '\n2. Quick fix 2 (quickfix)',
+            text: '\n2. Quick fix 2 (quickfix)\n   📋 For executeCodeAction tool:\n{\n  "title": "Quick fix 2",\n  "kind": "quickfix"\n}',
           },
         ],
       });
