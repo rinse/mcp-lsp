@@ -8,6 +8,7 @@ import { Hover, HoverParams, HoverT } from "./types/HoverRequest";
 import { Implementation, ImplementationParams, ImplementationT } from "./types/ImplementationRequest";
 import { InitializeParams } from "./types/Initialize";
 import { InitializedParams } from "./types/Initialized";
+import { References, ReferenceParams, ReferencesT } from "./types/ReferencesRequest";
 import { RenameParams } from "./types/RenameRequest";
 import { ResponseMessage } from "./types/ResponseMessage";
 import { TypeDefinition, TypeDefinitionParams, TypeDefinitionT } from "./types/TypeDefinitionRequest";
@@ -60,6 +61,17 @@ export class LSPServerExImpl implements LSPServerEx {
     const result = await this.server.sendRequest('textDocument/implementation', params);
     logger.debug("[LSP] Implementation request completed with result:", result);
     return ImplementationT.is(result.result) ? result.result : null;
+  }
+
+  async references(params: ReferenceParams): Promise<References> {
+    logger.debug("[LSP] Requesting references with params:", params);
+    const result = await this.server.sendRequest('textDocument/references', params);
+    logger.debug("[LSP] References request completed with result:", result);
+    if (ReferencesT.is(result.result)) {
+      return result.result;
+    } else {
+      return null;
+    }
   }
 
   async typeDefinition(params: TypeDefinitionParams): Promise<TypeDefinition> {

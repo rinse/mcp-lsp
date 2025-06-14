@@ -36,6 +36,7 @@ describe('MCPToolRename', () => {
       hover: jest.fn(),
       definition: jest.fn(),
       implementation: jest.fn(),
+      references: jest.fn(),
       typeDefinition: jest.fn(),
       rename: renameSpy,
       applyEdit: jest.fn(),
