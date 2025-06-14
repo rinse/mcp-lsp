@@ -1,6 +1,6 @@
 import { McpError } from '@modelcontextprotocol/sdk/types.js';
 
-import { MCPToolImplementation } from './MCPToolImplementation';
+import { MCPToolTypeDefinition } from './MCPToolTypeDefinition';
 import { LSPManager } from '../lsp/LSPManager';
 import { LSPServerEx } from '../lsp/LSPServerEx';
 import { Location } from '../lsp/types/Location';
@@ -10,14 +10,14 @@ jest.mock('../utils', () => ({
   readFileAsync: jest.fn().mockResolvedValue('mock file content'),
 }));
 
-describe('MCPToolImplementation', () => {
+describe('MCPToolTypeDefinition', () => {
   let mockLSPServerEx: jest.Mocked<LSPServerEx>;
   let lspManager: LSPManager;
-  let mcpToolImplementation: MCPToolImplementation;
-  let implementationSpy: jest.MockedFunction<LSPServerEx['implementation']>;
+  let mcpToolTypeDefinition: MCPToolTypeDefinition;
+  let typeDefinitionSpy: jest.MockedFunction<LSPServerEx['typeDefinition']>;
 
   beforeEach(() => {
-    implementationSpy = jest.fn();
+    typeDefinitionSpy = jest.fn();
     mockLSPServerEx = {
       initialize: jest.fn(),
       initialized: jest.fn(),
@@ -25,20 +25,21 @@ describe('MCPToolImplementation', () => {
       didClose: jest.fn().mockResolvedValue(undefined),
       hover: jest.fn(),
       definition: jest.fn(),
-      implementation: implementationSpy,
-      typeDefinition: jest.fn(),
+      implementation: jest.fn(),
+      typeDefinition: typeDefinitionSpy,
       rename: jest.fn(),
       applyEdit: jest.fn(),
     };
     lspManager = new LSPManager(mockLSPServerEx);
-    mcpToolImplementation = new MCPToolImplementation(lspManager);
+    mcpToolTypeDefinition = new MCPToolTypeDefinition(lspManager);
   });
 
   describe('listItem', () => {
     it('should return the correct tool description', () => {
-      const tool = mcpToolImplementation.listItem();
-      expect(tool.name).toBe('implementation');
-      expect(tool.description).toBe('Get implementation location for a symbol at a specific position in a TypeScript file');
+      const tool = mcpToolTypeDefinition.listItem();
+
+      expect(tool.name).toBe('typeDefinition');
+      expect(tool.description).toBe('Get type definition location for a symbol at a specific position in a TypeScript file');
       expect(tool.inputSchema).toEqual({
         type: 'object',
         properties: {
@@ -67,7 +68,7 @@ describe('MCPToolImplementation', () => {
       character: 5,
     };
 
-    it('should return implementation location for single result', async () => {
+    it('should return type definition location for single result', async () => {
       const mockLocation: Location = {
         uri: 'file:///src/test.ts',
         range: {
@@ -75,9 +76,11 @@ describe('MCPToolImplementation', () => {
           end: { line: 0, character: 0 },
         },
       };
-      implementationSpy.mockResolvedValue(mockLocation);
-      const result = await mcpToolImplementation.handle(validParams);
-      expect(implementationSpy).toHaveBeenCalledWith({
+      typeDefinitionSpy.mockResolvedValue(mockLocation);
+
+      const result = await mcpToolTypeDefinition.handle(validParams);
+
+      expect(typeDefinitionSpy).toHaveBeenCalledWith({
         textDocument: { uri: 'file:///test.ts' },
         position: { line: 10, character: 5 },
       });
@@ -88,26 +91,7 @@ describe('MCPToolImplementation', () => {
       });
     });
 
-    it('should return single implementation without prefix for array with one result', async () => {
-      const mockLocations: Location[] = [
-        {
-          uri: 'file:///src/single.ts',
-          range: {
-            start: { line: 10, character: 5 },
-            end: { line: 10, character: 5 },
-          },
-        },
-      ];
-      implementationSpy.mockResolvedValue(mockLocations);
-      const result = await mcpToolImplementation.handle(validParams);
-      expect(result.content).toHaveLength(1);
-      expect(result.content[0]).toEqual({
-        type: 'text',
-        text: '/src/single.ts:11:6',
-      });
-    });
-
-    it('should return multiple implementation locations for array result', async () => {
+    it('should return multiple type definition locations for array result', async () => {
       const mockLocations: Location[] = [
         {
           uri: 'file:///src/test1.ts',
@@ -124,22 +108,57 @@ describe('MCPToolImplementation', () => {
           },
         },
       ];
-      implementationSpy.mockResolvedValue(mockLocations);
-      const result = await mcpToolImplementation.handle(validParams);
+      typeDefinitionSpy.mockResolvedValue(mockLocations);
+
+      const result = await mcpToolTypeDefinition.handle(validParams);
+
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Found 2 implementations:\n  /src/test1.ts:1:1\n  /src/test2.ts:6:3',
+        text: 'Found 2 type definitions:\n  /src/test1.ts:1:1\n  /src/test2.ts:6:3',
       });
     });
 
-    it('should return "No implementation found" for null result', async () => {
-      implementationSpy.mockResolvedValue(null);
-      const result = await mcpToolImplementation.handle(validParams);
+    it('should return single type definition location for single array result', async () => {
+      const mockLocation: Location = {
+        uri: 'file:///src/test.ts',
+        range: {
+          start: { line: 0, character: 0 },
+          end: { line: 0, character: 0 },
+        },
+      };
+      typeDefinitionSpy.mockResolvedValue([mockLocation]);
+
+      const result = await mcpToolTypeDefinition.handle(validParams);
+
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No implementation found.',
+        text: '/src/test.ts:1:1',
+      });
+    });
+
+    it('should return "No type definition found" for empty array result', async () => {
+      typeDefinitionSpy.mockResolvedValue([]);
+
+      const result = await mcpToolTypeDefinition.handle(validParams);
+
+      expect(result.content).toHaveLength(1);
+      expect(result.content[0]).toEqual({
+        type: 'text',
+        text: 'No type definition found.',
+      });
+    });
+
+    it('should return "No type definition found" for null result', async () => {
+      typeDefinitionSpy.mockResolvedValue(null);
+
+      const result = await mcpToolTypeDefinition.handle(validParams);
+
+      expect(result.content).toHaveLength(1);
+      expect(result.content[0]).toEqual({
+        type: 'text',
+        text: 'No type definition found.',
       });
     });
 
@@ -149,13 +168,13 @@ describe('MCPToolImplementation', () => {
         // missing line and character
       };
 
-      await expect(mcpToolImplementation.handle(invalidParams)).rejects.toThrow(McpError);
+      await expect(mcpToolTypeDefinition.handle(invalidParams)).rejects.toThrow(McpError);
     });
 
     it('should throw McpError when LSP request fails', async () => {
-      implementationSpy.mockRejectedValue(new Error('LSP error'));
+      typeDefinitionSpy.mockRejectedValue(new Error('LSP error'));
 
-      await expect(mcpToolImplementation.handle(validParams)).rejects.toThrow(McpError);
+      await expect(mcpToolTypeDefinition.handle(validParams)).rejects.toThrow(McpError);
     });
 
     it('should format range correctly when start and end are different', async () => {
@@ -166,9 +185,9 @@ describe('MCPToolImplementation', () => {
           end: { line: 2, character: 5 },
         },
       };
-      implementationSpy.mockResolvedValue(mockLocation);
+      typeDefinitionSpy.mockResolvedValue(mockLocation);
 
-      const result = await mcpToolImplementation.handle(validParams);
+      const result = await mcpToolTypeDefinition.handle(validParams);
 
       expect(result.content[0]).toEqual({
         type: 'text',

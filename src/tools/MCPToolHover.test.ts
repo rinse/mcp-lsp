@@ -28,6 +28,7 @@ describe('MCPToolHover', () => {
       hover: hoverSpy,
       definition: jest.fn(),
       implementation: jest.fn(),
+      typeDefinition: jest.fn(),
       rename: jest.fn(),
       applyEdit: jest.fn(),
     };
