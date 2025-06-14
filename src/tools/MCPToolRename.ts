@@ -68,7 +68,7 @@ async function handleRename(
   if (decoded._tag === 'Left') {
     throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for rename tool: ${JSON.stringify(decoded.left)}`);
   }
-  const {uri, line, character, newName} = decoded.right;
+  const { uri, line, character, newName } = decoded.right;
   try {
     const workspaceEdit: WorkspaceEdit = await manager.rename({
       textDocument: { uri },
@@ -82,7 +82,7 @@ async function handleRename(
                   type: 'text',
                   text: applyResult.applied
                     ? `Successfully renamed symbol to "${newName}"`
-                    : `Failed to apply rename: ${applyResult.failureReason || 'Unknown error'}`,
+                    : `Failed to apply rename: ${applyResult.failureReason ?? 'Unknown error'}`,
                 } satisfies TextContent,
       ],
     };

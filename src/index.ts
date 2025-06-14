@@ -25,7 +25,7 @@ import { logger } from './utils/logger.js';
 // Call the main function, disregarding a returned promise object.
 void main();
 
-async function main() {
+async function main(): Promise<void> {
   // Spawn the TypeScript language server process
   const lspProcess = spawn('npx', ['typescript-language-server', '--stdio'], {
     stdio: ['pipe', 'pipe', 'pipe'],
@@ -104,7 +104,7 @@ async function main() {
   }
 }
 
-async function cleanup(lspServer: LSPServerStream, lspProcess: ChildProcess) {
+async function cleanup(lspServer: LSPServerStream, lspProcess: ChildProcess): Promise<void> {
   try {
     await lspServer.close();
   } catch (error) {

@@ -30,7 +30,7 @@ describe('readLSPMessageFromBuffer', () => {
     const result = readLSPMessageFromBuffer(buffer);
     expect(result).toEqual({
       kind: 'success',
-      value: {"jsonrpc":"2.0", "id":1, "method":"test"},
+      value: { "jsonrpc": "2.0", "id": 1, "method": "test" },
       consume: buffer.length,
     });
   });
@@ -54,7 +54,7 @@ describe('readLSPMessageFromBuffer', () => {
     const result = readLSPMessageFromBuffer(buffer);
     expect(result).toEqual({
       kind: 'success',
-      value: {"jsonrpc":"2.0", "method":"notification"},
+      value: { "jsonrpc": "2.0", "method": "notification" },
       consume: buffer.length,
     });
   });
@@ -67,7 +67,7 @@ describe('readLSPMessageFromBuffer', () => {
     const headerLength = Buffer.byteLength(`Content-Length: ${contentLength}\r\n\r\n`, 'utf8');
     expect(result).toEqual({
       kind: 'success',
-      value: {"jsonrpc":"2.0"},
+      value: { "jsonrpc": "2.0" },
       consume: headerLength + contentLength,
     });
   });
@@ -79,7 +79,7 @@ describe('readLSPMessageFromBuffer', () => {
     const result = readLSPMessageFromBuffer(buffer);
     expect(result).toEqual({
       kind: 'success',
-      value: {"jsonrpc":"2.0"},
+      value: { "jsonrpc": "2.0" },
       consume: buffer.length,
     });
   });

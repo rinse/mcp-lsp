@@ -2,7 +2,6 @@ import * as t from "io-ts";
 
 import { Message } from "./AbstractMessage";
 
-
 /**
  * A notification message.
  * A processed notification message must

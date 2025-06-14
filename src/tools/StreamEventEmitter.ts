@@ -18,17 +18,17 @@ export class StreamEventEmitter<E> extends EventEmitter {
     stream.on('error', (error: Error) => this.emit('error', error));
   }
 
-  private handleData(chunk: Buffer, parser: StreamParser<E>) {
+  private handleData(chunk: Buffer, parser: StreamParser<E>): void {
     this.buffer = Buffer.concat([this.buffer, chunk]);
     this.processBuffer(parser);
   }
 
-  private handleEnd(parser: StreamParser<E>) {
+  private handleEnd(parser: StreamParser<E>): void {
     this.processBuffer(parser, true);
     this.emit('end');
   }
 
-  private processBuffer(parser: StreamParser<E>, endOfStream = false) {
+  private processBuffer(parser: StreamParser<E>, endOfStream = false): void {
     while (this.buffer.length > 0) {
       const result = parser(this.buffer);
       if (result.kind === 'success') {
@@ -37,7 +37,7 @@ export class StreamEventEmitter<E> extends EventEmitter {
       } else if (result.kind === 'error') {
         this.emit('error', new Error(result.message));
         this.buffer = this.buffer.subarray(result.consume);
-      } else if (result.kind === 'waiting') {
+      } else {
         if (endOfStream && this.buffer.length > 0) {
           this.emit('error', new Error('Incomplete data at end of stream'));
         }

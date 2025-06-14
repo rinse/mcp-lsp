@@ -23,7 +23,7 @@ export interface ProgressParams<T> {
   value: T;
 }
 
-export const ProgressParamsT = <T>(type: t.Type<T>) => t.type({
+export const ProgressParamsT = <T>(type: t.Type<T>): t.Type<ProgressParams<T>> => t.type({
   token: ProgressTokenT,
   value: type,
 });

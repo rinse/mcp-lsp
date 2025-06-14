@@ -29,14 +29,14 @@ function createJsonLineParser(): (buffer: Buffer) => StreamParseResult<TestData>
     if (data == null) {
       return { kind: 'error', consume: separatorIndex + 1, message: `Invalid JSON object: ${elem}` };
     }
-    return { kind: 'success', value: data, consume: Buffer.byteLength(elem + '\n', 'utf8') };
+    return { kind: 'success', value: data, consume: Buffer.byteLength(`${elem  }\n`, 'utf8') };
   };
 }
 
 describe('StreamEventEmitter', () => {
   it('should emit parsed JSON objects from newline-delimited stream', (done) => {
     const stream = new Readable({
-      read() {
+      read(): void {
         this.push('{"type":"test","value":1}\n');
         this.push('{"type":"test","value":2}\n');
         this.push(null);
@@ -58,7 +58,7 @@ describe('StreamEventEmitter', () => {
 
   it('should handle split JSON across multiple chunks', (done) => {
     const stream = new Readable({
-      read() {
+      read(): void {
         this.push('{"type"');
         this.push(':"test","value":3}\n');
         this.push(null);
@@ -77,7 +77,7 @@ describe('StreamEventEmitter', () => {
 
   it('should emit error for invalid JSON', (done) => {
     const stream = new Readable({
-      read() {
+      read(): void {
         this.push('invalid json\n');
         this.push('{"type":"test","value":4}\n');
         this.push(null);
@@ -101,7 +101,7 @@ describe('StreamEventEmitter', () => {
 
   it('should handle incomplete data at end of stream', (done) => {
     const stream = new Readable({
-      read() {
+      read(): void {
         this.push('{"type":"test","value":5}\n');
         this.push('{"incomplete":');
         this.push(null);
@@ -126,7 +126,7 @@ describe('StreamEventEmitter', () => {
 
   it('should handle empty stream', (done) => {
     const stream = new Readable({
-      read() {
+      read(): void {
         this.push(null);
       },
     });
@@ -143,7 +143,7 @@ describe('StreamEventEmitter', () => {
 
   it('should forward stream errors', (done) => {
     const stream = new Readable({
-      read() {
+      read(): void {
         this.emit('error', new Error('Stream error'));
       },
     });
