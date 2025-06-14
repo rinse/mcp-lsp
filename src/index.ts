@@ -19,6 +19,7 @@ import { ClientCapabilities } from './lsp/types/clientcapabilities/ClientCapabil
 import { MCPTool } from './tools/MCPTool.js';
 import { MCPToolDefinition } from './tools/MCPToolDefinition.js';
 import { MCPToolHover } from './tools/MCPToolHover.js';
+import { MCPToolImplementation } from './tools/MCPToolImplementation.js';
 import { MCPToolReferences } from './tools/MCPToolReferences.js';
 import { MCPToolRename } from './tools/MCPToolRename.js';
 import { logger } from './utils/logger.js';
@@ -46,6 +47,7 @@ async function main() {
     // Register tools
     toolMap.set('hover', new MCPToolHover(lspManager));
     toolMap.set('definition', new MCPToolDefinition(lspManager));
+    toolMap.set('implementation', new MCPToolImplementation(lspManager));
     toolMap.set('references', new MCPToolReferences(lspManager));
     toolMap.set('rename', new MCPToolRename(lspManager));
     // MCP server instance

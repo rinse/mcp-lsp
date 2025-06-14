@@ -5,6 +5,7 @@ import { Definition, DefinitionParams, DefinitionT } from "./types/DefinitionReq
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
 import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
 import { Hover, HoverParams, HoverT } from "./types/HoverRequest";
+import { Implementation, ImplementationParams, ImplementationT } from "./types/ImplementationRequest";
 import { InitializeParams } from "./types/Initialize";
 import { InitializedParams } from "./types/Initialized";
 import { References, ReferenceParams, ReferencesT } from "./types/ReferencesRequest";
@@ -52,6 +53,13 @@ export class LSPServerExImpl implements LSPServerEx {
     } else {
       return null;
     }
+  }
+
+  async implementation(params: ImplementationParams): Promise<Implementation> {
+    logger.debug("[LSP] Requesting implementation with params:", params);
+    const result = await this.server.sendRequest('textDocument/implementation', params);
+    logger.debug("[LSP] Implementation request completed with result:", result);
+    return ImplementationT.is(result.result) ? result.result : null;
   }
 
   async references(params: ReferenceParams): Promise<References> {

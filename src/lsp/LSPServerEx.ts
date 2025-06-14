@@ -3,6 +3,7 @@ import { Definition, DefinitionParams } from "./types/DefinitionRequest";
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
 import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
 import { Hover, HoverParams } from "./types/HoverRequest";
+import { Implementation, ImplementationParams } from "./types/ImplementationRequest";
 import { InitializeParams } from "./types/Initialize";
 import { InitializedParams } from "./types/Initialized";
 import { References, ReferenceParams } from "./types/ReferencesRequest";
@@ -17,6 +18,7 @@ export interface LSPServerEx {
   didClose(params: DidCloseTextDocumentParams): Promise<void>;
   hover(params: HoverParams): Promise<Hover | null>;
   definition(params: DefinitionParams): Promise<Definition>;
+  implementation(params: ImplementationParams): Promise<Implementation>;
   references(params: ReferenceParams): Promise<References>;
   rename(params: RenameParams): Promise<WorkspaceEdit | null>;
   applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult>;
