@@ -92,6 +92,12 @@ function typeDefinitionToTextContents(typeDefinition: TypeDefinition): TextConte
     }];
   }
   if (Array.isArray(typeDefinition)) {
+    if (typeDefinition.length === 0) {
+      return [{
+        type: 'text',
+        text: 'No type definition found.',
+      }];
+    }
     if (typeDefinition.length === 1) {
       return [{
         type: 'text',

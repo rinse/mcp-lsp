@@ -138,6 +138,18 @@ describe('MCPToolTypeDefinition', () => {
       });
     });
 
+    it('should return "No type definition found" for empty array result', async () => {
+      typeDefinitionSpy.mockResolvedValue([]);
+
+      const result = await mcpToolTypeDefinition.handle(validParams);
+
+      expect(result.content).toHaveLength(1);
+      expect(result.content[0]).toEqual({
+        type: 'text',
+        text: 'No type definition found.',
+      });
+    });
+
     it('should return "No type definition found" for null result', async () => {
       typeDefinitionSpy.mockResolvedValue(null);
 
