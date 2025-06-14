@@ -26,6 +26,7 @@ describe('MCPToolImplementation', () => {
       hover: jest.fn(),
       definition: jest.fn(),
       implementation: implementationSpy,
+      references: jest.fn(),
       rename: jest.fn(),
       applyEdit: jest.fn(),
     };
