@@ -1,6 +1,7 @@
 import { LSPServer } from "./LSPServer";
 import { LSPServerEx as LSPServerEx } from "./LSPServerEx";
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult, ApplyWorkspaceEditResultT } from "./types/ApplyWorkspaceEditParams";
+import { CompletionParams, CompletionResult, CompletionResultT } from "./types/CompletionRequest";
 import { Definition, DefinitionParams, DefinitionT } from "./types/DefinitionRequest";
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
 import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
@@ -39,6 +40,17 @@ export class LSPServerExImpl implements LSPServerEx {
     const result = await this.server.sendRequest('textDocument/hover', params);
     logger.debug("[LSP] Hover request completed with result:", result);
     if (HoverT.is(result.result)) {
+      return result.result;
+    }
+    return null;
+
+  }
+
+  async completion(params: CompletionParams): Promise<CompletionResult> {
+    logger.debug("[LSP] Requesting completion with params:", params);
+    const result = await this.server.sendRequest('textDocument/completion', params);
+    logger.debug("[LSP] Completion request completed with result:", result);
+    if (CompletionResultT.is(result.result)) {
       return result.result;
     }
     return null;
