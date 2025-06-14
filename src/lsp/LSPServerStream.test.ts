@@ -17,7 +17,7 @@ jest.unmock('./types/NotificationMessage');
 class MockStreamEventEmitter {
   private listeners = new Map<string, ((data: unknown) => void)[]>();
 
-  on(event: string, listener: (data: unknown) => void) {
+  on(event: string, listener: (data: unknown) => void): void {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, []);
     }
@@ -27,8 +27,8 @@ class MockStreamEventEmitter {
     }
   }
 
-  emit(event: string, data: unknown) {
-    const eventListeners = this.listeners.get(event) || [];
+  emit(event: string, data: unknown): void {
+    const eventListeners = this.listeners.get(event) ?? [];
     eventListeners.forEach(listener => listener(data));
   }
 }
@@ -68,7 +68,7 @@ describe('LSPServerStream', () => {
     jest.useRealTimers();
     if (lspServer) {
       try {
-        (lspServer as unknown as { cleanup: () => void }).cleanup();
+        (lspServer as unknown as { cleanup(): void }).cleanup();
       } catch {
         // Ignore cleanup errors in tests
       }
@@ -98,7 +98,7 @@ describe('LSPServerStream', () => {
     it('should handle response messages and resolve pending requests', async () => {
       const requestPromise = lspServer.sendRequest('test/method', { param: 'value' });
       const sentData = writeSpy.mock.calls[0][0] as string;
-      const match = sentData.match(/Content-Length: \d+\r\n\r\n(.*)$/);
+      const match = /Content-Length: \d+\r\n\r\n(.*)$/.exec(sentData);
       if (!match?.[1]) throw new Error('Failed to parse message');
       const sentMessage: { id: unknown } = JSON.parse(match[1]) as { id: unknown };
       const response: ResponseMessage = {
@@ -143,8 +143,8 @@ describe('LSPServerStream', () => {
       expect(writeSpy).toHaveBeenCalledTimes(2);
       const sentData1 = writeSpy.mock.calls[0][0] as string;
       const sentData2 = writeSpy.mock.calls[1][0] as string;
-      const match1 = sentData1.match(/\r\n\r\n(.*)$/);
-      const match2 = sentData2.match(/\r\n\r\n(.*)$/);
+      const match1 = /\r\n\r\n(.*)$/.exec(sentData1);
+      const match2 = /\r\n\r\n(.*)$/.exec(sentData2);
       if (!match1?.[1] || !match2?.[1]) throw new Error('Failed to parse messages');
       const message1: { id: unknown } = JSON.parse(match1[1]) as { id: unknown };
       const message2: { id: unknown } = JSON.parse(match2[1]) as { id: unknown };
@@ -163,7 +163,7 @@ describe('LSPServerStream', () => {
       jest.useFakeTimers();
       const requestPromise = lspServer.sendRequest('test/method', { param: 'value' });
       const sentData = writeSpy.mock.calls[0][0] as string;
-      const match = sentData.match(/Content-Length: (\d+)\r\n\r\n(.*)$/);
+      const match = /Content-Length: (\d+)\r\n\r\n(.*)$/.exec(sentData);
       expect(match).toBeTruthy();
       if (!match) throw new Error('Failed to parse Content-Length header');
       const contentLength = parseInt(match[1]);
@@ -192,7 +192,7 @@ describe('LSPServerStream', () => {
       jest.useFakeTimers();
       const requestPromise = lspServer.sendRequest('test/method');
       const sentData = writeSpy.mock.calls[0][0] as string;
-      const match = sentData.match(/\r\n\r\n(.*)$/);
+      const match = /\r\n\r\n(.*)$/.exec(sentData);
       if (!match?.[1]) throw new Error('Failed to parse message');
       const message: unknown = JSON.parse(match[1]);
       expect(message).toEqual({
@@ -214,7 +214,7 @@ describe('LSPServerStream', () => {
     it('should send notification without ID', async () => {
       await lspServer.sendNotification('test/notification', { data: 'test' });
       const sentData = writeSpy.mock.calls[0][0] as string;
-      const match = sentData.match(/\r\n\r\n(.*)$/);
+      const match = /\r\n\r\n(.*)$/.exec(sentData);
       if (!match?.[1]) throw new Error('Failed to parse message');
       const message: unknown = JSON.parse(match[1]);
       expect(message).toEqual({
@@ -228,7 +228,7 @@ describe('LSPServerStream', () => {
     it('should handle notifications without params', async () => {
       await lspServer.sendNotification('test/notification');
       const sentData = writeSpy.mock.calls[0][0] as string;
-      const match = sentData.match(/\r\n\r\n(.*)$/);
+      const match = /\r\n\r\n(.*)$/.exec(sentData);
       if (!match?.[1]) throw new Error('Failed to parse message');
       const message: unknown = JSON.parse(match[1]);
       expect((message as { params?: unknown }).params).toBeUndefined();
@@ -257,7 +257,7 @@ describe('LSPServerStream', () => {
     it('should send shutdown request followed by exit notification', async () => {
       writeSpy.mockImplementation((data: unknown) => {
         const dataStr = data as string;
-        const message: { method?: string; id?: unknown } = JSON.parse(dataStr.match(/\r\n\r\n(.*)$/)?.[1] || '{}') as { method?: string; id?: unknown };
+        const message: { method?: string; id?: unknown } = JSON.parse((/\r\n\r\n(.*)$/.exec(dataStr))?.[1] ?? '{}') as { method?: string; id?: unknown };
         if (message.method === 'shutdown') {
           setTimeout(() => {
             streamEventEmitter.emit('data', {
@@ -273,8 +273,8 @@ describe('LSPServerStream', () => {
       expect(writeSpy).toHaveBeenCalledTimes(2);
       const sentData1 = writeSpy.mock.calls[0][0] as string;
       const sentData2 = writeSpy.mock.calls[1][0] as string;
-      const match1 = sentData1.match(/\r\n\r\n(.*)$/);
-      const match2 = sentData2.match(/\r\n\r\n(.*)$/);
+      const match1 = /\r\n\r\n(.*)$/.exec(sentData1);
+      const match2 = /\r\n\r\n(.*)$/.exec(sentData2);
       if (!match1?.[1] || !match2?.[1]) throw new Error('Failed to parse messages');
       const message1: { id: unknown; method?: string } = JSON.parse(match1[1]) as { id: unknown; method?: string };
       const message2: { id?: unknown; method?: string } = JSON.parse(match2[1]) as { id?: unknown; method?: string };
