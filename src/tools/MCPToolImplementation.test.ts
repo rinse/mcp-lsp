@@ -83,7 +83,26 @@ describe('MCPToolImplementation', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Implementation: /src/test.ts:1:1',
+        text: '/src/test.ts:1:1',
+      });
+    });
+
+    it('should return single implementation without prefix for array with one result', async () => {
+      const mockLocations: Location[] = [
+        {
+          uri: 'file:///src/single.ts',
+          range: {
+            start: { line: 10, character: 5 },
+            end: { line: 10, character: 5 },
+          },
+        },
+      ];
+      implementationSpy.mockResolvedValue(mockLocations);
+      const result = await mcpToolImplementation.handle(validParams);
+      expect(result.content).toHaveLength(1);
+      expect(result.content[0]).toEqual({
+        type: 'text',
+        text: '/src/single.ts:11:6',
       });
     });
 
@@ -106,14 +125,10 @@ describe('MCPToolImplementation', () => {
       ];
       implementationSpy.mockResolvedValue(mockLocations);
       const result = await mcpToolImplementation.handle(validParams);
-      expect(result.content).toHaveLength(2);
+      expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Implementation 1: /src/test1.ts:1:1',
-      });
-      expect(result.content[1]).toEqual({
-        type: 'text',
-        text: 'Implementation 2: /src/test2.ts:6:3',
+        text: 'Found 2 implementations:\n  /src/test1.ts:1:1\n  /src/test2.ts:6:3',
       });
     });
 
@@ -156,7 +171,7 @@ describe('MCPToolImplementation', () => {
 
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Implementation: /src/test.ts:1:1 to 3:6',
+        text: '/src/test.ts:1:1-3:6',
       });
     });
   });
