@@ -17,6 +17,7 @@ import { LSPServerExImpl } from './lsp/LSPServerExImpl.js';
 import { LSPServerStream } from './lsp/LSPServerStream.js';
 import { ClientCapabilities } from './lsp/types/clientcapabilities/ClientCapabilities.js';
 import { MCPTool } from './tools/MCPTool.js';
+import { MCPToolDefinition } from './tools/MCPToolDefinition.js';
 import { MCPToolHover } from './tools/MCPToolHover.js';
 import { MCPToolRename } from './tools/MCPToolRename.js';
 import { logger } from './utils/logger.js';
@@ -43,6 +44,7 @@ async function main() {
     const toolMap = new Map<string, MCPTool>();
     // Register tools
     toolMap.set('hover', new MCPToolHover(lspManager));
+    toolMap.set('definition', new MCPToolDefinition(lspManager));
     toolMap.set('rename', new MCPToolRename(lspManager));
     // MCP server instance
     const mcpServer = new Server(

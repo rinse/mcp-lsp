@@ -1,6 +1,7 @@
 import { LSPServer } from "./LSPServer";
 import { LSPServerEx as LSPServerEx } from "./LSPServerEx";
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult, ApplyWorkspaceEditResultT } from "./types/ApplyWorkspaceEditParams";
+import { Definition, DefinitionParams, DefinitionT } from "./types/DefinitionRequest";
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
 import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
 import { Hover, HoverParams, HoverT } from "./types/HoverRequest";
@@ -35,6 +36,17 @@ export class LSPServerExImpl implements LSPServerEx {
     const result = await this.server.sendRequest('textDocument/hover', params);
     logger.debug("[LSP] Hover request completed with result:", result);
     if (HoverT.is(result.result)) {
+      return result.result;
+    } else {
+      return null;
+    }
+  }
+
+  async definition(params: DefinitionParams): Promise<Definition> {
+    logger.debug("[LSP] Requesting definition with params:", params);
+    const result = await this.server.sendRequest('textDocument/definition', params);
+    logger.debug("[LSP] Definition request completed with result:", result);
+    if (DefinitionT.is(result.result)) {
       return result.result;
     } else {
       return null;
