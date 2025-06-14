@@ -50,6 +50,7 @@ export default eslintTs.config(
           "warnOnUnassignedImports": true,
         },
       ],
+      "@stylistic/eol-last": ["error"],
       "@stylistic/comma-spacing": ["error", { "before": false, "after": true }],
       "@stylistic/comma-dangle": ["error", "always-multiline"],
       "@stylistic/indent": ["error", 2],
