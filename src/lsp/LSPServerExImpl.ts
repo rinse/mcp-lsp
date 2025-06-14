@@ -10,6 +10,7 @@ import { InitializeParams } from "./types/Initialize";
 import { InitializedParams } from "./types/Initialized";
 import { RenameParams } from "./types/RenameRequest";
 import { ResponseMessage } from "./types/ResponseMessage";
+import { TypeDefinition, TypeDefinitionParams, TypeDefinitionT } from "./types/TypeDefinitionRequest";
 import { WorkspaceEdit, WorkspaceEditT } from "./types/WorkspaceEdit";
 import { logger } from "../utils/logger";
 
@@ -59,6 +60,17 @@ export class LSPServerExImpl implements LSPServerEx {
     const result = await this.server.sendRequest('textDocument/implementation', params);
     logger.debug("[LSP] Implementation request completed with result:", result);
     return ImplementationT.is(result.result) ? result.result : null;
+  }
+
+  async typeDefinition(params: TypeDefinitionParams): Promise<TypeDefinition> {
+    logger.debug("[LSP] Requesting typeDefinition with params:", params);
+    const result = await this.server.sendRequest('textDocument/typeDefinition', params);
+    logger.debug("[LSP] TypeDefinition request completed with result:", result);
+    if (TypeDefinitionT.is(result.result)) {
+      return result.result;
+    } else {
+      return null;
+    }
   }
 
   async rename(params: RenameParams): Promise<WorkspaceEdit | null> {
