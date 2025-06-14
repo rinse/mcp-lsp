@@ -6,6 +6,7 @@ import { Hover, HoverParams } from "./types/HoverRequest";
 import { Implementation, ImplementationParams } from "./types/ImplementationRequest";
 import { InitializeParams } from "./types/Initialize";
 import { InitializedParams } from "./types/Initialized";
+import { References, ReferenceParams } from "./types/ReferencesRequest";
 import { RenameParams } from "./types/RenameRequest";
 import { ResponseMessage } from "./types/ResponseMessage";
 import { TypeDefinition, TypeDefinitionParams } from "./types/TypeDefinitionRequest";
@@ -19,6 +20,7 @@ export interface LSPServerEx {
   hover(params: HoverParams): Promise<Hover | null>;
   definition(params: DefinitionParams): Promise<Definition>;
   implementation(params: ImplementationParams): Promise<Implementation>;
+  references(params: ReferenceParams): Promise<References>;
   typeDefinition(params: TypeDefinitionParams): Promise<TypeDefinition>;
   rename(params: RenameParams): Promise<WorkspaceEdit | null>;
   applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult>;
