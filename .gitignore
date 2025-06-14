@@ -4,3 +4,6 @@
 
 # app
 /logs
+
+# worktree
+/.wt
