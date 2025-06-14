@@ -58,11 +58,7 @@ export class LSPServerExImpl implements LSPServerEx {
     logger.debug("[LSP] Requesting implementation with params:", params);
     const result = await this.server.sendRequest('textDocument/implementation', params);
     logger.debug("[LSP] Implementation request completed with result:", result);
-    if (ImplementationT.is(result.result)) {
-      return result.result;
-    } else {
-      return null;
-    }
+    return ImplementationT.is(result.result) ? result.result : null;
   }
 
   async rename(params: RenameParams): Promise<WorkspaceEdit | null> {

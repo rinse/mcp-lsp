@@ -36,7 +36,6 @@ describe('MCPToolImplementation', () => {
   describe('listItem', () => {
     it('should return the correct tool description', () => {
       const tool = mcpToolImplementation.listItem();
-
       expect(tool.name).toBe('implementation');
       expect(tool.description).toBe('Get implementation location for a symbol at a specific position in a TypeScript file');
       expect(tool.inputSchema).toEqual({
@@ -76,9 +75,7 @@ describe('MCPToolImplementation', () => {
         },
       };
       implementationSpy.mockResolvedValue(mockLocation);
-
       const result = await mcpToolImplementation.handle(validParams);
-
       expect(implementationSpy).toHaveBeenCalledWith({
         textDocument: { uri: 'file:///test.ts' },
         position: { line: 10, character: 5 },
@@ -108,9 +105,7 @@ describe('MCPToolImplementation', () => {
         },
       ];
       implementationSpy.mockResolvedValue(mockLocations);
-
       const result = await mcpToolImplementation.handle(validParams);
-
       expect(result.content).toHaveLength(2);
       expect(result.content[0]).toEqual({
         type: 'text',
@@ -124,9 +119,7 @@ describe('MCPToolImplementation', () => {
 
     it('should return "No implementation found" for null result', async () => {
       implementationSpy.mockResolvedValue(null);
-
       const result = await mcpToolImplementation.handle(validParams);
-
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
