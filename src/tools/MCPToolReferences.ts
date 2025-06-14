@@ -101,10 +101,18 @@ function referencesToTextContents(references: References): TextContent[] {
       text: 'No references found.',
     }];
   }
-  return references.map((location, index) => ({
+  if (references.length === 1) {
+    return [{
+      type: 'text',
+      text: locationToString(references[0]),
+    }];
+  }
+  return [{
     type: 'text',
-    text: `Reference ${index + 1}: ${locationToString(location)}`,
-  }));
+    text: `Found ${references.length} references:\n${references
+      .map(location => `  ${locationToString(location)}`)
+      .join('\n')}`,
+  }];
 }
 
 function locationToString(location: Location): string {
@@ -112,10 +120,14 @@ function locationToString(location: Location): string {
   const start = location.range.start;
   const end = location.range.end;
   const startPos = `${start.line + 1}:${start.character + 1}`;
-  if (start.line !== end.line || start.character !== end.character) {
-    return `${filePath}:${startPos} to ${end.line + 1}:${end.character + 1}`;
+
+  // For single-position ranges (same start and end)
+  if (start.line === end.line && start.character === end.character) {
+    return `${filePath}:${startPos}`;
   }
-  return `${filePath}:${startPos}`;
+
+  // For multi-line ranges, use Go-style format
+  return `${filePath}:${startPos}-${end.line + 1}:${end.character + 1}`;
 }
 
 function referencesNothingContent(): CallToolResult {

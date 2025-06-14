@@ -98,14 +98,10 @@ describe('MCPToolReferences', () => {
         position: { line: 10, character: 5 },
         context: { includeDeclaration: true },
       });
-      expect(result.content).toHaveLength(2);
+      expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Reference 1: /src/test1.ts:1:1',
-      });
-      expect(result.content[1]).toEqual({
-        type: 'text',
-        text: 'Reference 2: /src/test2.ts:6:3',
+        text: 'Found 2 references:\n  /src/test1.ts:1:1\n  /src/test2.ts:6:3',
       });
     });
 
@@ -136,7 +132,7 @@ describe('MCPToolReferences', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Reference 1: /src/test.ts:1:1',
+        text: '/src/test.ts:1:1',
       });
     });
 
@@ -216,7 +212,7 @@ describe('MCPToolReferences', () => {
 
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Reference 1: /src/test.ts:1:1 to 3:6',
+        text: '/src/test.ts:1:1-3:6',
       });
     });
 
@@ -237,7 +233,7 @@ describe('MCPToolReferences', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Reference 1: /src/test.ts:11:6 to 11:16',
+        text: '/src/test.ts:11:6-11:16',
       });
     });
   });
