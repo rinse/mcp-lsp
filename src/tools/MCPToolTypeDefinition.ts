@@ -11,6 +11,7 @@ import * as t from "io-ts";
 import { MCPTool } from "./MCPTool";
 import { locationToString } from "./utils";
 import { LSPManager } from "../lsp/LSPManager";
+import { Location } from "../lsp/types/Location";
 import { TypeDefinition } from "../lsp/types/TypeDefinitionRequest";
 
 export class MCPToolTypeDefinition implements MCPTool {
@@ -111,9 +112,11 @@ function typeDefinitionToTextContents(typeDefinition: TypeDefinition): TextConte
         .join('\n')}`,
     }];
   }
+  // At this point, typeDefinition must be a Location (not null or array)
+  const location: Location = typeDefinition;
   return [{
     type: 'text',
-    text: locationToString(typeDefinition),
+    text: locationToString(location),
   }];
 }
 
