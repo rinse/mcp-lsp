@@ -1,29 +1,40 @@
 import path from 'path';
 
-import winston from 'winston';
+import winston, { LoggerOptions } from 'winston';
 
-const logDir = process.env.LOG_DIR ?? path.join(process.cwd(), 'logs');
+const logDir = process.env.LOG_DIR ?? path.join(process.cwd(), '.logs');
 const logLevel = process.env.LOG_LEVEL ?? 'info';
 
-export const logger = winston.createLogger({
-  level: logLevel,
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.errors({ stack: true }),
-    winston.format.json(),
-    winston.format.combine(
-      winston.format.printf(({ timestamp, level, message, stack }) => {
-        return `${String(timestamp)} [${String(level)}]: ${String(message)}${typeof stack === 'string' ? '\n' + stack : ''}`;
-      }),
+export function createLoggerOptions(logDir: string, logLevel: string): LoggerOptions {
+  return {
+    level: logLevel,
+    format: winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.errors({ stack: true }),
+      winston.format.json(),
+      winston.format.combine(
+        winston.format.printf(({ timestamp, level, message, stack, ...meta }) => {
+          const metaString = Object.keys(meta).length > 0
+            ? JSON.stringify(meta)
+            : '';
+          return `${String(timestamp)} [${String(level)}]: ${String(message)} ${metaString}${typeof stack === 'string' ? '\n' + stack : ''}`;
+        }),
+      ),
     ),
-  ),
-  transports: [
-    new winston.transports.File({
-      filename: path.join(logDir, 'error.log'),
-      level: 'error',
-    }),
-    new winston.transports.File({
-      filename: path.join(logDir, 'combined.log'),
-    }),
-  ],
-});
+    transports: [
+      new winston.transports.File({
+        filename: path.join(logDir, 'error.log'),
+        level: 'error',
+      }),
+      new winston.transports.File({
+        filename: path.join(logDir, 'debug.log'),
+        level: 'debug',
+      }),
+      new winston.transports.File({
+        filename: path.join(logDir, 'combined.log'),
+      }),
+    ],
+  };
+}
+
+export const logger = winston.createLogger(createLoggerOptions(logDir, logLevel));
