@@ -16,16 +16,8 @@ import { LSPServerEx } from './lsp/LSPServerEx.js';
 import { LSPServerExImpl } from './lsp/LSPServerExImpl.js';
 import { LSPServerStream } from './lsp/LSPServerStream.js';
 import { ClientCapabilities } from './lsp/types/clientcapabilities/ClientCapabilities.js';
-import { MCPTool } from './tools/MCPTool.js';
-import { MCPToolCodeAction } from './tools/MCPToolCodeAction.js';
-import { MCPToolDefinition } from './tools/MCPToolDefinition.js';
-import { MCPToolExecuteCodeAction } from './tools/MCPToolExecuteCodeAction.js';
-import { MCPToolHover } from './tools/MCPToolHover.js';
-import { MCPToolImplementation } from './tools/MCPToolImplementation.js';
-import { MCPToolReferences } from './tools/MCPToolReferences.js';
-import { MCPToolRename } from './tools/MCPToolRename.js';
-import { MCPToolTypeDefinition } from './tools/MCPToolTypeDefinition.js';
-import { logger } from './utils/loggers.js';
+import { logger } from './utils/logger.js';
+import { createToolMap } from './tools/ToolMap.js';
 
 // Call the main function, disregarding a returned promise object.
 void main();
@@ -46,16 +38,7 @@ async function main(): Promise<void> {
   try {
     const lspServerEx: LSPServerEx = new LSPServerExImpl(lspServer);
     const lspManager = new LSPManager(lspServerEx);
-    const toolMap = new Map<string, MCPTool>();
-    // Register tools
-    toolMap.set('hover', new MCPToolHover(lspManager));
-    toolMap.set('definition', new MCPToolDefinition(lspManager));
-    toolMap.set('implementation', new MCPToolImplementation(lspManager));
-    toolMap.set('references', new MCPToolReferences(lspManager));
-    toolMap.set('typeDefinition', new MCPToolTypeDefinition(lspManager));
-    toolMap.set('rename', new MCPToolRename(lspManager));
-    toolMap.set('codeAction', new MCPToolCodeAction(lspManager));
-    toolMap.set('executeCodeAction', new MCPToolExecuteCodeAction(lspManager));
+    const toolMap = createToolMap(lspManager);
     // MCP server instance
     const mcpServer = new Server(
       {
