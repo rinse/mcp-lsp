@@ -6,7 +6,7 @@ import { ResponseMessage } from './types/ResponseMessage';
 import { StreamEventEmitter } from '../tools/StreamEventEmitter';
 
 // Mock dependencies
-jest.mock('../utils/logger');
+jest.mock('../utils/loggers');
 
 // Ensure type guards are not mocked
 jest.unmock('./types/RequestMessage');

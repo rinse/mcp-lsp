@@ -3,7 +3,7 @@ import * as fs from 'fs/promises';
 import { ApplyWorkspaceEditResult } from './types/ApplyWorkspaceEditParams';
 import { TextEdit } from './types/TextEdit';
 import { WorkspaceEdit } from './types/WorkspaceEdit';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/loggers';
 
 export class WorkspaceEditApplier {
   async applyWorkspaceEdit(workspaceEdit: WorkspaceEdit): Promise<ApplyWorkspaceEditResult> {
