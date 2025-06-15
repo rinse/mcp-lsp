@@ -1,212 +1,59 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Project Overview
 
-This is an MCP (Model Context Protocol) server that bridges TypeScript Language Server Protocol (LSP) capabilities to MCP tools. The server enables Claude Code to interact with TypeScript projects through LSP features like hover information and symbol renaming.
+MCP server that bridges TypeScript Language Server Protocol (LSP) capabilities to MCP tools, enabling Claude Code to interact with TypeScript projects through LSP features.
 
 ## Predefined Tasks
 
-When a user provides instructions in the format `*<PREDEFINED_TASK>`, Claude should:
-
-1. **Read the corresponding task file**: Look for `.claude/predefined-tasks/<PREDEFINED_TASK>.md`
-2. **Execute the task**: If the file exists, read its contents and execute the instructions within it
-3. **Report missing tasks**: If the file doesn't exist, inform the user that the predefined task is not found and wait for further instructions
-
-**Examples:**
-- `*ready-for-review` → Read and execute `.claude/predefined-tasks/ready-for-review.md`
-- `*unknown-task` → Report that `.claude/predefined-tasks/unknown-task.md` does not exist
-
-This system enables users to define reusable, complex workflows that can be triggered with simple commands.
-
-## IMPORTANT: Preferred Workflow
-
-**ALWAYS use the MCP-LSP tools instead of manual editing when possible.** This is significantly more efficient and saves tokens while ensuring accuracy.
-
-### Primary Tools to Use (in order of preference):
-
-1. **`mcp__mcp-lsp__rename`** - For renaming symbols across the entire project
-   - **USE THIS instead of Edit tool for renaming variables, functions, classes, etc.**
-   - Automatically updates all references across all files
-   - Ensures type safety and prevents broken references
-   - Much more efficient than manual find-and-replace operations
-
-2. **`mcp__mcp-lsp__definition`** - For finding where symbols are defined
-   - **USE THIS instead of Grep/Read when looking for symbol definitions**
-   - Instantly locates the exact definition of any symbol
-   - More accurate than text-based searching
-
-3. **`mcp__mcp-lsp__hover`** - For understanding symbol types and documentation
-   - **USE THIS instead of reading multiple files to understand types**
-   - Provides complete type information and JSDoc comments
-   - Shows function signatures and return types
-
-### Workflow Guidelines:
-
-1. **Before making changes**: Use `definition` and `hover` tools to understand the code
-2. **For renaming**: ALWAYS use `rename` tool instead of manual editing
-3. **After using MCP-LSP tools**: Always run verification:
-   ```bash
-   npm test        # Verify functionality
-   npm run lint    # Check code style
-   npm run build   # Ensure compilation
-   ```
-
-**Why this approach is better:**
-- **Token efficiency**: LSP tools provide precise information without reading entire files
-- **Accuracy**: TypeScript-aware operations prevent errors
-- **Speed**: Direct symbol operations vs manual text manipulation
-- **Safety**: Automatic reference updating across the entire project
-
-## Commands
-
-### Development Commands
-
-- `npm run build` - Compile TypeScript to JavaScript
-- `npm run watch` - Compile TypeScript in watch mode
-- `npm test` - Run all tests
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Run ESLint with auto-fix
-
-### Code Quality
-
-After editing code, always run:
-- `npm run build` - Ensure code compiles without errors
-- `npm test` - Verify all tests pass
-- `npm run lint` - Check code style compliance
+`*<PREDEFINED_TASK>` → Execute `.claude/predefined-tasks/<PREDEFINED_TASK>.md`
 
 ## Architecture
 
-This MCP server bridges TypeScript Language Server Protocol (LSP) capabilities to MCP tools. The server:
-
-- **Transport**: Runs on stdio using `@modelcontextprotocol/sdk`
-- **LSP Integration**: Spawns and communicates with TypeScript Language Server via stdio
-- **Tool Registry**: Exposes LSP capabilities as MCP tools (hover, definition, rename)
-- **Message Parsing**: Handles LSP's Content-Length HTTP-style message format
-- **Document Lifecycle**: Manages opening/closing documents for LSP operations
-
-### Key Components
-
 - **LSPManager**: Central coordinator for LSP operations
 - **LSPServerStream**: Manages stdio communication with TypeScript language server
-- **LSPMessageParser**: Parses LSP's Content-Length message format
-- **MCPTool**: Base interface for MCP tools that wrap LSP capabilities
-- **StreamEventEmitter**: Event-driven communication layer
+- **Tools**: `src/tools/` - MCP tool implementations (hover, definition, rename, codeAction, executeCodeAction)
+- **Transport**: stdio using `@modelcontextprotocol/sdk`
 
-### Code Organization
+## Commands and Tools
 
-- `src/index.ts` - MCP server entry point
-- `src/lsp/` - LSP client implementation and type definitions
-- `src/tools/` - MCP tool implementations (hover, definition, rename)
-- `src/utils/` - Logging and utility functions
-- `out/` - Compiled JavaScript output
+### Build & Test Commands
+- `npm test` - Run all tests
+- `npm run lint:fix` - Fix code style issues
+- `npm run build` - Compile TypeScript
 
-## Coding Standards
+### MCP-LSP Tools (USE THESE INSTEAD OF MANUAL EDITING)
 
-### Type Safety Requirements
+**Position finding:** `awk -v pat='<PATTERN>' '{pos=index($0, pat); if (pos) print NR-1 ":" pos-1 ":" $0}'`
 
-- **NEVER use `as any`**: Type safety is our most reliable friend. Always use proper TypeScript types and avoid type assertions that bypass the type system.
-- When encountering type conflicts, investigate and fix the root cause rather than using type assertions
-- Prefer creating proper type-safe interfaces and using type guards over forcing type compatibility
-- If external libraries have poor types, create proper type definitions rather than using `any`
+#### mcp__mcp-lsp__rename
+**REQUIRED** for renaming symbols. Updates all references across project.
+- Parameters: `uri`, `line`, `character`, `newName`
 
-### Code Formatting
+#### mcp__mcp-lsp__definition  
+**REQUIRED** for finding symbol definitions. More accurate than grep.
+- Parameters: `uri`, `line`, `character`
 
-- **No empty lines within function bodies**: Function bodies should be compact without empty lines
-- **Single empty line between function definitions**: Always insert exactly one empty line between function declarations
+#### mcp__mcp-lsp__hover
+**REQUIRED** for understanding types and documentation.
+- Parameters: `uri`, `line`, `character`
 
-## Available Tools
+#### mcp__mcp-lsp__implementation
+Find where interfaces/abstract classes are implemented.
+- Parameters: `uri`, `line`, `character`
 
-### hover
-Get hover information for a position in a TypeScript file.
+#### mcp__mcp-lsp__references
+Find all references to a symbol.
+- Parameters: `uri`, `line`, `character`, `includeDeclaration` (optional)
 
-**Finding precise positions:** Use `grep -n` or `rg -n` to get exact line numbers for hovering over specific symbols.
+#### mcp__mcp-lsp__typeDefinition
+Jump to type definition of a symbol.
+- Parameters: `uri`, `line`, `character`
 
-**Parameters:**
-- `uri` (string): File URI (e.g., file:///path/to/file.ts)
-- `line` (number): Line number (0-based)
-- `character` (number): Character position (0-based)
+#### mcp__mcp-lsp__codeAction
+Get available code actions (quick fixes, refactorings).
+- Parameters: `uri`, `line`, `character`, `endLine`, `endCharacter`
 
-### definition
-Get definition location for a symbol at a specific position in a TypeScript file.
-
-**Finding precise positions:** Use `grep -n` or `rg -n` to get exact line numbers for finding definitions of specific symbols.
-
-**Parameters:**
-- `uri` (string): File URI (e.g., file:///path/to/file.ts)
-- `line` (number): Line number (0-based)
-- `character` (number): Character position (0-based)
-
-**Returns:** The location(s) where the symbol is defined, including file path and line/character positions.
-
-### rename
-Rename a symbol at a specific position in a TypeScript file.
-
-**IMPORTANT:** When working on code improvements or refactoring, you should actively use the rename tool to rename symbols for better code clarity and consistency. This is preferred over manual find-and-replace operations as it ensures all references are updated correctly across the entire project.
-
-**When to use rename:**
-- Improving variable, function, or class names for better readability
-- Standardizing naming conventions across the codebase
-- Refactoring code to use more descriptive names
-- Any time you want to change a symbol name throughout the project
-
-**Parameters:**
-- `uri` (string): File URI (e.g., file:///path/to/file.ts)
-- `line` (number): Line number (0-based)
-- `character` (number): Character position (0-based)
-- `newName` (string): The new name for the symbol
-
-**Returns:** Successfully applies the rename across all files and reports the changes made.
-
-### codeAction
-Get code actions (quick fixes, refactorings, source actions) for a range in a TypeScript file.
-
-**Parameters:**
-- `uri` (string): File URI (e.g., file:///path/to/file.ts)
-- `line` (number): Start line number (0-based)
-- `character` (number): Start character position (0-based)
-- `endLine` (number): End line number (0-based)
-- `endCharacter` (number): End character position (0-based)
-- `diagnostics` (optional): Array of diagnostic objects to filter code actions
-- `only` (optional): Array of CodeActionKind strings to filter by action type
-
-**Returns:** List of available code actions with both human-readable descriptions and structured JSON objects that can be directly copied and passed to the `executeCodeAction` tool.
-
-### executeCodeAction
-Execute a code action by applying its WorkspaceEdit or running its Command.
-
-**IMPORTANT:** This tool should be used AFTER the `codeAction` tool to actually apply the suggested fixes, refactorings, or source actions.
-
-**Typical Workflow:**
-1. Use `codeAction` tool to get available code actions for a range
-2. Choose a code action from the results 
-3. Use `executeCodeAction` tool to apply the selected code action
-
-**Parameters:**
-- `codeAction` (object): The complete CodeAction object from codeAction tool results
-  - Must include the `title` field
-  - Can contain `edit` (WorkspaceEdit) and/or `command` (Command) fields
-  - Other metadata fields like `kind`, `diagnostics` are preserved
-
-**Returns:** 
-- Success/failure status for WorkspaceEdit application
-- Success/failure status for Command execution  
-- Any command results returned by the language server
-- Clear error messages if execution fails
-
-**Example Usage:**
-```
-1. Get code actions: codeAction tool → returns list of actions with structured JSON
-2. Copy JSON from "📋 For executeCodeAction tool:" section
-3. Execute: executeCodeAction tool with the copied JSON object
-4. Verification: Action is applied and files are modified
-```
-
-## Documentation Resources
-
-The `docs/` directory contains reference links for:
-- **LSP (Language Server Protocol)**: Specification and implementation guides
-- **MCP (Model Context Protocol)**: Introduction and concept documentation
-
-When implementing LSP or MCP features, refer to links in these documentation files for the appropriate specifications.
+#### mcp__mcp-lsp__executeCodeAction
+Apply code actions from codeAction tool.
+- Parameters: `codeAction` object from codeAction results
