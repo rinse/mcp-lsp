@@ -18,6 +18,7 @@ import { LSPServerStream } from './lsp/LSPServerStream.js';
 import { ClientCapabilities } from './lsp/types/clientcapabilities/ClientCapabilities.js';
 import { MCPTool } from './tools/MCPTool.js';
 import { MCPToolCodeAction } from './tools/MCPToolCodeAction.js';
+import { MCPToolCompletion } from './tools/MCPToolCompletion.js';
 import { MCPToolDefinition } from './tools/MCPToolDefinition.js';
 import { MCPToolExecuteCodeAction } from './tools/MCPToolExecuteCodeAction.js';
 import { MCPToolHover } from './tools/MCPToolHover.js';
@@ -49,6 +50,7 @@ async function main(): Promise<void> {
     const toolMap = new Map<string, MCPTool>();
     // Register tools
     toolMap.set('hover', new MCPToolHover(lspManager));
+    toolMap.set('completion', new MCPToolCompletion(lspManager));
     toolMap.set('definition', new MCPToolDefinition(lspManager));
     toolMap.set('implementation', new MCPToolImplementation(lspManager));
     toolMap.set('references', new MCPToolReferences(lspManager));

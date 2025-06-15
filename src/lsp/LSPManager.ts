@@ -3,6 +3,7 @@ import { LSPServerEx as LSPServerEx } from "./LSPServerEx";
 import { readFileAsync } from "../utils";
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from "./types/ApplyWorkspaceEditParams";
 import { CodeActionParams, CodeActionResult } from "./types/CodeActionRequest";
+import { CompletionParams, CompletionResult } from "./types/CompletionRequest";
 import { Definition, DefinitionParams } from "./types/DefinitionRequest";
 import { ExecuteCommandParams, ExecuteCommandResult } from "./types/ExecuteCommandRequest";
 import { Hover, HoverParams } from "./types/HoverRequest";
@@ -53,6 +54,11 @@ export class LSPManager {
   async hover(params: HoverParams): Promise<Hover | null> {
     await this.openDocument(params.textDocument.uri);
     return await this.server.hover(params);
+  }
+
+  async completion(params: CompletionParams): Promise<CompletionResult> {
+    await this.openDocument(params.textDocument.uri);
+    return await this.server.completion(params);
   }
 
   async definition(params: DefinitionParams): Promise<Definition> {

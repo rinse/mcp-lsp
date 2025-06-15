@@ -1,5 +1,6 @@
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from "./types/ApplyWorkspaceEditParams";
 import { CodeActionParams, CodeActionResult } from "./types/CodeActionRequest";
+import { CompletionParams, CompletionResult } from "./types/CompletionRequest";
 import { Definition, DefinitionParams } from "./types/DefinitionRequest";
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
 import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
@@ -20,6 +21,7 @@ export interface LSPServerEx {
   didOpen(params: DidOpenTextDocumentParams): Promise<void>;
   didClose(params: DidCloseTextDocumentParams): Promise<void>;
   hover(params: HoverParams): Promise<Hover | null>;
+  completion(params: CompletionParams): Promise<CompletionResult>;
   definition(params: DefinitionParams): Promise<Definition>;
   implementation(params: ImplementationParams): Promise<Implementation>;
   references(params: ReferenceParams): Promise<References>;

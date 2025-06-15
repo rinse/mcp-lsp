@@ -12,7 +12,7 @@ MCP server that bridges TypeScript Language Server Protocol (LSP) capabilities t
 
 - **LSPManager**: Central coordinator for LSP operations
 - **LSPServerStream**: Manages stdio communication with TypeScript language server
-- **Tools**: `src/tools/` - MCP tool implementations (hover, definition, rename, codeAction, executeCodeAction)
+- **Tools**: `src/tools/` - MCP tool implementations (hover, completion, definition, rename, codeAction, executeCodeAction)
 - **Transport**: stdio using `@modelcontextprotocol/sdk`
 
 ## Commands and Tools
@@ -37,6 +37,10 @@ MCP server that bridges TypeScript Language Server Protocol (LSP) capabilities t
 #### mcp__mcp-lsp__hover
 **REQUIRED** for understanding types and documentation.
 - Parameters: `uri`, `line`, `character`
+
+#### mcp__mcp-lsp__completion
+Get code completion suggestions for TypeScript files.
+- Parameters: `uri`, `line`, `character`, `triggerKind` (optional), `triggerCharacter` (optional)
 
 #### mcp__mcp-lsp__implementation
 Find where interfaces/abstract classes are implemented.
