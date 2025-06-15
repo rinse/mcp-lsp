@@ -1,5 +1,5 @@
 import { StreamParseResult } from '../tools/StreamEventEmitter';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/loggers';
 import { Message, MessageT } from './types/AbstractMessage';
 
 const separator = '\r\n\r\n' as const;

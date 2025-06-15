@@ -1,6 +1,9 @@
 import path from 'path';
 
-import winston, { LoggerOptions } from 'winston';
+import winston, { createLogger, LoggerOptions } from 'winston';
+
+import { Logger } from './Logger';
+import { LoggerWinston } from './LoggerWinston';
 
 const logDir = process.env.LOG_DIR ?? path.join(process.cwd(), '.logs');
 const logLevel = process.env.LOG_LEVEL ?? 'info';
@@ -37,4 +40,6 @@ export function createLoggerOptions(logDir: string, logLevel: string): LoggerOpt
   };
 }
 
-export const logger = winston.createLogger(createLoggerOptions(logDir, logLevel));
+const winstonLogger = createLogger(createLoggerOptions(logDir, logLevel));
+
+export const logger: Logger = new LoggerWinston(winstonLogger);

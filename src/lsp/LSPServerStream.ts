@@ -7,7 +7,7 @@ import { NotificationMessage, isNotificationMessage } from './types/Notification
 import { isRequestMessage, RequestMessage } from './types/RequestMessage';
 import { isResponseMessage, ResponseMessage } from './types/ResponseMessage';
 import { StreamEventEmitter } from '../tools/StreamEventEmitter';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/loggers';
 
 export class LSPServerStream implements LSPServer {
   private streamEventEmitter: StreamEventEmitter<Message>;
@@ -35,7 +35,7 @@ export class LSPServerStream implements LSPServer {
   }
 
   private handleMessage(message: Message): void {
-    logger.debug('[LSP] Received message', { message });
+    logger.debug('[LSP] Received message', { data: message });
     if (isResponseMessage(message)) {
       const pending = this.pendingRequests.get(message.id);
       if (pending) {

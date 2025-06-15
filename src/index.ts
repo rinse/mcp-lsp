@@ -25,7 +25,7 @@ import { MCPToolImplementation } from './tools/MCPToolImplementation.js';
 import { MCPToolReferences } from './tools/MCPToolReferences.js';
 import { MCPToolRename } from './tools/MCPToolRename.js';
 import { MCPToolTypeDefinition } from './tools/MCPToolTypeDefinition.js';
-import { logger } from './utils/logger.js';
+import { logger } from './utils/loggers.js';
 
 // Call the main function, disregarding a returned promise object.
 void main();

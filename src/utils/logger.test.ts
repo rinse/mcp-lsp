@@ -2,7 +2,7 @@ import { Writable } from 'stream';
 
 import winston from 'winston';
 
-import { createLoggerOptions } from './logger';
+import { createLoggerOptions } from './loggers';
 
 describe('Logger', () => {
   let logBuffer: string[];
@@ -137,6 +137,16 @@ describe('Logger', () => {
       expect(logEntry).not.toContain('[object Object]');
       expect(logEntry).toContain('[warn]: Invalid result type');
       expect(logEntry).toContain('"result":{"type":"invalid","code":500,"details":{"reason":"bad data"}}');
+    });
+
+    it('should handle timestamp property specially in winston', () => {
+      const testObject = { jsonrpc: '2.0', method: 'test' };
+      // Using 'timestamp' as a property name in metadata can cause issues
+      testLogger.debug('Test with timestamp property', { timestamp: testObject });
+
+      expect(logBuffer).toHaveLength(1);
+      const logEntry = logBuffer[0];
+      expect(logEntry).toContain('[object Object]');
     });
   });
 });

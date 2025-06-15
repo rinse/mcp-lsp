@@ -15,7 +15,7 @@ import { RenameParams } from "./types/RenameRequest";
 import { ResponseMessage } from "./types/ResponseMessage";
 import { TypeDefinition, TypeDefinitionParams, TypeDefinitionT } from "./types/TypeDefinitionRequest";
 import { WorkspaceEdit, WorkspaceEditT } from "./types/WorkspaceEdit";
-import { logger } from "../utils/logger";
+import { logger } from "../utils/loggers";
 
 export class LSPServerExImpl implements LSPServerEx {
   constructor(private server: LSPServer) {}
@@ -24,9 +24,9 @@ export class LSPServerExImpl implements LSPServerEx {
     logger.debug("[LSP] Initializing LSP server with params:", params);
     const result = await this.server.sendRequest('initialize', params);
     if (result.result && typeof result.result === 'object' && 'capabilities' in result.result) {
-      logger.info("[LSP] Server capabilities:", JSON.stringify(result.result.capabilities, null, 2));
+      logger.info("[LSP] Server capabilities:", result.result.capabilities);
     }
-    logger.debug("[LSP] Full initialization result:", JSON.stringify(result, null, 2));
+    logger.debug("[LSP] Full initialization result:", result);
     return result;
   }
 
