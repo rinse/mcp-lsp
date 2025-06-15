@@ -104,7 +104,7 @@ async function main(): Promise<void> {
       } satisfies ClientCapabilities,
       trace: 'verbose',
     });
-    logger.info('Result of initialize:', resultInitialize);
+    logger.info('Result of initialize', { result: resultInitialize });
     await lspServerEx.initialized({});
     logger.info('TypeScript LSP initialized successfully');
   } catch (error) {

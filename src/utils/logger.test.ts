@@ -117,5 +117,26 @@ describe('Logger', () => {
       expect(timestamp).toBeInstanceOf(Date);
       expect(timestamp.getTime()).not.toBeNaN();
     });
+
+    it('should not show [object Object] when logging objects properly', () => {
+      const testObject = { id: 123, name: 'test', nested: { value: 'data' } };
+      testLogger.info('Test message with object', { data: testObject });
+
+      expect(logBuffer).toHaveLength(1);
+      const logEntry = logBuffer[0];
+      expect(logEntry).not.toContain('[object Object]');
+      expect(logEntry).toContain('"data":{"id":123,"name":"test","nested":{"value":"data"}}');
+    });
+
+    it('should handle logger.warn with structured object correctly', () => {
+      const resultObject = { type: 'invalid', code: 500, details: { reason: 'bad data' } };
+      testLogger.warn('Invalid result type', { result: resultObject });
+
+      expect(logBuffer).toHaveLength(1);
+      const logEntry = logBuffer[0];
+      expect(logEntry).not.toContain('[object Object]');
+      expect(logEntry).toContain('[warn]: Invalid result type');
+      expect(logEntry).toContain('"result":{"type":"invalid","code":500,"details":{"reason":"bad data"}}');
+    });
   });
 });

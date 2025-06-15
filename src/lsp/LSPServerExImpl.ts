@@ -105,7 +105,7 @@ export class LSPServerExImpl implements LSPServerEx {
     if (CodeActionResultT.is(result.result)) {
       return result.result;
     }
-    logger.warn("[LSP] Invalid code action result type:", result.result);
+    logger.warn("[LSP] Invalid code action result type", { result: result.result });
     return null;
   }
 
@@ -119,7 +119,7 @@ export class LSPServerExImpl implements LSPServerEx {
     if (ExecuteCommandResultT.is(result.result)) {
       return result.result;
     }
-    logger.warn("[LSP] Invalid execute command result type:", result.result);
+    logger.warn("[LSP] Invalid execute command result type", { result: result.result });
     return null;
   }
 
