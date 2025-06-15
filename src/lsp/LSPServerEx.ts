@@ -1,8 +1,10 @@
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from "./types/ApplyWorkspaceEditParams";
+import { CodeActionParams, CodeActionResult } from "./types/CodeActionRequest";
 import { CompletionParams, CompletionResult } from "./types/CompletionRequest";
 import { Definition, DefinitionParams } from "./types/DefinitionRequest";
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
 import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
+import { ExecuteCommandParams, ExecuteCommandResult } from "./types/ExecuteCommandRequest";
 import { Hover, HoverParams } from "./types/HoverRequest";
 import { Implementation, ImplementationParams } from "./types/ImplementationRequest";
 import { InitializeParams } from "./types/Initialize";
@@ -25,5 +27,7 @@ export interface LSPServerEx {
   references(params: ReferenceParams): Promise<References>;
   typeDefinition(params: TypeDefinitionParams): Promise<TypeDefinition>;
   rename(params: RenameParams): Promise<WorkspaceEdit | null>;
+  codeAction(params: CodeActionParams): Promise<CodeActionResult>;
+  executeCommand(params: ExecuteCommandParams): Promise<ExecuteCommandResult>;
   applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult>;
 }
