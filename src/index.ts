@@ -6,14 +6,14 @@ import {
   McpError,
 } from '@modelcontextprotocol/sdk/types.js';
 
+import { createLSPClientCapabilities } from './lsp/LSPClientCapabilities.js';
 import { LSPManager } from './lsp/LSPManager.js';
 import { LSPServerEx } from './lsp/LSPServerEx.js';
 import { LSPServerExImpl } from './lsp/LSPServerExImpl.js';
 import { LSPServerStream } from './lsp/LSPServerStream.js';
-import { logger } from './utils/logger.js';
-import { createToolMap } from './tools/ToolMap.js';
-import { createLSPClientCapabilities } from './lsp/LSPClientCapabilities.js';
 import { createMCPServer } from './mcp/MSPServer.js';
+import { createToolMap } from './tools/ToolMap.js';
+import { logger } from './utils/loggers.js';
 
 // Call the main function, disregarding a returned promise object.
 void main();

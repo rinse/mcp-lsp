@@ -2,7 +2,7 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { CallToolRequest, CallToolRequestSchema, ErrorCode, ListToolsRequestSchema, McpError, ServerResult } from '@modelcontextprotocol/sdk/types.js';
 
 import { MCPTool } from '../tools/MCPTool.js';
-import { logger } from '../utils/logger.js';
+import { logger } from '../utils/loggers.js';
 
 export function createMCPServer(toolMap: Map<string, MCPTool>): Server {
   const server = new Server(
