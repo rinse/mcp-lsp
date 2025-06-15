@@ -43,10 +43,12 @@ describe('MCPToolOutgoingCalls', () => {
       references: jest.fn(),
       typeDefinition: jest.fn(),
       rename: jest.fn(),
-      applyEdit: jest.fn(),
       prepareCallHierarchy: jest.fn(),
       incomingCalls: jest.fn(),
       outgoingCalls: outgoingCallsSpy,
+      codeAction: jest.fn(),
+      executeCommand: jest.fn(),
+      applyEdit: jest.fn(),
     };
     lspManager = new LSPManager(mockLSPServerEx);
     mcpToolOutgoingCalls = new MCPToolOutgoingCalls(lspManager);

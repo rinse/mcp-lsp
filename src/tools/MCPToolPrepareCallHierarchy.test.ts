@@ -29,10 +29,12 @@ describe('MCPToolPrepareCallHierarchy', () => {
       references: jest.fn(),
       typeDefinition: jest.fn(),
       rename: jest.fn(),
-      applyEdit: jest.fn(),
       prepareCallHierarchy: prepareCallHierarchySpy,
       incomingCalls: jest.fn(),
       outgoingCalls: jest.fn(),
+      codeAction: jest.fn(),
+      executeCommand: jest.fn(),
+      applyEdit: jest.fn(),
     };
     lspManager = new LSPManager(mockLSPServerEx);
     mcpToolPrepareCallHierarchy = new MCPToolPrepareCallHierarchy(lspManager);
