@@ -1,14 +1,9 @@
 import { spawn, type ChildProcess } from 'child_process';
 
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
   ErrorCode,
   McpError,
-  type CallToolRequest,
-  type ServerResult,
 } from '@modelcontextprotocol/sdk/types.js';
 
 import { LSPManager } from './lsp/LSPManager.js';
@@ -18,6 +13,7 @@ import { LSPServerStream } from './lsp/LSPServerStream.js';
 import { logger } from './utils/logger.js';
 import { createToolMap } from './tools/ToolMap.js';
 import { createLSPClientCapabilities } from './lsp/LSPClientCapabilities.js';
+import { createMCPServer } from './mcp/MSPServer.js';
 
 // Call the main function, disregarding a returned promise object.
 void main();
@@ -40,31 +36,7 @@ async function main(): Promise<void> {
     const lspManager = new LSPManager(lspServerEx);
     const toolMap = createToolMap(lspManager);
     // MCP server instance
-    const mcpServer = new Server(
-      {
-        name: 'mcp-lsp',
-        version: '0.1.0',
-      },
-      {
-        capabilities: {
-          tools: {},
-        },
-      },
-    );
-    // Set up request handlers
-    mcpServer.setRequestHandler(ListToolsRequestSchema, () => {
-      return {
-        tools: Array.from(toolMap.values()).map(tool => tool.listItem()),
-      } satisfies ServerResult;
-    });
-    mcpServer.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest, extra) => {
-      logger.debug("[MCP] CallToolRequest received", { request, extra });
-      const tool = toolMap.get(request.params.name);
-      if (tool !== undefined) {
-        return await tool.handle(request.params.arguments);
-      }
-      throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${request.params.name}`);
-    });
+    const mcpServer = createMCPServer(toolMap);
     const transport = new StdioServerTransport();
     await mcpServer.connect(transport);
     logger.info('MCP-LSP server running on stdio');
