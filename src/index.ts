@@ -15,9 +15,9 @@ import { LSPManager } from './lsp/LSPManager.js';
 import { LSPServerEx } from './lsp/LSPServerEx.js';
 import { LSPServerExImpl } from './lsp/LSPServerExImpl.js';
 import { LSPServerStream } from './lsp/LSPServerStream.js';
-import { ClientCapabilities } from './lsp/types/clientcapabilities/ClientCapabilities.js';
 import { logger } from './utils/logger.js';
 import { createToolMap } from './tools/ToolMap.js';
+import { createLSPClientCapabilities } from './lsp/LSPClientCapabilities.js';
 
 // Call the main function, disregarding a returned promise object.
 void main();
@@ -77,14 +77,7 @@ async function main(): Promise<void> {
     const resultInitialize = await lspServerEx.initialize({
       processId: process.pid,
       rootUri: `file://${process.cwd()}`,
-      capabilities: {
-        workspace: {
-          workspaceEdit: {
-            documentChanges: false,
-            resourceOperations: ['create', 'rename', 'delete'],
-          },
-        },
-      } satisfies ClientCapabilities,
+      capabilities: createLSPClientCapabilities(),
       trace: 'verbose',
     });
     logger.info('Result of initialize', { result: resultInitialize });
