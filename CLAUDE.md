@@ -6,6 +6,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is an MCP (Model Context Protocol) server that bridges TypeScript Language Server Protocol (LSP) capabilities to MCP tools. The server enables Claude Code to interact with TypeScript projects through LSP features like hover information and symbol renaming.
 
+## Predefined Tasks
+
+When a user provides instructions in the format `*<PREDEFINED_TASK>`, Claude should:
+
+1. **Read the corresponding task file**: Look for `.claude/predefined-tasks/<PREDEFINED_TASK>.md`
+2. **Execute the task**: If the file exists, read its contents and execute the instructions within it
+3. **Report missing tasks**: If the file doesn't exist, inform the user that the predefined task is not found and wait for further instructions
+
+**Examples:**
+- `*ready-for-review` → Read and execute `.claude/predefined-tasks/ready-for-review.md`
+- `*unknown-task` → Report that `.claude/predefined-tasks/unknown-task.md` does not exist
+
+This system enables users to define reusable, complex workflows that can be triggered with simple commands.
+
 ## IMPORTANT: Preferred Workflow
 
 **ALWAYS use the MCP-LSP tools instead of manual editing when possible.** This is significantly more efficient and saves tokens while ensuring accuracy.
@@ -61,47 +75,6 @@ After editing code, always run:
 - `npm run build` - Ensure code compiles without errors
 - `npm test` - Verify all tests pass
 - `npm run lint` - Check code style compliance
-
-### Testing the MCP Server
-
-The MCP server is already configured and accessible. To test changes:
-
-```bash
-npm run build
-```
-
-After rebuilding, the server at `out/index.js` will reflect your changes and can be tested directly.
-
-### Running TypeScript Language Server
-
-TypeScript Language Server starts with the following command.
-
-```bash
-npm run typescript-language-server
-```
-
-It communicates with stdio in [LSP](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/).
-
-## How to communicate with language servers
-
-First, you send an `initialize` request.
-
-```
-Content-Length: 76\r\n
-\r\n
-{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"capabilities": {}}}
-```
-
-After you received an `initialize` response, you send the `initialized` notification.
-
-```
-Content-Length: 59\r\n
-\r\n
-{"jsonrpc":"2.1","id":1,"method":"initialized","params":{}}
-```
-
-Because it is a notification, the server won't respond to it.
-Now you can send any requests as you want.
 
 ## Architecture
 
@@ -185,6 +158,50 @@ Rename a symbol at a specific position in a TypeScript file.
 - `newName` (string): The new name for the symbol
 
 **Returns:** Successfully applies the rename across all files and reports the changes made.
+
+### codeAction
+Get code actions (quick fixes, refactorings, source actions) for a range in a TypeScript file.
+
+**Parameters:**
+- `uri` (string): File URI (e.g., file:///path/to/file.ts)
+- `line` (number): Start line number (0-based)
+- `character` (number): Start character position (0-based)
+- `endLine` (number): End line number (0-based)
+- `endCharacter` (number): End character position (0-based)
+- `diagnostics` (optional): Array of diagnostic objects to filter code actions
+- `only` (optional): Array of CodeActionKind strings to filter by action type
+
+**Returns:** List of available code actions with both human-readable descriptions and structured JSON objects that can be directly copied and passed to the `executeCodeAction` tool.
+
+### executeCodeAction
+Execute a code action by applying its WorkspaceEdit or running its Command.
+
+**IMPORTANT:** This tool should be used AFTER the `codeAction` tool to actually apply the suggested fixes, refactorings, or source actions.
+
+**Typical Workflow:**
+1. Use `codeAction` tool to get available code actions for a range
+2. Choose a code action from the results 
+3. Use `executeCodeAction` tool to apply the selected code action
+
+**Parameters:**
+- `codeAction` (object): The complete CodeAction object from codeAction tool results
+  - Must include the `title` field
+  - Can contain `edit` (WorkspaceEdit) and/or `command` (Command) fields
+  - Other metadata fields like `kind`, `diagnostics` are preserved
+
+**Returns:** 
+- Success/failure status for WorkspaceEdit application
+- Success/failure status for Command execution  
+- Any command results returned by the language server
+- Clear error messages if execution fails
+
+**Example Usage:**
+```
+1. Get code actions: codeAction tool → returns list of actions with structured JSON
+2. Copy JSON from "📋 For executeCodeAction tool:" section
+3. Execute: executeCodeAction tool with the copied JSON object
+4. Verification: Action is applied and files are modified
+```
 
 ## Documentation Resources
 

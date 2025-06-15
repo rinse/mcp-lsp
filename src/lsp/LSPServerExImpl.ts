@@ -2,9 +2,11 @@ import { LSPServer } from "./LSPServer";
 import { LSPServerEx as LSPServerEx } from "./LSPServerEx";
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult, ApplyWorkspaceEditResultT } from "./types/ApplyWorkspaceEditParams";
 import { CallHierarchyItem, CallHierarchyIncomingCall, CallHierarchyIncomingCallsParams, CallHierarchyOutgoingCall, CallHierarchyOutgoingCallsParams, CallHierarchyPrepareParams, CallHierarchyItemArrayT, CallHierarchyIncomingCallArrayT, CallHierarchyOutgoingCallArrayT } from "./types/CallHierarchyRequest";
+import { CodeActionParams, CodeActionResult, CodeActionResultT } from "./types/CodeActionRequest";
 import { Definition, DefinitionParams, DefinitionT } from "./types/DefinitionRequest";
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
 import { DidOpenTextDocumentParams } from "./types/DidOpenTextDocument";
+import { ExecuteCommandParams, ExecuteCommandResult, ExecuteCommandResultT } from "./types/ExecuteCommandRequest";
 import { Hover, HoverParams, HoverT } from "./types/HoverRequest";
 import { Implementation, ImplementationParams, ImplementationT } from "./types/ImplementationRequest";
 import { InitializeParams } from "./types/Initialize";
@@ -124,6 +126,31 @@ export class LSPServerExImpl implements LSPServerEx {
     if (CallHierarchyOutgoingCallArrayT.is(result.result)) {
       return result.result;
     }
+    return null;
+  }
+
+  async codeAction(params: CodeActionParams): Promise<CodeActionResult> {
+    logger.debug("[LSP] Requesting code action with params:", params);
+    const result = await this.server.sendRequest('textDocument/codeAction', params);
+    logger.debug("[LSP] Code action request completed with result:", result);
+    if (CodeActionResultT.is(result.result)) {
+      return result.result;
+    }
+    logger.warn("[LSP] Invalid code action result type:", result.result);
+    return null;
+  }
+
+  async executeCommand(params: ExecuteCommandParams): Promise<ExecuteCommandResult> {
+    logger.debug("[LSP] Executing command with params:", params);
+    const result = await this.server.sendRequest('workspace/executeCommand', params);
+    logger.debug("[LSP] Execute command request completed with result:", result);
+    if (result.result === undefined) {
+      return null;
+    }
+    if (ExecuteCommandResultT.is(result.result)) {
+      return result.result;
+    }
+    logger.warn("[LSP] Invalid execute command result type:", result.result);
     return null;
   }
 

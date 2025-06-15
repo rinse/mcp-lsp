@@ -39,6 +39,8 @@ describe('MCPToolRename', () => {
       references: jest.fn(),
       typeDefinition: jest.fn(),
       rename: renameSpy,
+      codeAction: jest.fn(),
+      executeCommand: jest.fn(),
       applyEdit: jest.fn(),
       prepareCallHierarchy: jest.fn(),
       incomingCalls: jest.fn(),

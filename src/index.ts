@@ -17,7 +17,9 @@ import { LSPServerExImpl } from './lsp/LSPServerExImpl.js';
 import { LSPServerStream } from './lsp/LSPServerStream.js';
 import { ClientCapabilities } from './lsp/types/clientcapabilities/ClientCapabilities.js';
 import { MCPTool } from './tools/MCPTool.js';
+import { MCPToolCodeAction } from './tools/MCPToolCodeAction.js';
 import { MCPToolDefinition } from './tools/MCPToolDefinition.js';
+import { MCPToolExecuteCodeAction } from './tools/MCPToolExecuteCodeAction.js';
 import { MCPToolHover } from './tools/MCPToolHover.js';
 import { MCPToolImplementation } from './tools/MCPToolImplementation.js';
 import { MCPToolIncomingCalls } from './tools/MCPToolIncomingCalls.js';
@@ -58,6 +60,8 @@ async function main(): Promise<void> {
     toolMap.set('prepareCallHierarchy', new MCPToolPrepareCallHierarchy(lspManager));
     toolMap.set('incomingCalls', new MCPToolIncomingCalls(lspManager));
     toolMap.set('outgoingCalls', new MCPToolOutgoingCalls(lspManager));
+    toolMap.set('codeAction', new MCPToolCodeAction(lspManager));
+    toolMap.set('executeCodeAction', new MCPToolExecuteCodeAction(lspManager));
     // MCP server instance
     const mcpServer = new Server(
       {
