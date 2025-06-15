@@ -36,6 +36,7 @@ describe('MCPToolExecuteCodeAction', () => {
       didOpen: jest.fn().mockResolvedValue(undefined),
       didClose: jest.fn().mockResolvedValue(undefined),
       hover: jest.fn(),
+      completion: jest.fn(),
       definition: jest.fn(),
       implementation: jest.fn(),
       references: jest.fn(),
