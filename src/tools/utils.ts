@@ -1,4 +1,5 @@
 import { Location } from "../lsp/types/Location";
+import { Range } from "../lsp/types/Range";
 
 /**
  * Convert a Location to a human-readable string representation.
@@ -8,15 +9,23 @@ import { Location } from "../lsp/types/Location";
  */
 export function locationToString(location: Location): string {
   const filePath = location.uri.replace('file://', '');
-  const start = location.range.start;
-  const end = location.range.end;
-  const startPos = `${start.line + 1}:${start.character + 1}`;
+  return `${filePath}:${rangeToString(location.range)}`;
+}
 
+/**
+ * Convert a Range to a human-readable string representation.
+ *
+ * @param range - The LSP Range object
+ * @returns A string in the format "X:Y" or "X:Y-A:B" for ranges
+ */
+export function rangeToString(range: Range): string {
+  const start = range.start;
+  const end = range.end;
+  const startPos = `${start.line + 1}:${start.character + 1}`;
   // For single-position ranges (same start and end)
   if (start.line === end.line && start.character === end.character) {
-    return `${filePath}:${startPos}`;
+    return startPos;
   }
-
   // For multi-line ranges, use Go-style format
-  return `${filePath}:${startPos}-${end.line + 1}:${end.character + 1}`;
+  return `${startPos}-${end.line + 1}:${end.character + 1}`;
 }
