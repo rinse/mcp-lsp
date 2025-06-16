@@ -8,7 +8,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import * as t from "io-ts";
 
-import { callHierarchyItemToString } from "./formats/CallHierarchy";
+import { callHierarchyItemToString } from "./formats/CallHierarchyItem";
 import { MCPTool } from "./MCPTool";
 import { rangeToString } from "./utils";
 import { LSPManager } from "../lsp/LSPManager";

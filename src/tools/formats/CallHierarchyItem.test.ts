@@ -1,4 +1,4 @@
-import { callHierarchyItemToString } from './CallHierarchy';
+import { callHierarchyItemToString } from './CallHierarchyItem';
 import { CallHierarchyItem, SymbolKind } from '../../lsp/types/CallHierarchyRequest';
 
 describe('callHierarchyItemToString', () => {
