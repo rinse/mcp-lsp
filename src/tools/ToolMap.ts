@@ -1,11 +1,11 @@
 import { MCPTool } from "./MCPTool.js";
+import { MCPToolCallees } from "./MCPToolCallees.js";
+import { MCPToolCallHierarchy } from "./MCPToolCallHierarchy.js";
 import { MCPToolCodeAction } from "./MCPToolCodeAction.js";
 import { MCPToolDefinition } from "./MCPToolDefinition.js";
 import { MCPToolExecuteCodeAction } from "./MCPToolExecuteCodeAction.js";
 import { MCPToolHover } from "./MCPToolHover.js";
 import { MCPToolImplementation } from "./MCPToolImplementation.js";
-import { MCPToolIncomingCalls } from "./MCPToolIncomingCalls.js";
-import { MCPToolOutgoingCalls } from "./MCPToolOutgoingCalls.js";
 import { MCPToolReferences } from "./MCPToolReferences.js";
 import { MCPToolRename } from "./MCPToolRename.js";
 import { MCPToolTypeDefinition } from "./MCPToolTypeDefinition.js";
@@ -21,7 +21,7 @@ export function createToolMap(lspManager: LSPManager): Map<string, MCPTool> {
   toolMap.set('rename', new MCPToolRename(lspManager));
   toolMap.set('codeAction', new MCPToolCodeAction(lspManager));
   toolMap.set('executeCodeAction', new MCPToolExecuteCodeAction(lspManager));
-  toolMap.set('incomingCalls', new MCPToolIncomingCalls(lspManager));
-  toolMap.set('outgoingCalls', new MCPToolOutgoingCalls(lspManager));
+  toolMap.set('callHierarchy', new MCPToolCallHierarchy(lspManager));
+  toolMap.set('callees', new MCPToolCallees(lspManager));
   return toolMap;
 }

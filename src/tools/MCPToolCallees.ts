@@ -12,21 +12,21 @@ import { MCPTool } from "./MCPTool";
 import { LSPManager } from "../lsp/LSPManager";
 import { CallHierarchyOutgoingCall } from "../lsp/types/CallHierarchyRequest";
 
-export class MCPToolOutgoingCalls implements MCPTool {
+export class MCPToolCallees implements MCPTool {
   constructor(private manager: LSPManager) {}
 
   listItem(): Tool {
-    return listItemOutgoingCalls();
+    return listItemCallees();
   }
 
   async handle(params: CallToolRequest["params"]["arguments"]): Promise<CallToolResult> {
-    return handleOutgoingCalls(this.manager, params);
+    return handleCallees(this.manager, params);
   }
 }
 
-function listItemOutgoingCalls(): Tool {
+function listItemCallees(): Tool {
   return {
-    name: 'outgoingCalls',
+    name: 'callees',
     description: 'Find all functions/methods that a specific function calls',
     inputSchema: {
       type: 'object',
@@ -49,19 +49,19 @@ function listItemOutgoingCalls(): Tool {
   };
 }
 
-const OutgoingCallsParamsT = t.type({
+const CalleesParamsT = t.type({
   uri: t.string,
   line: t.number,
   character: t.number,
 });
 
-async function handleOutgoingCalls(
+async function handleCallees(
   manager: LSPManager,
   params: CallToolRequest["params"]["arguments"],
 ): Promise<CallToolResult> {
-  const decoded = OutgoingCallsParamsT.decode(params);
+  const decoded = CalleesParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for outgoingCalls tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for callees tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character } = decoded.right;
   try {
@@ -71,29 +71,29 @@ async function handleOutgoingCalls(
       position: { line, character },
     });
     if (prepareResult === null || prepareResult.length === 0) {
-      return outgoingCallsNothingContent();
+      return calleesNothingContent();
     }
     // Use the first item to get outgoing calls
     const result = await manager.outgoingCalls({ item: prepareResult[0] });
     return result !== null
-      ? outgoingCallsToCallToolResult(result)
-      : outgoingCallsNothingContent();
+      ? calleesToCallToolResult(result)
+      : calleesNothingContent();
   } catch (error) {
     throw new McpError(ErrorCode.InternalError, `Failed to get outgoing calls: ${String(error)}`);
   }
 }
 
-function outgoingCallsToCallToolResult(calls: CallHierarchyOutgoingCall[]): CallToolResult {
+function calleesToCallToolResult(calls: CallHierarchyOutgoingCall[]): CallToolResult {
   return {
-    content: outgoingCallsToTextContents(calls),
+    content: calleesToTextContents(calls),
   };
 }
 
-function outgoingCallsToTextContents(calls: CallHierarchyOutgoingCall[]): TextContent[] {
+function calleesToTextContents(calls: CallHierarchyOutgoingCall[]): TextContent[] {
   if (calls.length === 0) {
     return [{
       type: 'text',
-      text: 'No outgoing calls found.',
+      text: 'No callees found.',
     }];
   }
   return [{
@@ -102,11 +102,11 @@ function outgoingCallsToTextContents(calls: CallHierarchyOutgoingCall[]): TextCo
   }];
 }
 
-function outgoingCallsNothingContent(): CallToolResult {
+function calleesNothingContent(): CallToolResult {
   return {
     content: [{
       type: 'text',
-      text: 'No outgoing calls available for this item.',
+      text: 'No callees available for this item.',
     }],
   };
 }

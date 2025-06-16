@@ -12,21 +12,21 @@ import { MCPTool } from "./MCPTool";
 import { LSPManager } from "../lsp/LSPManager";
 import { CallHierarchyIncomingCall } from "../lsp/types/CallHierarchyRequest";
 
-export class MCPToolIncomingCalls implements MCPTool {
+export class MCPToolCallHierarchy implements MCPTool {
   constructor(private manager: LSPManager) {}
 
   listItem(): Tool {
-    return listItemIncomingCalls();
+    return listItemCallHierarchy();
   }
 
   async handle(params: CallToolRequest["params"]["arguments"]): Promise<CallToolResult> {
-    return handleIncomingCalls(this.manager, params);
+    return handleCallHierarchy(this.manager, params);
   }
 }
 
-function listItemIncomingCalls(): Tool {
+function listItemCallHierarchy(): Tool {
   return {
-    name: 'incomingCalls',
+    name: 'callHierarchy',
     description: 'Find all locations that call a specific function/method',
     inputSchema: {
       type: 'object',
@@ -49,19 +49,19 @@ function listItemIncomingCalls(): Tool {
   };
 }
 
-const IncomingCallsParamsT = t.type({
+const CallHierarchyParamsT = t.type({
   uri: t.string,
   line: t.number,
   character: t.number,
 });
 
-async function handleIncomingCalls(
+async function handleCallHierarchy(
   manager: LSPManager,
   params: CallToolRequest["params"]["arguments"],
 ): Promise<CallToolResult> {
-  const decoded = IncomingCallsParamsT.decode(params);
+  const decoded = CallHierarchyParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for incomingCalls tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for callHierarchy tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character } = decoded.right;
   try {
@@ -71,25 +71,25 @@ async function handleIncomingCalls(
       position: { line, character },
     });
     if (prepareResult === null || prepareResult.length === 0) {
-      return incomingCallsNothingContent();
+      return callHierarchyNothingContent();
     }
     // Use the first item to get incoming calls
     const result = await manager.incomingCalls({ item: prepareResult[0] });
     return result !== null
-      ? incomingCallsToCallToolResult(result)
-      : incomingCallsNothingContent();
+      ? callHierarchyToCallToolResult(result)
+      : callHierarchyNothingContent();
   } catch (error) {
     throw new McpError(ErrorCode.InternalError, `Failed to get incoming calls: ${String(error)}`);
   }
 }
 
-function incomingCallsToCallToolResult(calls: CallHierarchyIncomingCall[]): CallToolResult {
+function callHierarchyToCallToolResult(calls: CallHierarchyIncomingCall[]): CallToolResult {
   return {
-    content: incomingCallsToTextContents(calls),
+    content: callHierarchyToTextContents(calls),
   };
 }
 
-function incomingCallsToTextContents(calls: CallHierarchyIncomingCall[]): TextContent[] {
+function callHierarchyToTextContents(calls: CallHierarchyIncomingCall[]): TextContent[] {
   if (calls.length === 0) {
     return [{
       type: 'text',
@@ -102,7 +102,7 @@ function incomingCallsToTextContents(calls: CallHierarchyIncomingCall[]): TextCo
   }];
 }
 
-function incomingCallsNothingContent(): CallToolResult {
+function callHierarchyNothingContent(): CallToolResult {
   return {
     content: [{
       type: 'text',
