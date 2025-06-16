@@ -15,6 +15,7 @@ describe('MCPToolOutgoingCalls', () => {
   let lspManager: LSPManager;
   let mcpToolOutgoingCalls: MCPToolOutgoingCalls;
   let outgoingCallsSpy: jest.MockedFunction<LSPServerEx['outgoingCalls']>;
+  let prepareCallHierarchySpy: jest.MockedFunction<LSPServerEx['prepareCallHierarchy']>;
 
   const mockCallHierarchyItem: CallHierarchyItem = {
     name: 'testFunction',
@@ -32,6 +33,7 @@ describe('MCPToolOutgoingCalls', () => {
 
   beforeEach(() => {
     outgoingCallsSpy = jest.fn();
+    prepareCallHierarchySpy = jest.fn();
     mockLSPServerEx = {
       initialize: jest.fn(),
       initialized: jest.fn(),
@@ -43,7 +45,7 @@ describe('MCPToolOutgoingCalls', () => {
       references: jest.fn(),
       typeDefinition: jest.fn(),
       rename: jest.fn(),
-      prepareCallHierarchy: jest.fn(),
+      prepareCallHierarchy: prepareCallHierarchySpy,
       incomingCalls: jest.fn(),
       outgoingCalls: outgoingCallsSpy,
       codeAction: jest.fn(),
@@ -61,8 +63,10 @@ describe('MCPToolOutgoingCalls', () => {
       expect(tool.name).toBe('outgoingCalls');
       expect(tool.description).toBe('Find all functions/methods that a specific function calls');
       expect(tool.inputSchema.type).toBe('object');
-      expect(tool.inputSchema.properties).toHaveProperty('item');
-      expect(tool.inputSchema.required).toEqual(['item']);
+      expect(tool.inputSchema.properties).toHaveProperty('uri');
+      expect(tool.inputSchema.properties).toHaveProperty('line');
+      expect(tool.inputSchema.properties).toHaveProperty('character');
+      expect(tool.inputSchema.required).toEqual(['uri', 'line', 'character']);
     });
   });
 
@@ -92,14 +96,18 @@ describe('MCPToolOutgoingCalls', () => {
         },
       ];
 
+      prepareCallHierarchySpy.mockResolvedValue([mockCallHierarchyItem]);
       outgoingCallsSpy.mockResolvedValue(mockOutgoingCalls);
 
       const params = {
-        item: mockCallHierarchyItem,
+        uri: 'file:///test.ts',
+        line: 5,
+        character: 9,
       };
 
       const result = await mcpToolOutgoingCalls.handle(params);
 
+      expect(prepareCallHierarchySpy).toHaveBeenCalledWith({ textDocument: { uri: 'file:///test.ts' }, position: { line: 5, character: 9 } });
       expect(outgoingCallsSpy).toHaveBeenCalledWith({ item: mockCallHierarchyItem });
 
       expect(result.content).toHaveLength(1);
@@ -110,10 +118,13 @@ describe('MCPToolOutgoingCalls', () => {
     });
 
     it('should handle null response', async () => {
+      prepareCallHierarchySpy.mockResolvedValue([mockCallHierarchyItem]);
       outgoingCallsSpy.mockResolvedValue(null);
 
       const params = {
-        item: mockCallHierarchyItem,
+        uri: 'file:///test.ts',
+        line: 5,
+        character: 9,
       };
 
       const result = await mcpToolOutgoingCalls.handle(params);
@@ -126,10 +137,13 @@ describe('MCPToolOutgoingCalls', () => {
     });
 
     it('should handle empty array response', async () => {
+      prepareCallHierarchySpy.mockResolvedValue([mockCallHierarchyItem]);
       outgoingCallsSpy.mockResolvedValue([]);
 
       const params = {
-        item: mockCallHierarchyItem,
+        uri: 'file:///test.ts',
+        line: 5,
+        character: 9,
       };
 
       const result = await mcpToolOutgoingCalls.handle(params);
@@ -141,19 +155,42 @@ describe('MCPToolOutgoingCalls', () => {
       });
     });
 
+    it('should handle when prepareCallHierarchy returns empty results', async () => {
+      prepareCallHierarchySpy.mockResolvedValue([]);
+
+      const params = {
+        uri: 'file:///test.ts',
+        line: 5,
+        character: 9,
+      };
+
+      const result = await mcpToolOutgoingCalls.handle(params);
+
+      expect(result.content).toHaveLength(1);
+      expect(result.content[0]).toEqual({
+        type: 'text',
+        text: 'No outgoing calls available for this item.',
+      });
+    });
+
     it('should throw McpError for invalid parameters', async () => {
       const invalidParams = {
-        item: { invalid: 'item' },
+        uri: 123,  // invalid type
+        line: 'invalid',
+        character: 9,
       };
 
       await expect(mcpToolOutgoingCalls.handle(invalidParams)).rejects.toThrow(McpError);
     });
 
     it('should throw McpError when LSP request fails', async () => {
+      prepareCallHierarchySpy.mockResolvedValue([mockCallHierarchyItem]);
       outgoingCallsSpy.mockRejectedValue(new Error('LSP error'));
 
       const params = {
-        item: mockCallHierarchyItem,
+        uri: 'file:///test.ts',
+        line: 5,
+        character: 9,
       };
 
       await expect(mcpToolOutgoingCalls.handle(params)).rejects.toThrow(McpError);

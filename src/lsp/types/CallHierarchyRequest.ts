@@ -104,16 +104,20 @@ export interface CallHierarchyItem {
   data?: LSPAny;
 }
 
-export const CallHierarchyItemT = t.type({
-  name: t.string,
-  kind: SymbolKindT,
-  tags: t.union([t.array(SymbolTagT), t.undefined]),
-  detail: t.union([t.string, t.undefined]),
-  uri: t.string,
-  range: RangeT,
-  selectionRange: RangeT,
-  data: t.union([t.any, t.undefined]),
-});
+export const CallHierarchyItemT = t.intersection([
+  t.type({
+    name: t.string,
+    kind: SymbolKindT,
+    uri: t.string,
+    range: RangeT,
+    selectionRange: RangeT,
+  }),
+  t.partial({
+    tags: t.array(SymbolTagT),
+    detail: t.string,
+    data: t.any,
+  }),
+]);
 
 /**
  * The parameter of a `callHierarchy/incomingCalls` request.

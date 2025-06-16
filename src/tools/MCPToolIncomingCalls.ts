@@ -10,7 +10,7 @@ import * as t from "io-ts";
 
 import { MCPTool } from "./MCPTool";
 import { LSPManager } from "../lsp/LSPManager";
-import { CallHierarchyIncomingCall, CallHierarchyItemT } from "../lsp/types/CallHierarchyRequest";
+import { CallHierarchyIncomingCall } from "../lsp/types/CallHierarchyRequest";
 
 export class MCPToolIncomingCalls implements MCPTool {
   constructor(private manager: LSPManager) {}
@@ -31,68 +31,28 @@ function listItemIncomingCalls(): Tool {
     inputSchema: {
       type: 'object',
       properties: {
-        item: {
-          type: 'object',
-          description: 'The CallHierarchyItem from prepareCallHierarchy',
-          properties: {
-            name: { type: 'string' },
-            kind: { type: 'number' },
-            uri: { type: 'string' },
-            range: {
-              type: 'object',
-              properties: {
-                start: {
-                  type: 'object',
-                  properties: {
-                    line: { type: 'number' },
-                    character: { type: 'number' },
-                  },
-                  required: ['line', 'character'],
-                },
-                end: {
-                  type: 'object',
-                  properties: {
-                    line: { type: 'number' },
-                    character: { type: 'number' },
-                  },
-                  required: ['line', 'character'],
-                },
-              },
-              required: ['start', 'end'],
-            },
-            selectionRange: {
-              type: 'object',
-              properties: {
-                start: {
-                  type: 'object',
-                  properties: {
-                    line: { type: 'number' },
-                    character: { type: 'number' },
-                  },
-                  required: ['line', 'character'],
-                },
-                end: {
-                  type: 'object',
-                  properties: {
-                    line: { type: 'number' },
-                    character: { type: 'number' },
-                  },
-                  required: ['line', 'character'],
-                },
-              },
-              required: ['start', 'end'],
-            },
-          },
-          required: ['name', 'kind', 'uri', 'range', 'selectionRange'],
+        uri: {
+          type: 'string',
+          description: 'File URI (e.g., file:///path/to/file.ts)',
+        },
+        line: {
+          type: 'number',
+          description: 'Line number (0-based)',
+        },
+        character: {
+          type: 'number',
+          description: 'Character position (0-based)',
         },
       },
-      required: ['item'],
+      required: ['uri', 'line', 'character'],
     },
   };
 }
 
 const IncomingCallsParamsT = t.type({
-  item: CallHierarchyItemT,
+  uri: t.string,
+  line: t.number,
+  character: t.number,
 });
 
 async function handleIncomingCalls(
@@ -103,9 +63,18 @@ async function handleIncomingCalls(
   if (decoded._tag === 'Left') {
     throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for incomingCalls tool: ${JSON.stringify(decoded.left)}`);
   }
-  const { item } = decoded.right;
+  const { uri, line, character } = decoded.right;
   try {
-    const result = await manager.incomingCalls({ item });
+    // First prepare call hierarchy
+    const prepareResult = await manager.prepareCallHierarchy({
+      textDocument: { uri },
+      position: { line, character },
+    });
+    if (prepareResult === null || prepareResult.length === 0) {
+      return incomingCallsNothingContent();
+    }
+    // Use the first item to get incoming calls
+    const result = await manager.incomingCalls({ item: prepareResult[0] });
     return result !== null
       ? incomingCallsToCallToolResult(result)
       : incomingCallsNothingContent();
