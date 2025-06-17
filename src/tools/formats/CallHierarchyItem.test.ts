@@ -35,12 +35,12 @@ describe('callHierarchyItemToString', () => {
         start: { line: 25, character: 8 },
         end: { line: 25, character: 21 },
       },
-      detail: 'req: Request, res: Response): Promise<void>',
+      detail: 'req: Request, res: Response',
     };
 
     const result = callHierarchyItemToString(item);
 
-    expect(result).toBe('handleRequest(req: Request, res: Response): Promise<void> at /src/server/RequestHandler.ts:25:8-25:21');
+    expect(result).toBe('handleRequest(req: Request, res: Response) at /src/server/RequestHandler.ts:25:8-25:21');
   });
 
   it('should format a class constructor correctly', () => {
@@ -56,7 +56,7 @@ describe('callHierarchyItemToString', () => {
         start: { line: 5, character: 2 },
         end: { line: 5, character: 13 },
       },
-      detail: 'name: string, age: number)',
+      detail: 'name: string, age: number',
     };
 
     const result = callHierarchyItemToString(item);
@@ -85,21 +85,21 @@ describe('callHierarchyItemToString', () => {
   });
 
   it('should handle different symbol kinds', () => {
-    const testCases: { kind: SymbolKind; expected: string }[] = [
-      { kind: SymbolKind.File, expected: 'File' },
-      { kind: SymbolKind.Module, expected: 'Module' },
-      { kind: SymbolKind.Namespace, expected: 'Namespace' },
-      { kind: SymbolKind.Package, expected: 'Package' },
-      { kind: SymbolKind.Class, expected: 'Class' },
-      { kind: SymbolKind.Interface, expected: 'Interface' },
-      { kind: SymbolKind.Variable, expected: 'Variable' },
-      { kind: SymbolKind.Constant, expected: 'Constant' },
-      { kind: SymbolKind.Property, expected: 'Property' },
-      { kind: SymbolKind.Enum, expected: 'Enum' },
-      { kind: SymbolKind.EnumMember, expected: 'EnumMember' },
+    const testCases: SymbolKind[] = [
+      SymbolKind.File,
+      SymbolKind.Module,
+      SymbolKind.Namespace,
+      SymbolKind.Package,
+      SymbolKind.Class,
+      SymbolKind.Interface,
+      SymbolKind.Variable,
+      SymbolKind.Constant,
+      SymbolKind.Property,
+      SymbolKind.Enum,
+      SymbolKind.EnumMember,
     ];
 
-    testCases.forEach(({ kind, expected }) => {
+    testCases.forEach((kind) => {
       const item: CallHierarchyItem = {
         name: 'testItem',
         kind,
@@ -173,12 +173,36 @@ describe('callHierarchyItemToString', () => {
         end: { line: 10, character: 27 },
       },
       tags: [SymbolTag.Deprecated],
-      detail: 'message: string): void',
+      detail: 'message: string',
     };
 
     const result = callHierarchyItemToString(item);
 
-    expect(result).toBe('[deprecated] deprecatedFunction(message: string): void at /src/deprecated.ts:10:9-10:27');
+    expect(result).toBe('[deprecated] deprecatedFunction(message: string) at /src/deprecated.ts:10:9-10:27');
+  });
+
+  it('should properly handle closing parentheses in detail field', () => {
+    // Test case where detail field contains just parameters (typical LSP response)
+    const itemWithParams: CallHierarchyItem = {
+      name: 'processData',
+      kind: SymbolKind.Function,
+      uri: 'file:///src/processor.ts',
+      range: {
+        start: { line: 10, character: 0 },
+        end: { line: 15, character: 0 },
+      },
+      selectionRange: {
+        start: { line: 10, character: 9 },
+        end: { line: 10, character: 20 },
+      },
+      detail: 'data: string, options: Options',
+    };
+
+    const result = callHierarchyItemToString(itemWithParams);
+    expect(result).toBe('processData(data: string, options: Options) at /src/processor.ts:10:9-10:20');
+    
+    // Ensure no double parentheses
+    expect(result).not.toContain('))');
   });
 
   it('should handle custom range parameter', () => {

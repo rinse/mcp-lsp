@@ -212,7 +212,7 @@ describe('MCPToolCallHierarchy', () => {
               end: { line: 25, character: 27 },
             },
             tags: [SymbolTag.Deprecated],
-            detail: 'arg1: string, arg2: number): Promise<void>',
+            detail: 'arg1: string, arg2: number',
           },
           fromRanges: [
             {
@@ -236,7 +236,7 @@ describe('MCPToolCallHierarchy', () => {
 
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Found 1 callers:\n[deprecated] deprecatedFunction(arg1: string, arg2: number): Promise<void> at /caller.ts:28:4-28:22',
+        text: 'Found 1 callers:\n[deprecated] deprecatedFunction(arg1: string, arg2: number) at /caller.ts:28:4-28:22',
       });
     });
   });

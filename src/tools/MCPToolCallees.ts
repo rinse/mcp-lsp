@@ -8,8 +8,8 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import * as t from "io-ts";
 
-import { MCPTool } from "./MCPTool";
 import { callHierarchyItemToString } from "./formats/CallHierarchyItem";
+import { MCPTool } from "./MCPTool";
 import { LSPManager } from "../lsp/LSPManager";
 import { CallHierarchyOutgoingCall } from "../lsp/types/CallHierarchyRequest";
 
