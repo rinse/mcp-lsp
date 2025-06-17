@@ -113,7 +113,7 @@ describe('MCPToolCallees', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Found 1 callee:\n  calledFunction (Function) at /called.ts:26:10\n    called at line 8:5-8:19',
+        text: 'Found 1 callees:\n/called.ts:25:9',
       });
     });
 
@@ -132,7 +132,7 @@ describe('MCPToolCallees', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No callees available for this item.',
+        text: 'No callees found for symbol at /test.ts:5:9',
       });
     });
 
@@ -151,7 +151,7 @@ describe('MCPToolCallees', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No callees found.',
+        text: 'No callees found for symbol at /test.ts:5:9',
       });
     });
 
@@ -169,7 +169,7 @@ describe('MCPToolCallees', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No callees available for this item.',
+        text: 'No callees found for symbol at /test.ts:5:9',
       });
     });
 

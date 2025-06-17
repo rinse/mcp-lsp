@@ -8,9 +8,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import * as t from "io-ts";
 
-import { callHierarchyItemToString } from "./formats/CallHierarchyItem";
 import { MCPTool } from "./MCPTool";
-import { rangeToString } from "./utils";
 import { LSPManager } from "../lsp/LSPManager";
 import { CallHierarchyIncomingCall } from "../lsp/types/CallHierarchyRequest";
 
@@ -73,49 +71,60 @@ async function handleCallHierarchy(
       position: { line, character },
     });
     if (prepareResult === null || prepareResult.length === 0) {
-      return callHierarchyNothingContent();
+      return callHierarchyNothingContent(uri, line, character);
     }
     // Use the first item to get incoming calls
     const result = await manager.incomingCalls({ item: prepareResult[0] });
     return result !== null
-      ? callHierarchyToCallToolResult(result)
-      : callHierarchyNothingContent();
+      ? callHierarchyToCallToolResult(result, uri, line, character)
+      : callHierarchyNothingContent(uri, line, character);
   } catch (error) {
     throw new McpError(ErrorCode.InternalError, `Failed to get incoming calls: ${String(error)}`);
   }
 }
 
-function callHierarchyToCallToolResult(calls: CallHierarchyIncomingCall[]): CallToolResult {
+function callHierarchyToCallToolResult(calls: CallHierarchyIncomingCall[], uri: string, line: number, character: number): CallToolResult {
   return {
-    content: callHierarchyToTextContents(calls),
+    content: callHierarchyToTextContents(calls, uri, line, character),
   };
 }
 
-function callHierarchyToTextContents(calls: CallHierarchyIncomingCall[]): TextContent[] {
+function callHierarchyToTextContents(calls: CallHierarchyIncomingCall[], uri: string, line: number, character: number): TextContent[] {
   if (calls.length === 0) {
     return [{
       type: 'text',
-      text: 'No incoming calls found.',
+      text: formatNoCallersFound(uri, line, character),
     }];
   }
-  const lines: string[] = [`Found ${calls.length} incoming call${calls.length > 1 ? 's' : ''}:`];
-  calls.forEach((call) => {
-    lines.push(`  ${callHierarchyItemToString(call.from)}`);
-    call.fromRanges.forEach((range) => {
-      lines.push(`    at line ${rangeToString(range)}`);
-    });
-  });
   return [{
     type: 'text',
-    text: lines.join('\n'),
+    text: formatMultipleCallers(calls),
   }];
 }
 
-function callHierarchyNothingContent(): CallToolResult {
+function formatMultipleCallers(calls: CallHierarchyIncomingCall[]): string {
+  const lines = [`Found ${calls.length} callers:`];
+
+  for (const call of calls) {
+    for (const range of call.fromRanges) {
+      const filePath = call.from.uri.replace('file://', '');
+      const line = range.start.line;
+      const character = range.start.character;
+      lines.push(`\n${filePath}:${line}:${character}`);
+    }
+  }
+
+  return lines.join('');
+}
+function formatNoCallersFound(uri: string, line: number, character: number): string {
+  const filePath = uri.replace('file://', '');
+  return `No callers found for symbol at ${filePath}:${line}:${character}`;
+}
+function callHierarchyNothingContent(uri: string, line: number, character: number): CallToolResult {
   return {
     content: [{
       type: 'text',
-      text: 'No incoming calls available for this item.',
+      text: formatNoCallersFound(uri, line, character),
     }],
   };
 }

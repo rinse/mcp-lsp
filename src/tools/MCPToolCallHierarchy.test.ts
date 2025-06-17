@@ -113,7 +113,7 @@ describe('MCPToolCallHierarchy', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Found 1 incoming call:\n  callerFunction (Function) at /caller.ts:16:10\n    at line 18:5-18:17',
+        text: 'Found 1 callers:\n/caller.ts:17:4',
       });
     });
 
@@ -132,7 +132,7 @@ describe('MCPToolCallHierarchy', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No incoming calls available for this item.',
+        text: 'No callers found for symbol at /test.ts:5:9',
       });
     });
 
@@ -151,7 +151,7 @@ describe('MCPToolCallHierarchy', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No incoming calls found.',
+        text: 'No callers found for symbol at /test.ts:5:9',
       });
     });
 
@@ -179,7 +179,7 @@ describe('MCPToolCallHierarchy', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No incoming calls available for this item.',
+        text: 'No callers found for symbol at /test.ts:5:9',
       });
     });
 
