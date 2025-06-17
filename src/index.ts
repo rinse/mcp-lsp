@@ -11,7 +11,7 @@ import { LSPManager } from './lsp/LSPManager.js';
 import { LSPServerEx } from './lsp/LSPServerEx.js';
 import { LSPServerExImpl } from './lsp/LSPServerExImpl.js';
 import { LSPServerStream } from './lsp/LSPServerStream.js';
-import { createMCPServer } from './mcp/MSPServer.js';
+import { createMCPServer } from './mcp/MCPServer.js';
 import { createToolMap } from './tools/ToolMap.js';
 import { logger } from './utils/loggers.js';
 
