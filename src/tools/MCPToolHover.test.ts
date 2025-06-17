@@ -34,6 +34,9 @@ describe('MCPToolHover', () => {
       codeAction: jest.fn(),
       executeCommand: jest.fn(),
       applyEdit: jest.fn(),
+      prepareCallHierarchy: jest.fn(),
+      incomingCalls: jest.fn(),
+      outgoingCalls: jest.fn(),
     };
     lspManager = new LSPManager(mockLSPServerEx);
     mcpToolHover = new MCPToolHover(lspManager);

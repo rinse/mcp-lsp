@@ -2,6 +2,7 @@ import { getLanguageIdentifier } from "./LanguageIdentifiers";
 import { LSPServerEx as LSPServerEx } from "./LSPServerEx";
 import { readFileAsync } from "../utils";
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from "./types/ApplyWorkspaceEditParams";
+import { CallHierarchyItem, CallHierarchyIncomingCall, CallHierarchyIncomingCallsParams, CallHierarchyOutgoingCall, CallHierarchyOutgoingCallsParams, CallHierarchyPrepareParams } from "./types/CallHierarchyRequest";
 import { CodeActionParams, CodeActionResult } from "./types/CodeActionRequest";
 import { Definition, DefinitionParams } from "./types/DefinitionRequest";
 import { ExecuteCommandParams, ExecuteCommandResult } from "./types/ExecuteCommandRequest";
@@ -78,6 +79,19 @@ export class LSPManager {
   async rename(params: RenameParams): Promise<WorkspaceEdit | null> {
     await this.openDocument(params.textDocument.uri);
     return await this.server.rename(params);
+  }
+
+  async prepareCallHierarchy(params: CallHierarchyPrepareParams): Promise<CallHierarchyItem[] | null> {
+    await this.openDocument(params.textDocument.uri);
+    return await this.server.prepareCallHierarchy(params);
+  }
+
+  async incomingCalls(params: CallHierarchyIncomingCallsParams): Promise<CallHierarchyIncomingCall[] | null> {
+    return await this.server.incomingCalls(params);
+  }
+
+  async outgoingCalls(params: CallHierarchyOutgoingCallsParams): Promise<CallHierarchyOutgoingCall[] | null> {
+    return await this.server.outgoingCalls(params);
   }
 
   async codeAction(params: CodeActionParams): Promise<CodeActionResult> {

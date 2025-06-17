@@ -57,3 +57,11 @@ Get available code actions (quick fixes, refactorings).
 #### mcp__mcp-lsp__executeCodeAction
 Apply code actions from codeAction tool.
 - Parameters: `codeAction` object from codeAction results
+
+#### mcp__mcp-lsp__callHierarchy
+Find all locations that call a specific function/method.
+- Parameters: `uri`, `line`, `character`
+
+#### mcp__mcp-lsp__callees
+Find all functions/methods that a specific function calls.
+- Parameters: `uri`, `line`, `character`

@@ -1,4 +1,5 @@
 import { ApplyWorkspaceEditParams, ApplyWorkspaceEditResult } from "./types/ApplyWorkspaceEditParams";
+import { CallHierarchyItem, CallHierarchyIncomingCall, CallHierarchyIncomingCallsParams, CallHierarchyOutgoingCall, CallHierarchyOutgoingCallsParams, CallHierarchyPrepareParams } from "./types/CallHierarchyRequest";
 import { CodeActionParams, CodeActionResult } from "./types/CodeActionRequest";
 import { Definition, DefinitionParams } from "./types/DefinitionRequest";
 import { DidCloseTextDocumentParams } from "./types/DidCloseTextDocument";
@@ -25,6 +26,9 @@ export interface LSPServerEx {
   references(params: ReferenceParams): Promise<References>;
   typeDefinition(params: TypeDefinitionParams): Promise<TypeDefinition>;
   rename(params: RenameParams): Promise<WorkspaceEdit | null>;
+  prepareCallHierarchy(params: CallHierarchyPrepareParams): Promise<CallHierarchyItem[] | null>;
+  incomingCalls(params: CallHierarchyIncomingCallsParams): Promise<CallHierarchyIncomingCall[] | null>;
+  outgoingCalls(params: CallHierarchyOutgoingCallsParams): Promise<CallHierarchyOutgoingCall[] | null>;
   codeAction(params: CodeActionParams): Promise<CodeActionResult>;
   executeCommand(params: ExecuteCommandParams): Promise<ExecuteCommandResult>;
   applyEdit(params: ApplyWorkspaceEditParams): Promise<ApplyWorkspaceEditResult>;
