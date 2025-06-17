@@ -14,10 +14,6 @@ export function callHierarchyItemToString(item: CallHierarchyItem, range?: Locat
   // Add name
   result += item.name;
 
-  // Add detail if present (signature)
-  if (item.detail) {
-    result += `(${item.detail})`;
-  }
 
   // Add location - use provided range or default to selectionRange
   const location: Location = {

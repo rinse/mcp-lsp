@@ -40,7 +40,7 @@ describe('callHierarchyItemToString', () => {
 
     const result = callHierarchyItemToString(item);
 
-    expect(result).toBe('handleRequest(req: Request, res: Response) at /src/server/RequestHandler.ts:25:8-25:21');
+    expect(result).toBe('handleRequest at /src/server/RequestHandler.ts:25:8-25:21');
   });
 
   it('should format a class constructor correctly', () => {
@@ -61,7 +61,7 @@ describe('callHierarchyItemToString', () => {
 
     const result = callHierarchyItemToString(item);
 
-    expect(result).toBe('constructor(name: string, age: number) at /src/models/User.ts:5:2-5:13');
+    expect(result).toBe('constructor at /src/models/User.ts:5:2-5:13');
   });
 
   it('should handle Windows-style file URIs', () => {
@@ -178,12 +178,12 @@ describe('callHierarchyItemToString', () => {
 
     const result = callHierarchyItemToString(item);
 
-    expect(result).toBe('[deprecated] deprecatedFunction(message: string) at /src/deprecated.ts:10:9-10:27');
+    expect(result).toBe('[deprecated] deprecatedFunction at /src/deprecated.ts:10:9-10:27');
   });
 
-  it('should properly handle closing parentheses in detail field', () => {
-    // Test case where detail field contains just parameters (typical LSP response)
-    const itemWithParams: CallHierarchyItem = {
+  it('should ignore detail field and format simply', () => {
+    // Test that detail field is ignored for cleaner output
+    const itemWithDetail: CallHierarchyItem = {
       name: 'processData',
       kind: SymbolKind.Function,
       uri: 'file:///src/processor.ts',
@@ -198,11 +198,11 @@ describe('callHierarchyItemToString', () => {
       detail: 'data: string, options: Options',
     };
 
-    const result = callHierarchyItemToString(itemWithParams);
-    expect(result).toBe('processData(data: string, options: Options) at /src/processor.ts:10:9-10:20');
+    const result = callHierarchyItemToString(itemWithDetail);
+    expect(result).toBe('processData at /src/processor.ts:10:9-10:20');
     
-    // Ensure no double parentheses
-    expect(result).not.toContain('))');
+    // Ensure detail is not included
+    expect(result).not.toContain('data: string');
   });
 
   it('should handle custom range parameter', () => {
