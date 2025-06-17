@@ -3,7 +3,7 @@ import { McpError } from '@modelcontextprotocol/sdk/types.js';
 import { MCPToolCallHierarchy } from './MCPToolCallHierarchy';
 import { LSPManager } from '../lsp/LSPManager';
 import { LSPServerEx } from '../lsp/LSPServerEx';
-import { CallHierarchyItem, CallHierarchyIncomingCall, SymbolKind } from '../lsp/types/CallHierarchyRequest';
+import { CallHierarchyItem, CallHierarchyIncomingCall, SymbolKind, SymbolTag } from '../lsp/types/CallHierarchyRequest';
 
 // Mock the readFileAsync function
 jest.mock('../utils', () => ({
@@ -113,7 +113,7 @@ describe('MCPToolCallHierarchy', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Found 1 callers:\n/caller.ts:17:4-17:16',
+        text: 'Found 1 callers:\ncallerFunction at /caller.ts:17:4-17:16',
       });
     });
 
@@ -194,6 +194,50 @@ describe('MCPToolCallHierarchy', () => {
       };
 
       await expect(mcpToolCallHierarchy.handle(params)).rejects.toThrow(McpError);
+    });
+
+    it('should format call hierarchy with detail and tags', async () => {
+      const mockCallHierarchy: CallHierarchyIncomingCall[] = [
+        {
+          from: {
+            name: 'deprecatedFunction',
+            kind: SymbolKind.Function,
+            uri: 'file:///caller.ts',
+            range: {
+              start: { line: 25, character: 0 },
+              end: { line: 30, character: 0 },
+            },
+            selectionRange: {
+              start: { line: 25, character: 9 },
+              end: { line: 25, character: 27 },
+            },
+            tags: [SymbolTag.Deprecated],
+            detail: 'arg1: string, arg2: number): Promise<void>',
+          },
+          fromRanges: [
+            {
+              start: { line: 28, character: 4 },
+              end: { line: 28, character: 22 },
+            },
+          ],
+        },
+      ];
+
+      prepareCallHierarchySpy.mockResolvedValue([mockCallHierarchyItem]);
+      incomingCallsSpy.mockResolvedValue(mockCallHierarchy);
+
+      const params = {
+        uri: 'file:///test.ts',
+        line: 5,
+        character: 9,
+      };
+
+      const result = await mcpToolCallHierarchy.handle(params);
+
+      expect(result.content[0]).toEqual({
+        type: 'text',
+        text: 'Found 1 callers:\n[deprecated] deprecatedFunction(arg1: string, arg2: number): Promise<void>) at /caller.ts:28:4-28:22',
+      });
     });
   });
 });
