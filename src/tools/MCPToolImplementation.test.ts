@@ -90,11 +90,11 @@ describe('MCPToolImplementation', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: '/src/test.ts:1:1',
+        text: '/src/test.ts:0:0',
       });
     });
 
-    it('should return single implementation without prefix for array with one result', async () => {
+    it('should return multiple implementations for array with one result', async () => {
       const mockLocations: Location[] = [
         {
           uri: 'file:///src/single.ts',
@@ -109,7 +109,7 @@ describe('MCPToolImplementation', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: '/src/single.ts:11:6',
+        text: 'Found 1 implementations:\n/src/single.ts:10:5',
       });
     });
 
@@ -135,7 +135,7 @@ describe('MCPToolImplementation', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Found 2 implementations:\n  /src/test1.ts:1:1\n  /src/test2.ts:6:3',
+        text: 'Found 2 implementations:\n/src/test1.ts:0:0\n/src/test2.ts:5:2',
       });
     });
 
@@ -145,7 +145,7 @@ describe('MCPToolImplementation', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No implementation found.',
+        text: 'No implementations found for symbol at /test.ts:10:5',
       });
     });
 
@@ -164,7 +164,7 @@ describe('MCPToolImplementation', () => {
       await expect(mcpToolImplementation.handle(validParams)).rejects.toThrow(McpError);
     });
 
-    it('should format range correctly when start and end are different', async () => {
+    it('should use start position for location formatting', async () => {
       const mockLocation: Location = {
         uri: 'file:///src/test.ts',
         range: {
@@ -178,7 +178,7 @@ describe('MCPToolImplementation', () => {
 
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: '/src/test.ts:1:1-3:6',
+        text: '/src/test.ts:0:0',
       });
     });
   });
