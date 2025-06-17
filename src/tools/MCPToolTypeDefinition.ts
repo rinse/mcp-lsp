@@ -119,6 +119,7 @@ function formatSingleTypeDefinition(location: Location): string {
 
   return `${filePath}:${line}:${character}`;
 }
+
 function formatMultipleTypeDefinitions(locations: Location[]): string {
   const lines = [`Found ${locations.length} type definitions:`];
 
@@ -131,10 +132,12 @@ function formatMultipleTypeDefinitions(locations: Location[]): string {
 
   return lines.join('');
 }
+
 function formatNoTypeDefinitionFound(uri: string, line: number, character: number): string {
   const filePath = uri.replace('file://', '');
   return `No type definition found for symbol at ${filePath}:${line}:${character}`;
 }
+
 function typeDefinitionNothingContent(uri: string, line: number, character: number): CallToolResult {
   return {
     content: [{

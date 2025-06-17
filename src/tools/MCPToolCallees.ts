@@ -114,10 +114,12 @@ function formatMultipleCallees(calls: CallHierarchyOutgoingCall[]): string {
 
   return lines.join('');
 }
+
 function formatNoCalleesFound(uri: string, line: number, character: number): string {
   const filePath = uri.replace('file://', '');
   return `No callees found for symbol at ${filePath}:${line}:${character}`;
 }
+
 function calleesNothingContent(uri: string, line: number, character: number): CallToolResult {
   return {
     content: [{

@@ -96,6 +96,7 @@ function hoverToTextContents(hover: Hover, uri: string, line: number, character:
     text: `${header}\n${content}`,
   }];
 }
+
 function formatHoverContent(contents: Hover['contents']): string {
   // Extract type and documentation from the hover content
   let typeInfo = '';

@@ -116,6 +116,7 @@ function formatSingleDefinition(location: Location): string {
 
   return `${filePath}:${line}:${character}`;
 }
+
 function formatMultipleDefinitions(locations: Location[]): string {
   const lines = [`Found ${locations.length} definitions:`];
 
@@ -128,6 +129,7 @@ function formatMultipleDefinitions(locations: Location[]): string {
 
   return lines.join('');
 }
+
 function formatNoDefinitionFound(uri: string, line: number, character: number): string {
   const filePath = uri.replace('file://', '');
   return `No definition found for symbol at ${filePath}:${line}:${character}`;

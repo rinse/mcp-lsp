@@ -116,10 +116,12 @@ function formatMultipleCallers(calls: CallHierarchyIncomingCall[]): string {
 
   return lines.join('');
 }
+
 function formatNoCallersFound(uri: string, line: number, character: number): string {
   const filePath = uri.replace('file://', '');
   return `No callers found for symbol at ${filePath}:${line}:${character}`;
 }
+
 function callHierarchyNothingContent(uri: string, line: number, character: number): CallToolResult {
   return {
     content: [{

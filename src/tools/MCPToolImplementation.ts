@@ -117,6 +117,7 @@ function formatSingleImplementation(location: Location): string {
 
   return `${filePath}:${line}:${character}`;
 }
+
 function formatMultipleImplementations(locations: Location[]): string {
   const lines = [`Found ${locations.length} implementations:`];
 
@@ -129,10 +130,12 @@ function formatMultipleImplementations(locations: Location[]): string {
 
   return lines.join('');
 }
+
 function formatNoImplementationFound(uri: string, line: number, character: number): string {
   const filePath = uri.replace('file://', '');
   return `No implementations found for symbol at ${filePath}:${line}:${character}`;
 }
+
 function implementationNothingContent(uri: string, line: number, character: number): CallToolResult {
   return {
     content: [{
