@@ -104,17 +104,12 @@ function callHierarchyToTextContents(calls: CallHierarchyIncomingCall[], uri: st
 }
 
 function formatMultipleCallers(calls: CallHierarchyIncomingCall[]): string {
-  const lines = [`Found ${calls.length} callers:`];
-
-  for (const call of calls) {
-    for (const range of call.fromRanges) {
-      // Use callHierarchyItemToString with the specific range
+  return calls.reduce((acc, call) => {
+    return call.fromRanges.reduce((lineAcc, range) => {
       const formattedLine = callHierarchyItemToString(call.from, range);
-      lines.push(`\n${formattedLine}`);
-    }
-  }
-
-  return lines.join('');
+      return `${lineAcc}\n${formattedLine}`;
+    }, acc);
+  }, `Found ${calls.length} callers:`);
 }
 
 function formatNoCallersFound(uri: string, line: number, character: number): string {

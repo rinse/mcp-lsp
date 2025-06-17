@@ -200,7 +200,7 @@ describe('callHierarchyItemToString', () => {
 
     const result = callHierarchyItemToString(itemWithDetail);
     expect(result).toBe('processData at /src/processor.ts:10:9-10:20');
-    
+
     // Ensure detail is not included
     expect(result).not.toContain('data: string');
   });

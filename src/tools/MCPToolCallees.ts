@@ -104,15 +104,10 @@ function calleesToTextContents(calls: CallHierarchyOutgoingCall[], uri: string, 
 }
 
 function formatMultipleCallees(calls: CallHierarchyOutgoingCall[]): string {
-  const lines = [`Found ${calls.length} callees:`];
-
-  for (const call of calls) {
-    // Use callHierarchyItemToString with the selectionRange
+  return calls.reduce((acc, call) => {
     const formattedLine = callHierarchyItemToString(call.to, call.to.selectionRange);
-    lines.push(`\n${formattedLine}`);
-  }
-
-  return lines.join('');
+    return `${acc}\n${formattedLine}`;
+  }, `Found ${calls.length} callees:`);
 }
 
 function formatNoCalleesFound(uri: string, line: number, character: number): string {
