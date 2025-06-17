@@ -58,7 +58,7 @@ describe('MCPToolHover', () => {
       expect(result).toEqual({
         content: [{
           type: 'text',
-          text: 'Test hover content',
+          text: '/test/file.ts:10:5\n  Type: Test hover content',
         }],
       });
       expect(hoverSpy).toHaveBeenCalledWith({
@@ -79,10 +79,7 @@ describe('MCPToolHover', () => {
       expect(result).toEqual({
         content: [{
           type: 'text',
-          text: JSON.stringify({
-            language: 'javascript',
-            value: 'function test() { return 42; }',
-          }),
+          text: '/test/file.ts:10:5\n  Type: function test() { return 42; }',
         }],
       });
     });
@@ -96,12 +93,10 @@ describe('MCPToolHover', () => {
       hoverSpy.mockResolvedValue(hoverResult);
       const result = await mcpToolHover.handle(validParams);
       expect(result).toEqual({
-        content: [
-          {
-            type: 'text',
-            text: `{"language":"typescript","value":"const x = 5;"}`,
-          },
-        ],
+        content: [{
+          type: 'text',
+          text: '/test/file.ts:10:5\n  Type: const x = 5;',
+        }],
       });
     });
 
@@ -117,7 +112,7 @@ describe('MCPToolHover', () => {
       expect(result).toEqual({
         content: [{
           type: 'text',
-          text: '# Header\n\nSome **markdown** content',
+          text: '/test/file.ts:10:5\n  Type: # Header\n  Docs: Some **markdown** content',
         }],
       });
     });
@@ -128,7 +123,7 @@ describe('MCPToolHover', () => {
       expect(result).toEqual({
         content: [{
           type: 'text',
-          text: 'No output.',
+          text: '/test/file.ts:10:5\n  No hover information available',
         }],
       });
     });
@@ -172,7 +167,7 @@ describe('MCPToolHover', () => {
       expect(result).toEqual({
         content: [{
           type: 'text',
-          text: 'Test content with range',
+          text: '/test/file.ts:10:5\n  Type: Test content with range',
         }],
       });
     });

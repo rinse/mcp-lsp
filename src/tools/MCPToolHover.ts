@@ -11,7 +11,7 @@ import * as t from "io-ts";
 import { MCPTool } from "./MCPTool";
 import { LSPManager } from "../lsp/LSPManager";
 import { Hover } from "../lsp/types/HoverRequest";
-import { MarkedStringT, markedStringToJsonString } from "../lsp/types/MarkedString";
+import { MarkedStringT } from "../lsp/types/MarkedString";
 import { MarkupContentT } from "../lsp/types/MarkupContent";
 
 export class MCPToolHover implements MCPTool {
@@ -72,49 +72,104 @@ async function handleHover(
       position: { line, character },
     });
     return result !== null
-      ? hoverToCallToolResult(result)
-      : hoverNothingContent();
+      ? hoverToCallToolResult(result, uri, line, character)
+      : hoverNothingContent(uri, line, character);
   } catch (error) {
     throw new McpError(ErrorCode.InternalError, `Failed to get hover information: ${String(error)}`);
   }
 }
 
-function hoverToCallToolResult(hover: Hover): CallToolResult {
+function hoverToCallToolResult(hover: Hover, uri: string, line: number, character: number): CallToolResult {
   return {
-    content: hoverToTextContents(hover),
+    content: hoverToTextContents(hover, uri, line, character),
   };
 }
 
-function hoverToTextContents(hover: Hover): TextContent[] {
-  if (MarkedStringT.is(hover.contents)) {
-    return [{
-      type: 'text',
-      text: markedStringToJsonString(hover.contents),
-    }];
+function hoverToTextContents(hover: Hover, uri: string, line: number, character: number): TextContent[] {
+  // Convert URI to file path for display
+  const filePath = uri.replace('file://', '');
+  const header = `${filePath}:${line}:${character}`;
+  const content = formatHoverContent(hover.contents);
+
+  return [{
+    type: 'text',
+    text: `${header}\n${content}`,
+  }];
+}
+function formatHoverContent(contents: Hover['contents']): string {
+  // Extract type and documentation from the hover content
+  let typeInfo = '';
+  let documentation = '';
+  if (typeof contents === 'string') {
+    // Simple string content
+    typeInfo = contents;
+  } else if (MarkedStringT.is(contents)) {
+    // MarkedString object
+    if (typeof contents === 'object' && 'language' in contents) {
+      typeInfo = contents.value;
+    }
+  } else if (t.array(MarkedStringT).is(contents)) {
+    // Array of MarkedString
+    const parts: string[] = [];
+    for (const item of contents) {
+      if (typeof item === 'string') {
+        parts.push(item);
+      } else if (item.language === 'typescript' || item.language === 'javascript') {
+        // Type information usually comes in code blocks
+        typeInfo = item.value;
+      } else {
+        // Other content (often documentation)
+        parts.push(item.value);
+      }
+    }
+    if (!typeInfo && parts.length > 0) {
+      typeInfo = parts[0];
+      documentation = parts.slice(1).join('\n');
+    } else {
+      documentation = parts.join('\n');
+    }
+  } else if (MarkupContentT.is(contents)) {
+    // MarkupContent (markdown or plaintext)
+    const lines = contents.value.split('\n');
+    // Often the first line or code block contains the type
+    const codeBlockMatch = /```(?:typescript|javascript|ts|js)?\n([^`]+)\n```/.exec(contents.value);
+    if (codeBlockMatch) {
+      typeInfo = codeBlockMatch[1].trim();
+      // Remove the code block from documentation
+      documentation = contents.value.replace(codeBlockMatch[0], '').trim();
+    } else if (lines.length > 0) {
+      // First line might be the type
+      typeInfo = lines[0];
+      documentation = lines.slice(1).join('\n').trim();
+    }
   }
-  if (t.array(MarkedStringT).is(hover.contents)) {
-    return hover.contents.map(markedString => ({
-      type: 'text',
-      text: markedStringToJsonString(markedString),
-    }));
+  // Format the output according to our new standard
+  let output = '';
+
+  // Add type information if available
+  if (typeInfo) {
+    output += `  Type: ${typeInfo.trim()}`;
   }
-  if (MarkupContentT.is(hover.contents)) {
-    return [{
-      type: 'text',
-      text: hover.contents.value,
-    }];
+
+  // Add documentation if available
+  if (documentation) {
+    const docLines = documentation.split('\n').filter(line => line.trim());
+    if (docLines.length > 0) {
+      if (output) output += '\n';
+      output += `  Docs: ${docLines.join('\n        ')}`;
+    }
   }
-  throw new McpError(
-    ErrorCode.InternalError,
-    `Unsupported hover content type: ${JSON.stringify(hover.contents)}`,
-  );
+  return output || '  No hover information available';
 }
 
-function hoverNothingContent(): CallToolResult {
+function hoverNothingContent(uri: string, line: number, character: number): CallToolResult {
+  const filePath = uri.replace('file://', '');
+  const header = `${filePath}:${line}:${character}`;
+
   return {
     content: [{
       type: 'text',
-      text: 'No output.',
+      text: `${header}\n  No hover information available`,
     }],
   };
 }
