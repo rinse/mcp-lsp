@@ -1,6 +1,6 @@
 {
     "mcpServers": {
-        "mcp-lsp": {
+        "typescript-code-assistant": {
             "command": "node",
             "args": ["out/index.js"]
         }

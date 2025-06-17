@@ -4,10 +4,13 @@ import { CallToolRequest, CallToolRequestSchema, ErrorCode, ListToolsRequestSche
 import { MCPTool } from '../tools/MCPTool.js';
 import { logger } from '../utils/loggers.js';
 
-export function createMCPServer(toolMap: Map<string, MCPTool>): Server {
+export function createMCPServer(
+  languageName: string,
+  toolMap: Map<string, MCPTool>,
+): Server {
   const server = new Server(
     {
-      name: 'mcp-lsp',
+      name: `${languageName} Code Assistant`,
       version: '0.1.0',
     },
     {
