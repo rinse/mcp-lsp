@@ -72,60 +72,71 @@ async function handleTypeDefinition(
       position: { line, character },
     });
     return result !== null
-      ? typeDefinitionToCallToolResult(result)
-      : typeDefinitionNothingContent();
+      ? typeDefinitionToCallToolResult(result, uri, line, character)
+      : typeDefinitionNothingContent(uri, line, character);
   } catch (error) {
     throw new McpError(ErrorCode.InternalError, `Failed to get type definition information: ${String(error)}`);
   }
 }
 
-function typeDefinitionToCallToolResult(typeDefinition: TypeDefinition): CallToolResult {
+function typeDefinitionToCallToolResult(typeDefinition: TypeDefinition, uri: string, line: number, character: number): CallToolResult {
   return {
-    content: typeDefinitionToTextContents(typeDefinition),
+    content: typeDefinitionToTextContents(typeDefinition, uri, line, character),
   };
 }
 
-function typeDefinitionToTextContents(typeDefinition: TypeDefinition): TextContent[] {
+function typeDefinitionToTextContents(typeDefinition: TypeDefinition, uri: string, line: number, character: number): TextContent[] {
   if (typeDefinition === null) {
     return [{
       type: 'text',
-      text: 'No type definition found.',
+      text: formatNoTypeDefinitionFound(uri, line, character),
     }];
   }
   if (Array.isArray(typeDefinition)) {
     if (typeDefinition.length === 0) {
       return [{
         type: 'text',
-        text: 'No type definition found.',
-      }];
-    }
-    if (typeDefinition.length === 1) {
-      return [{
-        type: 'text',
-        text: locationToString(typeDefinition[0]),
+        text: formatNoTypeDefinitionFound(uri, line, character),
       }];
     }
     return [{
       type: 'text',
-      text: `Found ${typeDefinition.length} type definitions:\n${typeDefinition
-        .map(location => `  ${locationToString(location)}`)
-        .join('\n')}`,
+      text: formatMultipleTypeDefinitions(typeDefinition),
     }];
   }
   // At this point, typeDefinition must be a Location (not null or array)
   const location: Location = typeDefinition;
   return [{
     type: 'text',
-    text: locationToString(location),
+    text: formatSingleTypeDefinition(location),
   }];
 }
 
 
-function typeDefinitionNothingContent(): CallToolResult {
+function formatSingleTypeDefinition(location: Location): string {
+  return locationToString(location);
+}
+
+function formatMultipleTypeDefinitions(locations: Location[]): string {
+  const lines = [`Found ${locations.length} type definitions:`];
+
+  for (const location of locations) {
+    lines.push(`\n${locationToString(location)}`);
+  }
+
+  return lines.join('');
+}
+
+function formatNoTypeDefinitionFound(uri: string, line: number, character: number): string {
+  const filePath = uri.replace('file://', '');
+  return `No type definition found for symbol at ${filePath}:${line}:${character}`;
+}
+
+function typeDefinitionNothingContent(uri: string, line: number, character: number): CallToolResult {
   return {
     content: [{
       type: 'text',
-      text: 'No type definition found.',
+      text: formatNoTypeDefinitionFound(uri, line, character),
     }],
   };
 }

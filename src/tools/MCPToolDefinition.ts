@@ -9,6 +9,7 @@ import {
 import * as t from "io-ts";
 
 import { MCPTool } from "./MCPTool";
+import { locationToString } from "./utils";
 import { LSPManager } from "../lsp/LSPManager";
 import { Definition } from "../lsp/types/DefinitionRequest";
 import { Location } from "../lsp/types/Location";
@@ -71,54 +72,68 @@ async function handleDefinition(
       position: { line, character },
     });
     return result !== null
-      ? definitionToCallToolResult(result)
-      : definitionNothingContent();
+      ? definitionToCallToolResult(result, uri, line, character)
+      : definitionNothingContent(uri, line, character);
   } catch (error) {
     throw new McpError(ErrorCode.InternalError, `Failed to get definition information: ${String(error)}`);
   }
 }
 
-function definitionToCallToolResult(definition: Definition): CallToolResult {
+function definitionToCallToolResult(definition: Definition, uri: string, line: number, character: number): CallToolResult {
   return {
-    content: definitionToTextContents(definition),
+    content: definitionToTextContents(definition, uri, line, character),
   };
 }
 
-function definitionToTextContents(definition: Definition): TextContent[] {
+function definitionToTextContents(definition: Definition, uri: string, line: number, character: number): TextContent[] {
   if (definition === null) {
     return [{
       type: 'text',
-      text: 'No definition found.',
+      text: formatNoDefinitionFound(uri, line, character),
     }];
   }
   if (Array.isArray(definition)) {
-    return definition.map((location, index) => ({
+    if (definition.length === 0) {
+      return [{
+        type: 'text',
+        text: formatNoDefinitionFound(uri, line, character),
+      }];
+    }
+    return [{
       type: 'text',
-      text: `Definition ${index + 1}: ${locationToString(location)}`,
-    }));
+      text: formatMultipleDefinitions(definition),
+    }];
   }
   return [{
     type: 'text',
-    text: `Definition: ${locationToString(definition)}`,
+    text: formatSingleDefinition(definition),
   }];
 }
 
-function locationToString(location: Location): string {
-  const filePath = location.uri.replace('file://', '');
-  const start = location.range.start;
-  const end = location.range.end;
-  const startPos = `${start.line + 1}:${start.character + 1}`;
-  if (start.line !== end.line || start.character !== end.character) {
-    return `${filePath}:${startPos} to ${end.line + 1}:${end.character + 1}`;
-  }
-  return `${filePath}:${startPos}`;
+function formatSingleDefinition(location: Location): string {
+  return locationToString(location);
 }
 
-function definitionNothingContent(): CallToolResult {
+function formatMultipleDefinitions(locations: Location[]): string {
+  const lines = [`Found ${locations.length} definitions:`];
+
+  for (const location of locations) {
+    lines.push(`\n${locationToString(location)}`);
+  }
+
+  return lines.join('');
+}
+
+function formatNoDefinitionFound(uri: string, line: number, character: number): string {
+  const filePath = uri.replace('file://', '');
+  return `No definition found for symbol at ${filePath}:${line}:${character}`;
+}
+
+function definitionNothingContent(uri: string, line: number, character: number): CallToolResult {
   return {
     content: [{
       type: 'text',
-      text: 'No definition found.',
+      text: formatNoDefinitionFound(uri, line, character),
     }],
   };
 }

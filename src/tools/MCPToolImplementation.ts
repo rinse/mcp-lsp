@@ -12,6 +12,7 @@ import { MCPTool } from "./MCPTool";
 import { locationToString } from "./utils";
 import { LSPManager } from "../lsp/LSPManager";
 import { Implementation } from "../lsp/types/ImplementationRequest";
+import { Location } from "../lsp/types/Location";
 
 export class MCPToolImplementation implements MCPTool {
   constructor(private manager: LSPManager) {}
@@ -71,52 +72,69 @@ async function handleImplementation(
       position: { line, character },
     });
     return result !== null
-      ? implementationToCallToolResult(result)
-      : implementationNothingContent();
+      ? implementationToCallToolResult(result, uri, line, character)
+      : implementationNothingContent(uri, line, character);
   } catch (error) {
     throw new McpError(ErrorCode.InternalError, `Failed to get implementation information: ${String(error)}`);
   }
 }
 
-function implementationToCallToolResult(implementation: Implementation): CallToolResult {
+function implementationToCallToolResult(implementation: Implementation, uri: string, line: number, character: number): CallToolResult {
   return {
-    content: implementationToTextContents(implementation),
+    content: implementationToTextContents(implementation, uri, line, character),
   };
 }
 
-function implementationToTextContents(implementation: Implementation): TextContent[] {
+function implementationToTextContents(implementation: Implementation, uri: string, line: number, character: number): TextContent[] {
   if (implementation === null) {
     return [{
       type: 'text',
-      text: 'No implementation found.',
+      text: formatNoImplementationFound(uri, line, character),
     }];
   }
   if (Array.isArray(implementation)) {
-    if (implementation.length === 1) {
+    if (implementation.length === 0) {
       return [{
         type: 'text',
-        text: locationToString(implementation[0]),
+        text: formatNoImplementationFound(uri, line, character),
       }];
     }
     return [{
       type: 'text',
-      text: `Found ${implementation.length} implementations:\n${implementation
-        .map(location => `  ${locationToString(location)}`)
-        .join('\n')}`,
+      text: formatMultipleImplementations(implementation),
     }];
   }
   return [{
     type: 'text',
-    text: locationToString(implementation),
+    text: formatSingleImplementation(implementation),
   }];
 }
 
 
-function implementationNothingContent(): CallToolResult {
+function formatSingleImplementation(location: Location): string {
+  return locationToString(location);
+}
+
+function formatMultipleImplementations(locations: Location[]): string {
+  const lines = [`Found ${locations.length} implementations:`];
+
+  for (const location of locations) {
+    lines.push(`\n${locationToString(location)}`);
+  }
+
+  return lines.join('');
+}
+
+function formatNoImplementationFound(uri: string, line: number, character: number): string {
+  const filePath = uri.replace('file://', '');
+  return `No implementations found for symbol at ${filePath}:${line}:${character}`;
+}
+
+function implementationNothingContent(uri: string, line: number, character: number): CallToolResult {
   return {
     content: [{
       type: 'text',
-      text: 'No implementation found.',
+      text: formatNoImplementationFound(uri, line, character),
     }],
   };
 }

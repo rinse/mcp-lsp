@@ -11,6 +11,7 @@ import * as t from "io-ts";
 import { MCPTool } from "./MCPTool";
 import { locationToString } from "./utils";
 import { LSPManager } from "../lsp/LSPManager";
+import { Location } from "../lsp/types/Location";
 import { References } from "../lsp/types/ReferencesRequest";
 
 export class MCPToolReferences implements MCPTool {
@@ -81,46 +82,53 @@ async function handleReferences(
       context: { includeDeclaration },
     });
     return result !== null
-      ? referencesToCallToolResult(result)
-      : referencesNothingContent();
+      ? referencesToCallToolResult(result, uri, line, character)
+      : referencesNothingContent(uri, line, character);
   } catch (error) {
     throw new McpError(ErrorCode.InternalError, `Failed to get references information: ${String(error)}`);
   }
 }
 
-function referencesToCallToolResult(references: References): CallToolResult {
+function referencesToCallToolResult(references: References, uri: string, line: number, character: number): CallToolResult {
   return {
-    content: referencesToTextContents(references),
+    content: referencesToTextContents(references, uri, line, character),
   };
 }
 
-function referencesToTextContents(references: References): TextContent[] {
+function referencesToTextContents(references: References, uri: string, line: number, character: number): TextContent[] {
   if (references === null || references.length === 0) {
     return [{
       type: 'text',
-      text: 'No references found.',
-    }];
-  }
-  if (references.length === 1) {
-    return [{
-      type: 'text',
-      text: locationToString(references[0]),
+      text: formatNoReferencesFound(uri, line, character),
     }];
   }
   return [{
     type: 'text',
-    text: `Found ${references.length} references:\n${references
-      .map(location => `  ${locationToString(location)}`)
-      .join('\n')}`,
+    text: formatMultipleReferences(references),
   }];
 }
 
 
-function referencesNothingContent(): CallToolResult {
+function formatMultipleReferences(locations: Location[]): string {
+  const lines = [`Found ${locations.length} references:`];
+
+  for (const location of locations) {
+    lines.push(`\n${locationToString(location)}`);
+  }
+
+  return lines.join('');
+}
+
+function formatNoReferencesFound(uri: string, line: number, character: number): string {
+  const filePath = uri.replace('file://', '');
+  return `No references found for symbol at ${filePath}:${line}:${character}`;
+}
+
+function referencesNothingContent(uri: string, line: number, character: number): CallToolResult {
   return {
     content: [{
       type: 'text',
-      text: 'No references found.',
+      text: formatNoReferencesFound(uri, line, character),
     }],
   };
 }

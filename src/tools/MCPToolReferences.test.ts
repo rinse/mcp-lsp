@@ -107,7 +107,7 @@ describe('MCPToolReferences', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Found 2 references:\n  /src/test1.ts:1:1\n  /src/test2.ts:6:3',
+        text: 'Found 2 references:\n/src/test1.ts:0:0\n/src/test2.ts:5:2',
       });
     });
 
@@ -138,7 +138,7 @@ describe('MCPToolReferences', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: '/src/test.ts:1:1',
+        text: 'Found 1 references:\n/src/test.ts:0:0',
       });
     });
 
@@ -171,7 +171,7 @@ describe('MCPToolReferences', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No references found.',
+        text: 'No references found for symbol at /test.ts:10:5',
       });
     });
 
@@ -183,7 +183,7 @@ describe('MCPToolReferences', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No references found.',
+        text: 'No references found for symbol at /test.ts:10:5',
       });
     });
 
@@ -202,7 +202,7 @@ describe('MCPToolReferences', () => {
       await expect(mcpToolReferences.handle(validParams)).rejects.toThrow(McpError);
     });
 
-    it('should format range correctly when start and end are different', async () => {
+    it('should use start position for location formatting', async () => {
       const mockReferences: Location[] = [
         {
           uri: 'file:///src/test.ts',
@@ -218,7 +218,7 @@ describe('MCPToolReferences', () => {
 
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: '/src/test.ts:1:1-3:6',
+        text: 'Found 1 references:\n/src/test.ts:0:0-2:5',
       });
     });
 
@@ -239,7 +239,7 @@ describe('MCPToolReferences', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: '/src/test.ts:11:6-11:16',
+        text: 'Found 1 references:\n/src/test.ts:10:5-10:15',
       });
     });
   });

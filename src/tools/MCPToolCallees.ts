@@ -10,7 +10,6 @@ import * as t from "io-ts";
 
 import { callHierarchyItemToString } from "./formats/CallHierarchyItem";
 import { MCPTool } from "./MCPTool";
-import { rangeToString } from "./utils";
 import { LSPManager } from "../lsp/LSPManager";
 import { CallHierarchyOutgoingCall } from "../lsp/types/CallHierarchyRequest";
 
@@ -73,49 +72,54 @@ async function handleCallees(
       position: { line, character },
     });
     if (prepareResult === null || prepareResult.length === 0) {
-      return calleesNothingContent();
+      return calleesNothingContent(uri, line, character);
     }
     // Use the first item to get outgoing calls
     const result = await manager.outgoingCalls({ item: prepareResult[0] });
     return result !== null
-      ? calleesToCallToolResult(result)
-      : calleesNothingContent();
+      ? calleesToCallToolResult(result, uri, line, character)
+      : calleesNothingContent(uri, line, character);
   } catch (error) {
     throw new McpError(ErrorCode.InternalError, `Failed to get outgoing calls: ${String(error)}`);
   }
 }
 
-function calleesToCallToolResult(calls: CallHierarchyOutgoingCall[]): CallToolResult {
+function calleesToCallToolResult(calls: CallHierarchyOutgoingCall[], uri: string, line: number, character: number): CallToolResult {
   return {
-    content: calleesToTextContents(calls),
+    content: calleesToTextContents(calls, uri, line, character),
   };
 }
 
-function calleesToTextContents(calls: CallHierarchyOutgoingCall[]): TextContent[] {
+function calleesToTextContents(calls: CallHierarchyOutgoingCall[], uri: string, line: number, character: number): TextContent[] {
   if (calls.length === 0) {
     return [{
       type: 'text',
-      text: 'No callees found.',
+      text: formatNoCalleesFound(uri, line, character),
     }];
   }
-  const lines: string[] = [`Found ${calls.length} callee${calls.length > 1 ? 's' : ''}:`];
-  calls.forEach((call) => {
-    lines.push(`  ${callHierarchyItemToString(call.to)}`);
-    call.fromRanges.forEach((range) => {
-      lines.push(`    called at line ${rangeToString(range)}`);
-    });
-  });
   return [{
     type: 'text',
-    text: lines.join('\n'),
+    text: formatMultipleCallees(calls),
   }];
 }
 
-function calleesNothingContent(): CallToolResult {
+function formatMultipleCallees(calls: CallHierarchyOutgoingCall[]): string {
+  return calls.reduce((acc, call) => {
+    const formattedLine = callHierarchyItemToString(call.to, call.to.selectionRange);
+    return `${acc}\n${formattedLine}`;
+  }, `Found ${calls.length} callees:`);
+}
+
+function formatNoCalleesFound(uri: string, line: number, character: number): string {
+  const filePath = uri.replace('file://', '');
+  return `No callees found for symbol at ${filePath}:${line}:${character}`;
+}
+
+function calleesNothingContent(uri: string, line: number, character: number): CallToolResult {
   return {
     content: [{
       type: 'text',
-      text: 'No callees available for this item.',
+      text: formatNoCalleesFound(uri, line, character),
     }],
   };
 }

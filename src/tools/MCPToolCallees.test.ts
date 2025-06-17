@@ -3,7 +3,7 @@ import { McpError } from '@modelcontextprotocol/sdk/types.js';
 import { MCPToolCallees } from './MCPToolCallees';
 import { LSPManager } from '../lsp/LSPManager';
 import { LSPServerEx } from '../lsp/LSPServerEx';
-import { CallHierarchyItem, CallHierarchyOutgoingCall, SymbolKind } from '../lsp/types/CallHierarchyRequest';
+import { CallHierarchyItem, CallHierarchyOutgoingCall, SymbolKind, SymbolTag } from '../lsp/types/CallHierarchyRequest';
 
 // Mock the readFileAsync function
 jest.mock('../utils', () => ({
@@ -113,7 +113,7 @@ describe('MCPToolCallees', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Found 1 callee:\n  calledFunction (Function) at /called.ts:26:10\n    called at line 8:5-8:19',
+        text: 'Found 1 callees:\ncalledFunction at /called.ts:25:9-25:23',
       });
     });
 
@@ -132,7 +132,7 @@ describe('MCPToolCallees', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No callees available for this item.',
+        text: 'No callees found for symbol at /test.ts:5:9',
       });
     });
 
@@ -151,7 +151,7 @@ describe('MCPToolCallees', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No callees found.',
+        text: 'No callees found for symbol at /test.ts:5:9',
       });
     });
 
@@ -169,7 +169,7 @@ describe('MCPToolCallees', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No callees available for this item.',
+        text: 'No callees found for symbol at /test.ts:5:9',
       });
     });
 
@@ -194,6 +194,50 @@ describe('MCPToolCallees', () => {
       };
 
       await expect(mcpToolCallees.handle(params)).rejects.toThrow(McpError);
+    });
+
+    it('should format callees with detail and tags', async () => {
+      const mockOutgoingCalls: CallHierarchyOutgoingCall[] = [
+        {
+          to: {
+            name: 'deprecatedHelper',
+            kind: SymbolKind.Method,
+            uri: 'file:///helpers.ts',
+            range: {
+              start: { line: 50, character: 0 },
+              end: { line: 55, character: 0 },
+            },
+            selectionRange: {
+              start: { line: 50, character: 9 },
+              end: { line: 50, character: 25 },
+            },
+            tags: [SymbolTag.Deprecated],
+            detail: 'data: Record<string, any>',
+          },
+          fromRanges: [
+            {
+              start: { line: 10, character: 8 },
+              end: { line: 10, character: 24 },
+            },
+          ],
+        },
+      ];
+
+      prepareCallHierarchySpy.mockResolvedValue([mockCallHierarchyItem]);
+      outgoingCallsSpy.mockResolvedValue(mockOutgoingCalls);
+
+      const params = {
+        uri: 'file:///test.ts',
+        line: 5,
+        character: 9,
+      };
+
+      const result = await mcpToolCallees.handle(params);
+
+      expect(result.content[0]).toEqual({
+        type: 'text',
+        text: 'Found 1 callees:\n[deprecated] deprecatedHelper at /helpers.ts:50:9-50:25',
+      });
     });
   });
 });
