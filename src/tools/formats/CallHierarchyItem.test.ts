@@ -85,7 +85,7 @@ describe('callHierarchyItemToString', () => {
   });
 
   it('should handle different symbol kinds', () => {
-    const testCases: Array<{ kind: SymbolKind; expected: string }> = [
+    const testCases: { kind: SymbolKind; expected: string }[] = [
       { kind: SymbolKind.File, expected: 'File' },
       { kind: SymbolKind.Module, expected: 'Module' },
       { kind: SymbolKind.Namespace, expected: 'Namespace' },
