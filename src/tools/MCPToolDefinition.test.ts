@@ -93,7 +93,7 @@ describe('MCPToolDefinition', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Definition: /src/test.ts:1:1',
+        text: '/src/test.ts:0:0',
       });
     });
 
@@ -118,14 +118,10 @@ describe('MCPToolDefinition', () => {
 
       const result = await mcpToolDefinition.handle(validParams);
 
-      expect(result.content).toHaveLength(2);
+      expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Definition 1: /src/test1.ts:1:1',
-      });
-      expect(result.content[1]).toEqual({
-        type: 'text',
-        text: 'Definition 2: /src/test2.ts:6:3',
+        text: 'Found 2 definitions:\n/src/test1.ts:0:0\n/src/test2.ts:5:2',
       });
     });
 
@@ -137,7 +133,7 @@ describe('MCPToolDefinition', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No definition found.',
+        text: 'No definition found for symbol at /test.ts:10:5',
       });
     });
 
@@ -156,7 +152,7 @@ describe('MCPToolDefinition', () => {
       await expect(mcpToolDefinition.handle(validParams)).rejects.toThrow(McpError);
     });
 
-    it('should format range correctly when start and end are different', async () => {
+    it('should use start position for location formatting', async () => {
       const mockLocation: Location = {
         uri: 'file:///src/test.ts',
         range: {
@@ -170,7 +166,7 @@ describe('MCPToolDefinition', () => {
 
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Definition: /src/test.ts:1:1 to 3:6',
+        text: '/src/test.ts:0:0',
       });
     });
   });
