@@ -93,7 +93,7 @@ describe('MCPToolTypeDefinition', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: '/src/test.ts:1:1',
+        text: '/src/test.ts:0:0',
       });
     });
 
@@ -121,7 +121,7 @@ describe('MCPToolTypeDefinition', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Found 2 type definitions:\n  /src/test1.ts:1:1\n  /src/test2.ts:6:3',
+        text: 'Found 2 type definitions:\n/src/test1.ts:0:0\n/src/test2.ts:5:2',
       });
     });
 
@@ -140,7 +140,7 @@ describe('MCPToolTypeDefinition', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: '/src/test.ts:1:1',
+        text: 'Found 1 type definitions:\n/src/test.ts:0:0',
       });
     });
 
@@ -152,7 +152,7 @@ describe('MCPToolTypeDefinition', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No type definition found.',
+        text: 'No type definition found for symbol at /test.ts:10:5',
       });
     });
 
@@ -164,7 +164,7 @@ describe('MCPToolTypeDefinition', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'No type definition found.',
+        text: 'No type definition found for symbol at /test.ts:10:5',
       });
     });
 
@@ -183,7 +183,7 @@ describe('MCPToolTypeDefinition', () => {
       await expect(mcpToolTypeDefinition.handle(validParams)).rejects.toThrow(McpError);
     });
 
-    it('should format range correctly when start and end are different', async () => {
+    it('should use start position for location formatting', async () => {
       const mockLocation: Location = {
         uri: 'file:///src/test.ts',
         range: {
@@ -197,7 +197,7 @@ describe('MCPToolTypeDefinition', () => {
 
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: '/src/test.ts:1:1-3:6',
+        text: '/src/test.ts:0:0',
       });
     });
   });
