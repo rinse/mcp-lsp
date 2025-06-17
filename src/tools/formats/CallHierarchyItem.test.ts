@@ -1,5 +1,5 @@
 import { callHierarchyItemToString } from './CallHierarchyItem';
-import { CallHierarchyItem, SymbolKind } from '../../lsp/types/CallHierarchyRequest';
+import { CallHierarchyItem, SymbolKind, SymbolTag } from '../../lsp/types/CallHierarchyRequest';
 
 describe('callHierarchyItemToString', () => {
   it('should format a function item correctly', () => {
@@ -19,7 +19,7 @@ describe('callHierarchyItemToString', () => {
 
     const result = callHierarchyItemToString(item);
 
-    expect(result).toBe('myFunction (Function) at /src/utils.ts:11:10');
+    expect(result).toBe('myFunction at /src/utils.ts:10:9-10:19');
   });
 
   it('should format a method item with detail correctly', () => {
@@ -35,12 +35,12 @@ describe('callHierarchyItemToString', () => {
         start: { line: 25, character: 8 },
         end: { line: 25, character: 21 },
       },
-      detail: 'RequestHandler',
+      detail: 'req: Request, res: Response): Promise<void>',
     };
 
     const result = callHierarchyItemToString(item);
 
-    expect(result).toBe('handleRequest (Method) at /src/server/RequestHandler.ts:26:9 - RequestHandler');
+    expect(result).toBe('handleRequest(req: Request, res: Response): Promise<void> at /src/server/RequestHandler.ts:25:8-25:21');
   });
 
   it('should format a class constructor correctly', () => {
@@ -56,12 +56,12 @@ describe('callHierarchyItemToString', () => {
         start: { line: 5, character: 2 },
         end: { line: 5, character: 13 },
       },
-      detail: 'User',
+      detail: 'name: string, age: number)',
     };
 
     const result = callHierarchyItemToString(item);
 
-    expect(result).toBe('constructor (Constructor) at /src/models/User.ts:6:3 - User');
+    expect(result).toBe('constructor(name: string, age: number) at /src/models/User.ts:5:2-5:13');
   });
 
   it('should handle Windows-style file URIs', () => {
@@ -81,7 +81,7 @@ describe('callHierarchyItemToString', () => {
 
     const result = callHierarchyItemToString(item);
 
-    expect(result).toBe('processData (Function) at /C:/Projects/app/src/processor.ts:16:10');
+    expect(result).toBe('processData at /C:/Projects/app/src/processor.ts:15:9-15:20');
   });
 
   it('should handle different symbol kinds', () => {
@@ -115,7 +115,7 @@ describe('callHierarchyItemToString', () => {
       };
 
       const result = callHierarchyItemToString(item);
-      expect(result).toBe(`testItem (${expected}) at /test.ts:1:1`);
+      expect(result).toBe(`testItem at /test.ts:0:0-0:8`);
     });
   });
 
@@ -136,7 +136,7 @@ describe('callHierarchyItemToString', () => {
 
     const result = callHierarchyItemToString(item);
 
-    expect(result).toBe('simpleFunction (Function) at /src/simple.ts:1:10');
+    expect(result).toBe('simpleFunction at /src/simple.ts:0:9-0:23');
   });
 
   it('should handle zero-based positions correctly', () => {
@@ -156,26 +156,53 @@ describe('callHierarchyItemToString', () => {
 
     const result = callHierarchyItemToString(item);
 
-    expect(result).toBe('firstFunction (Function) at /src/first.ts:1:1');
+    expect(result).toBe('firstFunction at /src/first.ts:0:0-0:13');
   });
 
-  it('should handle unknown symbol kinds', () => {
+  it('should handle deprecated items with tags', () => {
     const item: CallHierarchyItem = {
-      name: 'unknownItem',
-      kind: 999 as SymbolKind, // Invalid kind
-      uri: 'file:///src/unknown.ts',
+      name: 'deprecatedFunction',
+      kind: SymbolKind.Function,
+      uri: 'file:///src/deprecated.ts',
       range: {
-        start: { line: 5, character: 2 },
-        end: { line: 5, character: 15 },
+        start: { line: 10, character: 0 },
+        end: { line: 15, character: 0 },
       },
       selectionRange: {
-        start: { line: 5, character: 2 },
-        end: { line: 5, character: 13 },
+        start: { line: 10, character: 9 },
+        end: { line: 10, character: 27 },
       },
+      tags: [SymbolTag.Deprecated],
+      detail: 'message: string): void',
     };
 
     const result = callHierarchyItemToString(item);
 
-    expect(result).toBe('unknownItem (Unknown(999)) at /src/unknown.ts:6:3');
+    expect(result).toBe('[deprecated] deprecatedFunction(message: string): void at /src/deprecated.ts:10:9-10:27');
+  });
+
+  it('should handle custom range parameter', () => {
+    const item: CallHierarchyItem = {
+      name: 'myMethod',
+      kind: SymbolKind.Method,
+      uri: 'file:///src/test.ts',
+      range: {
+        start: { line: 20, character: 2 },
+        end: { line: 25, character: 2 },
+      },
+      selectionRange: {
+        start: { line: 20, character: 8 },
+        end: { line: 20, character: 16 },
+      },
+    };
+
+    const customRange = {
+      start: { line: 22, character: 4 },
+      end: { line: 22, character: 20 },
+    };
+
+    const result = callHierarchyItemToString(item, customRange);
+
+    expect(result).toBe('myMethod at /src/test.ts:22:4-22:20');
   });
 });

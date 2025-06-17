@@ -9,10 +9,9 @@ import {
 import * as t from "io-ts";
 
 import { MCPTool } from "./MCPTool";
-import { locationToString } from "./utils";
+import { callHierarchyItemToString } from "./formats/CallHierarchyItem";
 import { LSPManager } from "../lsp/LSPManager";
-import { CallHierarchyOutgoingCall, SymbolTag } from "../lsp/types/CallHierarchyRequest";
-import { Location } from "../lsp/types/Location";
+import { CallHierarchyOutgoingCall } from "../lsp/types/CallHierarchyRequest";
 
 export class MCPToolCallees implements MCPTool {
   constructor(private manager: LSPManager) {}
@@ -108,31 +107,8 @@ function formatMultipleCallees(calls: CallHierarchyOutgoingCall[]): string {
   const lines = [`Found ${calls.length} callees:`];
 
   for (const call of calls) {
-    const location: Location = {
-      uri: call.to.uri,
-      range: call.to.selectionRange,
-    };
-    
-    // Build the formatted line with CallHierarchyItem info
-    let formattedLine = '';
-    
-    // Add tags if present
-    if (call.to.tags && call.to.tags.length > 0) {
-      const tagNames = call.to.tags.map(tag => tag === SymbolTag.Deprecated ? 'deprecated' : `tag${tag}`);
-      formattedLine += `[${tagNames.join(', ')}] `;
-    }
-    
-    // Add name
-    formattedLine += call.to.name;
-    
-    // Add detail if present (signature)
-    if (call.to.detail) {
-      formattedLine += `(${call.to.detail})`;
-    }
-    
-    // Add location
-    formattedLine += ` at ${locationToString(location)}`;
-    
+    // Use callHierarchyItemToString with the selectionRange
+    const formattedLine = callHierarchyItemToString(call.to, call.to.selectionRange);
     lines.push(`\n${formattedLine}`);
   }
 

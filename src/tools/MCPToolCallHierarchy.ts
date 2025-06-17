@@ -9,10 +9,9 @@ import {
 import * as t from "io-ts";
 
 import { MCPTool } from "./MCPTool";
-import { locationToString } from "./utils";
+import { callHierarchyItemToString } from "./formats/CallHierarchyItem";
 import { LSPManager } from "../lsp/LSPManager";
-import { CallHierarchyIncomingCall, SymbolKind, SymbolTag } from "../lsp/types/CallHierarchyRequest";
-import { Location } from "../lsp/types/Location";
+import { CallHierarchyIncomingCall } from "../lsp/types/CallHierarchyRequest";
 
 export class MCPToolCallHierarchy implements MCPTool {
   constructor(private manager: LSPManager) {}
@@ -109,31 +108,8 @@ function formatMultipleCallers(calls: CallHierarchyIncomingCall[]): string {
 
   for (const call of calls) {
     for (const range of call.fromRanges) {
-      const location: Location = {
-        uri: call.from.uri,
-        range: range,
-      };
-      
-      // Build the formatted line with CallHierarchyItem info
-      let formattedLine = '';
-      
-      // Add tags if present
-      if (call.from.tags && call.from.tags.length > 0) {
-        const tagNames = call.from.tags.map(tag => tag === SymbolTag.Deprecated ? 'deprecated' : `tag${tag}`);
-        formattedLine += `[${tagNames.join(', ')}] `;
-      }
-      
-      // Add name
-      formattedLine += call.from.name;
-      
-      // Add detail if present (signature)
-      if (call.from.detail) {
-        formattedLine += `(${call.from.detail})`;
-      }
-      
-      // Add location
-      formattedLine += ` at ${locationToString(location)}`;
-      
+      // Use callHierarchyItemToString with the specific range
+      const formattedLine = callHierarchyItemToString(call.from, range);
       lines.push(`\n${formattedLine}`);
     }
   }

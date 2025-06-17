@@ -236,7 +236,7 @@ describe('MCPToolCallees', () => {
 
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Found 1 callees:\n[deprecated] deprecatedHelper(data: Record<string, any>): boolean) at /helpers.ts:50:9-50:25',
+        text: 'Found 1 callees:\n[deprecated] deprecatedHelper(data: Record<string, any>): boolean at /helpers.ts:50:9-50:25',
       });
     });
   });
