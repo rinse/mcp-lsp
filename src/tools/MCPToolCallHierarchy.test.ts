@@ -113,7 +113,7 @@ describe('MCPToolCallHierarchy', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Found 1 callers:\n/caller.ts:17:4',
+        text: 'Found 1 callers:\n/caller.ts:17:4-17:16',
       });
     });
 

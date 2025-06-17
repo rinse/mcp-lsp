@@ -14,7 +14,7 @@ describe('locationToString', () => {
 
     const result = locationToString(location);
 
-    expect(result).toBe('/src/test.ts:10:5');
+    expect(result).toBe('/src/test.ts:9:4');
   });
 
   it('should format range location correctly', () => {
@@ -28,7 +28,7 @@ describe('locationToString', () => {
 
     const result = locationToString(location);
 
-    expect(result).toBe('/src/test.ts:10:5-12:8');
+    expect(result).toBe('/src/test.ts:9:4-11:7');
   });
 
   it('should format same-line range correctly', () => {
@@ -42,7 +42,7 @@ describe('locationToString', () => {
 
     const result = locationToString(location);
 
-    expect(result).toBe('/src/test.ts:10:5-10:11');
+    expect(result).toBe('/src/test.ts:9:4-9:10');
   });
 
   it('should handle zero-based line and character positions', () => {
@@ -56,7 +56,7 @@ describe('locationToString', () => {
 
     const result = locationToString(location);
 
-    expect(result).toBe('/src/test.ts:1:1');
+    expect(result).toBe('/src/test.ts:0:0');
   });
 
   it('should handle complex file paths', () => {
@@ -70,7 +70,7 @@ describe('locationToString', () => {
 
     const result = locationToString(location);
 
-    expect(result).toBe('/home/user/project/src/components/Button.tsx:43:16');
+    expect(result).toBe('/home/user/project/src/components/Button.tsx:42:15');
   });
 
   it('should handle Windows-style paths', () => {
@@ -84,7 +84,7 @@ describe('locationToString', () => {
 
     const result = locationToString(location);
 
-    expect(result).toBe('/C:/Users/dev/project/src/main.ts:6:3');
+    expect(result).toBe('/C:/Users/dev/project/src/main.ts:5:2');
   });
 });
 
@@ -97,7 +97,7 @@ describe('rangeToString', () => {
 
     const result = rangeToString(range);
 
-    expect(result).toBe('10:5');
+    expect(result).toBe('9:4');
   });
 
   it('should format multi-line range correctly', () => {
@@ -108,7 +108,7 @@ describe('rangeToString', () => {
 
     const result = rangeToString(range);
 
-    expect(result).toBe('10:5-12:8');
+    expect(result).toBe('9:4-11:7');
   });
 
   it('should format same-line range with different positions correctly', () => {
@@ -119,7 +119,7 @@ describe('rangeToString', () => {
 
     const result = rangeToString(range);
 
-    expect(result).toBe('10:5-10:11');
+    expect(result).toBe('9:4-9:10');
   });
 
   it('should handle zero-based positions', () => {
@@ -130,7 +130,7 @@ describe('rangeToString', () => {
 
     const result = rangeToString(range);
 
-    expect(result).toBe('1:1');
+    expect(result).toBe('0:0');
   });
 
   it('should handle large line and character numbers', () => {
@@ -141,7 +141,7 @@ describe('rangeToString', () => {
 
     const result = rangeToString(range);
 
-    expect(result).toBe('1000:121-1006:16');
+    expect(result).toBe('999:120-1005:15');
   });
 
   it('should handle single-character range on same line', () => {
@@ -152,6 +152,7 @@ describe('rangeToString', () => {
 
     const result = rangeToString(range);
 
-    expect(result).toBe('6:11-6:12');
+    expect(result).toBe('5:10-5:11');
   });
 });
+

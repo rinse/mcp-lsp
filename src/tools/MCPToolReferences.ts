@@ -9,6 +9,7 @@ import {
 import * as t from "io-ts";
 
 import { MCPTool } from "./MCPTool";
+import { locationToString } from "./utils";
 import { LSPManager } from "../lsp/LSPManager";
 import { Location } from "../lsp/types/Location";
 import { References } from "../lsp/types/ReferencesRequest";
@@ -112,10 +113,7 @@ function formatMultipleReferences(locations: Location[]): string {
   const lines = [`Found ${locations.length} references:`];
 
   for (const location of locations) {
-    const filePath = location.uri.replace('file://', '');
-    const line = location.range.start.line;
-    const character = location.range.start.character;
-    lines.push(`\n${filePath}:${line}:${character}`);
+    lines.push(`\n${locationToString(location)}`);
   }
 
   return lines.join('');

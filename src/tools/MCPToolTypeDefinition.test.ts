@@ -197,7 +197,7 @@ describe('MCPToolTypeDefinition', () => {
 
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: '/src/test.ts:0:0',
+        text: '/src/test.ts:0:0-2:5',
       });
     });
   });

@@ -218,7 +218,7 @@ describe('MCPToolReferences', () => {
 
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Found 1 references:\n/src/test.ts:0:0',
+        text: 'Found 1 references:\n/src/test.ts:0:0-2:5',
       });
     });
 
@@ -239,7 +239,7 @@ describe('MCPToolReferences', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Found 1 references:\n/src/test.ts:10:5',
+        text: 'Found 1 references:\n/src/test.ts:10:5-10:15',
       });
     });
   });

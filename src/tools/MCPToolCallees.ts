@@ -9,8 +9,10 @@ import {
 import * as t from "io-ts";
 
 import { MCPTool } from "./MCPTool";
+import { locationToString } from "./utils";
 import { LSPManager } from "../lsp/LSPManager";
 import { CallHierarchyOutgoingCall } from "../lsp/types/CallHierarchyRequest";
+import { Location } from "../lsp/types/Location";
 
 export class MCPToolCallees implements MCPTool {
   constructor(private manager: LSPManager) {}
@@ -106,10 +108,11 @@ function formatMultipleCallees(calls: CallHierarchyOutgoingCall[]): string {
   const lines = [`Found ${calls.length} callees:`];
 
   for (const call of calls) {
-    const filePath = call.to.uri.replace('file://', '');
-    const line = call.to.selectionRange.start.line;
-    const character = call.to.selectionRange.start.character;
-    lines.push(`\n${filePath}:${line}:${character}`);
+    const location: Location = {
+      uri: call.to.uri,
+      range: call.to.selectionRange,
+    };
+    lines.push(`\n${locationToString(location)}`);
   }
 
   return lines.join('');

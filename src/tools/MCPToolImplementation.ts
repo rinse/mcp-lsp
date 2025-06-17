@@ -9,6 +9,7 @@ import {
 import * as t from "io-ts";
 
 import { MCPTool } from "./MCPTool";
+import { locationToString } from "./utils";
 import { LSPManager } from "../lsp/LSPManager";
 import { Implementation } from "../lsp/types/ImplementationRequest";
 import { Location } from "../lsp/types/Location";
@@ -111,21 +112,14 @@ function implementationToTextContents(implementation: Implementation, uri: strin
 
 
 function formatSingleImplementation(location: Location): string {
-  const filePath = location.uri.replace('file://', '');
-  const line = location.range.start.line;
-  const character = location.range.start.character;
-
-  return `${filePath}:${line}:${character}`;
+  return locationToString(location);
 }
 
 function formatMultipleImplementations(locations: Location[]): string {
   const lines = [`Found ${locations.length} implementations:`];
 
   for (const location of locations) {
-    const filePath = location.uri.replace('file://', '');
-    const line = location.range.start.line;
-    const character = location.range.start.character;
-    lines.push(`\n${filePath}:${line}:${character}`);
+    lines.push(`\n${locationToString(location)}`);
   }
 
   return lines.join('');

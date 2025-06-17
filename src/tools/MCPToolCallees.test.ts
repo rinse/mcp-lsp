@@ -113,7 +113,7 @@ describe('MCPToolCallees', () => {
       expect(result.content).toHaveLength(1);
       expect(result.content[0]).toEqual({
         type: 'text',
-        text: 'Found 1 callees:\n/called.ts:25:9',
+        text: 'Found 1 callees:\n/called.ts:25:9-25:23',
       });
     });
 
