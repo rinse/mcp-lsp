@@ -11,7 +11,9 @@
     "test": "jest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typescript-language-server": "typescript-language-server --stdio --log-level 4"
+    "typescript-language-server": "typescript-language-server --stdio --log-level 4",
+    "inspector": "npx @modelcontextprotocol/inspector node out/index.js",
+    "tool-inspector": "npx @modelcontextprotocol/inspector --cli node out/index.js --method tools/call"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +21,7 @@
   "description": "",
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@modelcontextprotocol/inspector": "^0.14.3",
     "@stylistic/eslint-plugin": "^4.4.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^24.0.0",

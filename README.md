@@ -1,3 +1,54 @@
 # MCP-LSP
 
 A general MCP server for LSP (Language Server Protocol).
+
+## Development and Testing
+
+### MCP Inspector
+
+The MCP Inspector provides an interactive web UI for testing and debugging the MCP LSP server without needing to restart Claude during development.
+
+#### Installation
+
+The inspector is already included as a dev dependency. To use it:
+
+```bash
+# Build the project first
+npm run build
+
+# Launch Web UI for interactive testing
+npm run inspector
+# Then navigate to http://localhost:6274
+
+# Or use CLI mode for individual tool testing
+npm run tool-inspector -- --tool-name <tool> --tool-arg <arg>=<value>
+```
+
+#### Usage Examples
+
+**Test hover tool:**
+```bash
+npm run tool-inspector -- --tool-name hover --tool-arg uri=file:///path/to/file.ts --tool-arg line=10 --tool-arg character=5
+```
+
+**Test definition tool:**
+```bash
+npm run tool-inspector -- --tool-name definition --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10
+```
+
+**Test rename tool:**
+```bash
+npm run tool-inspector -- --tool-name rename --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg newName=newVariableName
+```
+
+**Test codeAction tool:**
+```bash
+npm run tool-inspector -- --tool-name codeAction --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg endLine=5 --tool-arg endCharacter=20
+```
+
+#### Benefits
+
+- Test MCP server implementations without restarting Claude
+- Interactive web interface for exploring available tools
+- CLI mode for automated testing and debugging
+- Immediate feedback on tool functionality and LSP integration
