@@ -2,23 +2,11 @@
 
 A general MCP server for LSP (Language Server Protocol).
 
-## Development and Testing
+## Development with Claude
 
 ### MCP Inspector
 
-The MCP Inspector provides an interactive web UI for testing and debugging the MCP LSP server, enabling Claude to test and develop MCP server implementations efficiently without requiring Claude restarts.
-
-```bash
-# Build the project first
-npm run build
-
-# Launch Web UI for interactive testing
-npm run inspector
-# Then navigate to http://localhost:6274
-
-# Or use CLI mode for individual tool testing
-npm run inspector-tool -- --tool-name <tool> --tool-arg <arg>=<value>
-```
+The MCP Inspector provides CLI accessing to MCP servers, enabling Claude to test and develop MCP server implementations efficiently without requiring Claude restarts.
 
 #### Usage Examples
 
