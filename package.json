@@ -13,7 +13,7 @@
     "lint:fix": "eslint . --fix",
     "typescript-language-server": "typescript-language-server --stdio --log-level 4",
     "inspector": "npx @modelcontextprotocol/inspector node out/index.js",
-    "tool-inspector": "npx @modelcontextprotocol/inspector --cli node out/index.js --method tools/call"
+    "inspector-tool": "npx @modelcontextprotocol/inspector --cli node out/index.js --method tools/call"
   },
   "keywords": [],
   "author": "",

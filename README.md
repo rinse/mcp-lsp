@@ -21,29 +21,29 @@ npm run inspector
 # Then navigate to http://localhost:6274
 
 # Or use CLI mode for individual tool testing
-npm run tool-inspector -- --tool-name <tool> --tool-arg <arg>=<value>
+npm run inspector-tool -- --tool-name <tool> --tool-arg <arg>=<value>
 ```
 
 #### Usage Examples
 
 **Test hover tool:**
 ```bash
-npm run tool-inspector -- --tool-name hover --tool-arg uri=file:///path/to/file.ts --tool-arg line=10 --tool-arg character=5
+npm run inspector-tool -- --tool-name hover --tool-arg uri=file:///path/to/file.ts --tool-arg line=10 --tool-arg character=5
 ```
 
 **Test definition tool:**
 ```bash
-npm run tool-inspector -- --tool-name definition --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10
+npm run inspector-tool -- --tool-name definition --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10
 ```
 
 **Test rename tool:**
 ```bash
-npm run tool-inspector -- --tool-name rename --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg newName=newVariableName
+npm run inspector-tool -- --tool-name rename --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg newName=newVariableName
 ```
 
 **Test codeAction tool:**
 ```bash
-npm run tool-inspector -- --tool-name codeAction --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg endLine=5 --tool-arg endCharacter=20
+npm run inspector-tool -- --tool-name codeAction --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg endLine=5 --tool-arg endCharacter=20
 ```
 
 #### Benefits
