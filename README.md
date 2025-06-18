@@ -6,11 +6,7 @@ A general MCP server for LSP (Language Server Protocol).
 
 ### MCP Inspector
 
-The MCP Inspector provides an interactive web UI for testing and debugging the MCP LSP server without needing to restart Claude during development.
-
-#### Installation
-
-The inspector is already included as a dev dependency. To use it:
+The MCP Inspector provides an interactive web UI for testing and debugging the MCP LSP server, enabling Claude to test and develop MCP server implementations efficiently without requiring Claude restarts.
 
 ```bash
 # Build the project first
