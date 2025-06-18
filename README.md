@@ -45,10 +45,3 @@ npm run inspector-tool -- --tool-name rename --tool-arg uri=file:///path/to/file
 ```bash
 npm run inspector-tool -- --tool-name codeAction --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg endLine=5 --tool-arg endCharacter=20
 ```
-
-#### Benefits
-
-- Test MCP server implementations without restarting Claude
-- Interactive web interface for exploring available tools
-- CLI mode for automated testing and debugging
-- Immediate feedback on tool functionality and LSP integration
