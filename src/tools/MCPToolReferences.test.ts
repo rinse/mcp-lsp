@@ -44,22 +44,22 @@ describe('MCPToolReferences', () => {
     it('should return the correct tool description', () => {
       const tool = mcpToolReferences.listItem();
 
-      expect(tool.name).toBe('references');
-      expect(tool.description).toBe('Get all references to a symbol at a specific position in a TypeScript file');
+      expect(tool.name).toBe('get_symbol_references');
+      expect(tool.description).toContain('Get all references to a symbol at a specific position in a TypeScript file');
       expect(tool.inputSchema).toEqual({
         type: 'object',
         properties: {
           uri: {
             type: 'string',
-            description: 'File URI (e.g., file:///path/to/file.ts)',
+            description: 'Required. File URI (e.g., file:///path/to/file.ts)',
           },
           line: {
             type: 'number',
-            description: 'Line number (0-based)',
+            description: 'Required. 0-based line index of the cursor.',
           },
           character: {
             type: 'number',
-            description: 'Character position (0-based)',
+            description: 'Required. 0-based character (column) index.',
           },
           includeDeclaration: {
             type: 'boolean',

@@ -38,10 +38,13 @@ When to call
 
 Output
 Plain-text block:
-Found <N> definitions:\n<absPath>:<startLine>:<startCol>-<endLine>:<endCol>\n...
+Found <N> definitions:
+<absPath>:<startLine>:<startCol>-<endLine>:<endCol>
+...
 
 Output Example (single hit):
-Found 1 definitions:\n/home/rinse/w/mcp/mcp-lsp/.wt/1/src/lsp/LSPServerStream.ts:11:13-11:28\n
+Found 1 definitions:
+/home/rinse/w/mcp/mcp-lsp/.wt/1/src/lsp/LSPServerStream.ts:11:13-11:28
 
 Notes & limits
 * Only .ts / .tsx files currently supported

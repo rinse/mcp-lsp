@@ -28,22 +28,50 @@ export class MCPToolReferences implements MCPTool {
 
 function listItemReferences(): Tool {
   return {
-    name: 'references',
-    description: 'Get all references to a symbol at a specific position in a TypeScript file',
+    name: 'get_symbol_references',
+    description: `Get all references to a symbol at a specific position in a TypeScript file
+
+## Use this tool whenever:
+- You (or the user) ask "What’s the type / doc of …?"
+- You want the overload list, parameter types, or quick docs for a function or method.
+- You are deciding whether to jump to the definition or read the call-site comments.
+
+## Typical trigger phrases the agent should react to ⬇
+"find references", "show references", "list references", "find usages", "show usages", "list usages",
+"where is this used", "who uses", "who calls", "caller list", "trace call chain", "trace usage path", "impact analysis",
+"どこで使われている", "参照を探す", "関数呼び出しを辿る", "辿る" "使用箇所", "利用箇所", "呼び出し元", "影響範囲"
+
+Output
+Plain-text block:
+Found <N> references:
+<absPath>:<startLine>:<startCol>-<endLine>:<endCol>
+...
+
+Output Example:
+Found 27 references:
+/home/rinse/w/mcp/mcp-lsp/.wt/1/src/tools/MCPTool.ts:6:17-6:24
+/home/rinse/w/mcp/mcp-lsp/.wt/1/src/mcp/MCPServer.ts:3:9-3:16
+...
+
+Notes & limits
+* Only .ts / .tsx files currently supported
+* The file must exist on disk (unsaved buffers not supported).
+* Very large files (> 2 MB) may increase latency.
+* Position finding: \`awk -v pat='<PATTERN>' '{pos=index($0, pat); if (pos) print NR-1 ":" pos-1 ":" $0}'\``,
     inputSchema: {
       type: 'object',
       properties: {
         uri: {
           type: 'string',
-          description: 'File URI (e.g., file:///path/to/file.ts)',
+          description: 'Required. File URI (e.g., file:///path/to/file.ts)',
         },
         line: {
           type: 'number',
-          description: 'Line number (0-based)',
+          description: 'Required. 0-based line index of the cursor.',
         },
         character: {
           type: 'number',
-          description: 'Character position (0-based)',
+          description: 'Required. 0-based character (column) index.',
         },
         includeDeclaration: {
           type: 'boolean',
@@ -72,7 +100,7 @@ async function handleReferences(
 ): Promise<CallToolResult> {
   const decoded = ReferencesParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for references tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for get_symbol_references tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character, includeDeclaration = true } = decoded.right;
   try {

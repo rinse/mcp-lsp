@@ -16,7 +16,7 @@ export function createToolMap(lspManager: LSPManager): Map<string, MCPTool> {
   toolMap.set('get_hover_info', new MCPToolHover(lspManager));
   toolMap.set('get_definition_locations', new MCPToolDefinition(lspManager));
   toolMap.set('implementation', new MCPToolImplementation(lspManager));
-  toolMap.set('references', new MCPToolReferences(lspManager));
+  toolMap.set('get_symbol_references', new MCPToolReferences(lspManager));
   toolMap.set('typeDefinition', new MCPToolTypeDefinition(lspManager));
   toolMap.set('rename', new MCPToolRename(lspManager));
   toolMap.set('codeAction', new MCPToolCodeAction(lspManager));

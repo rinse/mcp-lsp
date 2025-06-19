@@ -47,13 +47,13 @@ npm run inspector-tool -- --tool-name get_definition_locations --tool-arg uri=fi
 npm run inspector-tool -- --tool-name implementation --tool-arg uri=file:///path/to/file.ts --tool-arg line=15 --tool-arg character=8
 ```
 
-**Test references tool (find all symbol references):**
+**Test get_symbol_references tool (find all symbol references):**
 ```bash
 # Include declaration
-npm run inspector-tool -- --tool-name references --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg includeDeclaration=true
+npm run inspector-tool -- --tool-name get_symbol_references --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg includeDeclaration=true
 
 # Exclude declaration
-npm run inspector-tool -- --tool-name references --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg includeDeclaration=false
+npm run inspector-tool -- --tool-name get_symbol_references --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg includeDeclaration=false
 ```
 
 **Test typeDefinition tool (jump to type definition):**
