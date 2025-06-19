@@ -13,7 +13,7 @@ import { LSPManager } from "../lsp/LSPManager.js";
 
 export function createToolMap(lspManager: LSPManager): Map<string, MCPTool> {
   const toolMap = new Map<string, MCPTool>();
-  toolMap.set('hover', new MCPToolHover(lspManager));
+  toolMap.set('get_hover_info', new MCPToolHover(lspManager));
   toolMap.set('definition', new MCPToolDefinition(lspManager));
   toolMap.set('implementation', new MCPToolImplementation(lspManager));
   toolMap.set('references', new MCPToolReferences(lspManager));

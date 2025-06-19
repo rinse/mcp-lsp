@@ -14,6 +14,11 @@ import { Hover } from "../lsp/types/HoverRequest";
 import { MarkedStringT } from "../lsp/types/MarkedString";
 import { MarkupContentT } from "../lsp/types/MarkupContent";
 
+/**
+ * MCPToolHover is a wrapper of the Hover tool for {@link MCPTool}.
+ *
+ * The functionarity is delegated to {@link LSPServerEx#hover}.
+ */
 export class MCPToolHover implements MCPTool {
   constructor(private manager: LSPManager) {}
 
@@ -28,22 +33,43 @@ export class MCPToolHover implements MCPTool {
 
 function listItemHover(): Tool {
   return {
-    name: 'hover',
-    description: 'Get hover information for a position in a TypeScript file',
+    name: 'get_hover_info',
+    description: `Retrieve hover information (type signature and inline documentation) for the symbol located at a specific cursor position in a TypeScript. Use it whenever the agent—or the end-user—asks “What is the type / doc of this identifier?” or needs quick symbol details without parsing the whole file.
+
+When to call
+* The user / agent wants the type, return-type, overload list, or TSDoc of an identifier.
+* Typical questions: "What’s the type of foo?", "Show docs for this function", "Explain what this variable is".
+
+Output
+Plain-text block in the form:
+<path>:<line>:<character>
+  Type: <inferred-type or signature>
+  Docs: <first JSDoc/JSDoc-like sentence>
+
+Output Example:
+/test/file.ts:10:5
+  Type: function listItemCallees(): Tool
+  Docs: Prints how to use the Callees tool.
+
+Limits / notes
+* Only .ts / .tsx files currently supported
+* The file must exist on disk (unsaved buffers not supported).
+* Very large files (>2 MB) may degrade latency.
+* Position finding: \`awk -v pat='<PATTERN>' '{pos=index($0, pat); if (pos) print NR-1 ":" pos-1 ":" $0}'\``,
     inputSchema: {
       type: 'object',
       properties: {
         uri: {
           type: 'string',
-          description: 'File URI (e.g., file:///path/to/file.ts)',
+          description: 'Required. File URI (e.g., file:///path/to/file.ts)',
         },
         line: {
           type: 'number',
-          description: 'Line number (0-based)',
+          description: 'Required. 0-based line index where the cursor is.',
         },
         character: {
           type: 'number',
-          description: 'Character position (0-based)',
+          description: 'Required. 0-based character (column) index on that line.',
         },
       },
       required: ['uri', 'line', 'character'],

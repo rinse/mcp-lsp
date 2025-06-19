@@ -12,7 +12,7 @@ Claude commands are available in `.claude/commands/` directory for automated wor
 
 - **LSPManager**: Central coordinator for LSP operations
 - **LSPServerStream**: Manages stdio communication with TypeScript language server
-- **Tools**: `src/tools/` - MCP tool implementations (hover, definition, rename, codeAction, executeCodeAction)
+- **Tools**: `src/tools/` - MCP tool implementations (get_hover_info, get_definition_locations, rename, codeAction, executeCodeAction)
 - **Transport**: stdio using `@modelcontextprotocol/sdk`
 
 ## Commands and Tools
@@ -32,9 +32,9 @@ npm run inspector-tool -- --tool-name <TOOL_NAME> [--tool-arg <KEY>=<VALUE>]...
 ```
 
 Examples:
-**Test hover tool (get type info and documentation):**
+**Test get_hover_info tool (get type info and documentation):**
 ```bash
-npm run inspector-tool -- --tool-name hover --tool-arg uri=file:///path/to/file.ts --tool-arg line=10 --tool-arg character=5
+npm run inspector-tool -- --tool-name get_hover_info --tool-arg uri=file:///path/to/file.ts --tool-arg line=10 --tool-arg character=5
 ```
 
 **Test definition tool (jump to symbol definition):**
