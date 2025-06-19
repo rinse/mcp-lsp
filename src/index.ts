@@ -19,6 +19,10 @@ import { logger } from './utils/loggers.js';
 void main();
 
 async function main(): Promise<void> {
+  logger.info("======================================");
+  logger.info("[MCP] Server Process had started. ::::");
+  logger.info("======================================");
+
   // Spawn the TypeScript language server process
   const lspProcess = spawn('npx', ['typescript-language-server', '--stdio'], {
     stdio: ['pipe', 'pipe', 'pipe'],
@@ -30,20 +34,27 @@ async function main(): Promise<void> {
     logger.info('[LSP] Process exited', { code, signal });
     throw new McpError(ErrorCode.InternalError, `LSP Process exited.`);
   });
+
+  // MCP server instance
   const lspServer = new LSPServerStream(lspProcess.stdin, lspProcess.stdout);
+  const lspServerEx: LSPServerEx = new LSPServerExImpl(lspServer);
+  const lspManager = new LSPManager(lspServerEx);
+  const toolMap = createToolMap(lspManager);
+  const mcpServer = createMCPServer(toolMap);
+
+  const preShutdownProcess = async () => {
+    await safeClose("MCP Server", () => mcpServer.close());
+    await safeClose("LSP Process", async () => { void lspProcess.kill(); });
+    await safeClose("LSP Server", () => lspServer.close());
+  };
+  // Finish the process on EOF
+  process.stdin.on("end", preShutdownProcess);
+  // Graceful shutdown for signals
+  for (const signal of ['SIGHUP', 'SIGINT', 'SIGTERM', 'exit', 'uncaughtException'] as const) {
+    process.on(signal, preShutdownProcess);
+  }
+
   try {
-    const lspServerEx: LSPServerEx = new LSPServerExImpl(lspServer);
-    const lspManager = new LSPManager(lspServerEx);
-    const toolMap = createToolMap(lspManager);
-    // MCP server instance
-    const mcpServer = createMCPServer(toolMap);
-    const transport = new StdioServerTransport();
-    await mcpServer.connect(transport);
-    logger.info('MCP-LSP server running on stdio');
-    // Register cleanup handlers
-    process.on('SIGINT', () => void cleanup(lspServer, lspProcess));
-    process.on('SIGTERM', () => void cleanup(lspServer, lspProcess));
-    process.on('exit', () => void cleanup(lspServer, lspProcess));
     // Start and initialize TypeScript LSP
     await lspServer.start();
     const resultInitialize = await lspServerEx.initialize({
@@ -52,21 +63,22 @@ async function main(): Promise<void> {
       capabilities: createLSPClientCapabilities(),
       trace: 'verbose',
     });
-    logger.info('Result of initialize', { result: resultInitialize });
+    logger.info('[MCP] Result of LSP initialization', { result: resultInitialize });
+
     await lspServerEx.initialized({});
-    logger.info('TypeScript LSP initialized successfully');
+    const transport = new StdioServerTransport();
+    await mcpServer.connect(transport);
+    logger.info('[MCP] server running on stdio');
   } catch (error) {
-    logger.error('Failed to initialize TypeScript LSP', { error });
-    await cleanup(lspServer, lspProcess);
-    process.exit(1);
+    throw new McpError(ErrorCode.InternalError, `Failed to initialize LSP`, error);
   }
 }
 
-async function cleanup(lspServer: LSPServerStream, lspProcess: ChildProcess): Promise<void> {
+async function safeClose(name: string, close: () => Promise<void>) {
   try {
-    await lspServer.close();
+    logger.info(`[MCP] Closing ${name}.`)
+    await close();
   } catch (error) {
-    logger.error('[LSP] Error during server close', { error });
+    logger.error(`[MCP] Error during close ${name}`, { error });
   }
-  lspProcess.kill();
-};
+}
