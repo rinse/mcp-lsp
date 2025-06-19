@@ -37,9 +37,9 @@ Examples:
 npm run inspector-tool -- --tool-name get_hover_info --tool-arg uri=file:///path/to/file.ts --tool-arg line=10 --tool-arg character=5
 ```
 
-**Test definition tool (jump to symbol definition):**
+**Test get_definition_locations tool (jump to symbol definition):**
 ```bash
-npm run inspector-tool -- --tool-name definition --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10
+npm run inspector-tool -- --tool-name get_definition_locations --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10
 ```
 
 **Test implementation tool (find interface/abstract class implementations):**

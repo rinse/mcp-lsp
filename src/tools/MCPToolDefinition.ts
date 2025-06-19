@@ -28,22 +28,40 @@ export class MCPToolDefinition implements MCPTool {
 
 function listItemDefinition(): Tool {
   return {
-    name: 'definition',
-    description: 'Get definition location for a symbol at a specific position in a TypeScript file',
+    name: 'get_definition_locations',
+    description: `Locate and return source-code definition site(s) (declarations or implementations) for the symbol under the given cursor position in a TypeScript / JavaScript file.
+
+When to call
+* The agent needs to "go to definition" while reading or analysing code,
+  e.g. to inspect a function body, view an interface that a class implements, verify a variable's scope, or discover additional object fields.
+* Typical user prompts: "Where is foo defined?", "Open the declaration of this method", "Jump to the interface for this class".
+
+Output
+Plain-text block:
+Found <N> definitions:\n<absPath>:<startLine>:<startCol>-<endLine>:<endCol>\n...
+
+Output Example (single hit):
+Found 1 definitions:\n/home/rinse/w/mcp/mcp-lsp/.wt/1/src/lsp/LSPServerStream.ts:11:13-11:28\n
+
+Notes & limits
+* Only .ts / .tsx files currently supported
+* The file must exist on disk (unsaved buffers not supported).
+* Very large files (> 2 MB) may increase latency.
+* Position finding: \`awk -v pat='<PATTERN>' '{pos=index($0, pat); if (pos) print NR-1 ":" pos-1 ":" $0}'\``,
     inputSchema: {
       type: 'object',
       properties: {
         uri: {
           type: 'string',
-          description: 'File URI (e.g., file:///path/to/file.ts)',
+          description: 'Required. File URI (e.g., file:///path/to/file.ts)',
         },
         line: {
           type: 'number',
-          description: 'Line number (0-based)',
+          description: 'Required. 0-based line index of the cursor.',
         },
         character: {
           type: 'number',
-          description: 'Character position (0-based)',
+          description: 'Required. 0-based character (column) index.',
         },
       },
       required: ['uri', 'line', 'character'],
