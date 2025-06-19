@@ -26,7 +26,12 @@ Claude commands are available in `.claude/commands/` directory for automated wor
 Use MCP Inspector to test newly developed MCP tools.
 
 #### Command Examples
+Basic syntax:
+```bash
+npm run inspector-tool -- --tool-name <TOOL_NAME> [--tool-arg <KEY>=<VALUE>]...
+```
 
+Examples:
 **Test hover tool (get type info and documentation):**
 ```bash
 npm run inspector-tool -- --tool-name hover --tool-arg uri=file:///path/to/file.ts --tool-arg line=10 --tool-arg character=5
@@ -82,46 +87,4 @@ npm run inspector-tool -- --tool-name callHierarchy --tool-arg uri=file:///path/
 npm run inspector-tool -- --tool-name callees --tool-arg uri=file:///path/to/file.ts --tool-arg line=30 --tool-arg character=10
 ```
 
-### MCP-LSP Tools (USE THESE INSTEAD OF MANUAL EDITING)
-
 **Position finding:** `awk -v pat='<PATTERN>' '{pos=index($0, pat); if (pos) print NR-1 ":" pos-1 ":" $0}'`
-
-#### mcp__mcp-lsp__rename
-**REQUIRED** for renaming symbols. Updates all references across project.
-- Parameters: `uri`, `line`, `character`, `newName`
-
-#### mcp__mcp-lsp__definition  
-**REQUIRED** for finding symbol definitions. More accurate than grep.
-- Parameters: `uri`, `line`, `character`
-
-#### mcp__mcp-lsp__hover
-**REQUIRED** for understanding types and documentation.
-- Parameters: `uri`, `line`, `character`
-
-#### mcp__mcp-lsp__implementation
-REQUIRED for finding where interfaces/abstract classes are implemented.
-- Parameters: `uri`, `line`, `character`
-
-#### mcp__mcp-lsp__references
-REQUIRED for finding references to a symbol.
-- Parameters: `uri`, `line`, `character`, `includeDeclaration` (optional)
-
-#### mcp__mcp-lsp__typeDefinition
-REQUIRED for jumping to type definition of a symbol.
-- Parameters: `uri`, `line`, `character`
-
-#### mcp__mcp-lsp__codeAction
-REQUIRED for getting available code actions (quick fixes, refactorings).
-- Parameters: `uri`, `line`, `character`, `endLine`, `endCharacter`
-
-#### mcp__mcp-lsp__executeCodeAction
-Apply code actions from codeAction tool.
-- Parameters: `codeAction` object from codeAction results
-
-#### mcp__mcp-lsp__callHierarchy
-REQUIRED for finding all locations that call a specific function/method.
-- Parameters: `uri`, `line`, `character`
-
-#### mcp__mcp-lsp__callees
-REQUIRED for finding all functions/methods that a specific function calls.
-- Parameters: `uri`, `line`, `character`
