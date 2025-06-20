@@ -332,7 +332,7 @@ describe('MCPToolCodeAction', () => {
         endCharacter: 15,
       };
       await expect(mcpToolCodeAction.handle(invalidParams)).rejects.toThrow(McpError);
-      await expect(mcpToolCodeAction.handle(invalidParams)).rejects.toThrow('Invalid parameters for codeAction tool');
+      await expect(mcpToolCodeAction.handle(invalidParams)).rejects.toThrow('Invalid parameters for get_code_actions tool');
     });
 
     it('should throw error when missing required parameters', async () => {
@@ -343,7 +343,7 @@ describe('MCPToolCodeAction', () => {
         // Missing endLine and endCharacter
       };
       await expect(mcpToolCodeAction.handle(missingParams)).rejects.toThrow(McpError);
-      await expect(mcpToolCodeAction.handle(missingParams)).rejects.toThrow('Invalid parameters for codeAction tool');
+      await expect(mcpToolCodeAction.handle(missingParams)).rejects.toThrow('Invalid parameters for get_code_actions tool');
     });
 
     it('should handle errors from LSP server', async () => {
@@ -357,7 +357,7 @@ describe('MCPToolCodeAction', () => {
   describe('listItem', () => {
     it('should return correct tool definition', () => {
       const toolDefinition = mcpToolCodeAction.listItem();
-      expect(toolDefinition.name).toBe('codeAction');
+      expect(toolDefinition.name).toBe('get_code_actions');
       expect(toolDefinition.description).toContain('code actions');
       expect(toolDefinition.inputSchema.properties).toHaveProperty('uri');
       expect(toolDefinition.inputSchema.properties).toHaveProperty('line');
