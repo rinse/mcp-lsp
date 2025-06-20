@@ -17,7 +17,23 @@ export function createMCPServer(
       capabilities: {
         tools: {},
       },
-      instructions: "", // TODO
+      instructions: `Code Assistant provides various tools for reading / editing codes.
+
+## You MUST use this MCP whenever:
+- Finding a symbol based on a symbol
+  * implementation, references, callers, type definitions, etc.
+- Renaming a symbol
+  * Rename
+- Applying quick fix
+  * Find an available imports for unresolved symbol.
+
+## Locating a symbol
+Tools often takes an accurate position of symbol. Locate a symbol with the following "awk trick":
+
+\`\`\`
+awk -v pat='<PATTERN>' '{pos=index($0, pat); if (pos) print NR-1 ":" pos-1 ":" $0}'
+\`\`\`
+`,
     },
   );
   // Set up request handlers
