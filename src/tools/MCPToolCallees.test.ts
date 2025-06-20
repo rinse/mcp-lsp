@@ -60,13 +60,26 @@ describe('MCPToolCallees', () => {
     it('should return the correct tool description', () => {
       const tool = mcpToolCallees.listItem();
 
-      expect(tool.name).toBe('callees');
-      expect(tool.description).toBe('Find all functions/methods that a specific function calls');
-      expect(tool.inputSchema.type).toBe('object');
-      expect(tool.inputSchema.properties).toHaveProperty('uri');
-      expect(tool.inputSchema.properties).toHaveProperty('line');
-      expect(tool.inputSchema.properties).toHaveProperty('character');
-      expect(tool.inputSchema.required).toEqual(['uri', 'line', 'character']);
+      expect(tool.name).toBe('find_callee_locations');
+      expect(tool.description).toContain('Find all functions/methods that a specific function calls');
+      expect(tool.inputSchema).toEqual({
+        type: 'object',
+        properties: {
+          uri: {
+            type: 'string',
+            description: 'Required. File URI (e.g., file:///path/to/file.ts)',
+          },
+          line: {
+            type: 'number',
+            description: 'Required. 0-based line index where the cursor is located',
+          },
+          character: {
+            type: 'number',
+            description: 'Required. 0-based character index on that line',
+          },
+        },
+        required: ['uri', 'line', 'character'],
+      });
     });
   });
 
@@ -181,6 +194,7 @@ describe('MCPToolCallees', () => {
       };
 
       await expect(mcpToolCallees.handle(invalidParams)).rejects.toThrow(McpError);
+      await expect(mcpToolCallees.handle(invalidParams)).rejects.toThrow('Invalid parameters for find_callee_locations tool');
     });
 
     it('should throw McpError when LSP request fails', async () => {

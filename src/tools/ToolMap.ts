@@ -22,6 +22,6 @@ export function createToolMap(lspManager: LSPManager): Map<string, MCPTool> {
   toolMap.set('codeAction', new MCPToolCodeAction(lspManager));
   toolMap.set('executeCodeAction', new MCPToolExecuteCodeAction(lspManager));
   toolMap.set('find_caller_locations', new MCPToolCallHierarchy(lspManager));
-  toolMap.set('callees', new MCPToolCallees(lspManager));
+  toolMap.set('find_callee_locations', new MCPToolCallees(lspManager));
   return toolMap;
 }
