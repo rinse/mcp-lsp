@@ -44,22 +44,22 @@ describe('MCPToolTypeDefinition', () => {
     it('should return the correct tool description', () => {
       const tool = mcpToolTypeDefinition.listItem();
 
-      expect(tool.name).toBe('typeDefinition');
-      expect(tool.description).toBe('Get type definition location for a symbol at a specific position in a TypeScript file');
+      expect(tool.name).toBe('goto_type_declaration');
+      expect(tool.description).toContain('Always jump straight to the canonical type declaration');
       expect(tool.inputSchema).toEqual({
         type: 'object',
         properties: {
           uri: {
             type: 'string',
-            description: 'File URI (e.g., file:///path/to/file.ts)',
+            description: 'Required. File URI (e.g. file:///path/to/file.ts)',
           },
           line: {
             type: 'number',
-            description: 'Line number (0-based)',
+            description: 'Required. 0-based line index',
           },
           character: {
             type: 'number',
-            description: 'Character position (0-based)',
+            description: 'Required. 0-based character index',
           },
         },
         required: ['uri', 'line', 'character'],

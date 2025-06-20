@@ -56,9 +56,9 @@ npm run inspector-tool -- --tool-name get_symbol_references --tool-arg uri=file:
 npm run inspector-tool -- --tool-name get_symbol_references --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg includeDeclaration=false
 ```
 
-**Test typeDefinition tool (jump to type definition):**
+**Test goto_type_declaration tool (jump to type declaration):**
 ```bash
-npm run inspector-tool -- --tool-name typeDefinition --tool-arg uri=file:///path/to/file.ts --tool-arg line=20 --tool-arg character=15
+npm run inspector-tool -- --tool-name goto_type_declaration --tool-arg uri=file:///path/to/file.ts --tool-arg line=20 --tool-arg character=15
 ```
 
 **Test rename tool (rename symbol across project):**
