@@ -4,9 +4,9 @@
 
 MCP server that bridges TypeScript Language Server Protocol (LSP) capabilities to MCP tools, enabling Claude Code to interact with TypeScript projects through LSP features.
 
-## Predefined Tasks
+## Claude Commands
 
-`*<PREDEFINED_TASK>` → Execute `.claude/predefined-tasks/<PREDEFINED_TASK>.md`
+Claude commands are available in `.claude/commands/` directory for automated workflows.
 
 ## Architecture
 
