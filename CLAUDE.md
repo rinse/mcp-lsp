@@ -12,7 +12,7 @@ Claude commands are available in `.claude/commands/` directory for automated wor
 
 - **LSPManager**: Central coordinator for LSP operations
 - **LSPServerStream**: Manages stdio communication with TypeScript language server
-- **Tools**: `src/tools/` - MCP tool implementations (get_hover_info, get_definition_locations, find_implementation_locations, get_symbol_references, refactor_rename_symbol, codeAction, executeCodeAction)
+- **Tools**: `src/tools/` - MCP tool implementations (get_hover_info, get_definition_locations, find_implementation_locations, get_symbol_references, refactor_rename_symbol, codeAction, executeCodeAction, find_caller_locations)
 - **Transport**: stdio using `@modelcontextprotocol/sdk`
 
 ## Commands and Tools
@@ -77,9 +77,9 @@ npm run inspector-tool -- --tool-name codeAction --tool-arg uri=file:///path/to/
 npm run inspector-tool -- --tool-name executeCodeAction --tool-arg 'codeAction={"title":"Add missing import","kind":"quickfix","edit":{"changes":{...}}}'
 ```
 
-**Test callHierarchy tool (find incoming calls to a function):**
+**Test find_caller_locations tool (find incoming calls to a function):**
 ```bash
-npm run inspector-tool -- --tool-name callHierarchy --tool-arg uri=file:///path/to/file.ts --tool-arg line=25 --tool-arg character=5
+npm run inspector-tool -- --tool-name find_caller_locations --tool-arg uri=file:///path/to/file.ts --tool-arg line=25 --tool-arg character=5
 ```
 
 **Test callees tool (find outgoing calls from a function):**

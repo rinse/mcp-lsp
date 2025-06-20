@@ -21,7 +21,7 @@ export function createToolMap(lspManager: LSPManager): Map<string, MCPTool> {
   toolMap.set('refactor_rename_symbol', new MCPToolRename(lspManager));
   toolMap.set('codeAction', new MCPToolCodeAction(lspManager));
   toolMap.set('executeCodeAction', new MCPToolExecuteCodeAction(lspManager));
-  toolMap.set('callHierarchy', new MCPToolCallHierarchy(lspManager));
+  toolMap.set('find_caller_locations', new MCPToolCallHierarchy(lspManager));
   toolMap.set('callees', new MCPToolCallees(lspManager));
   return toolMap;
 }

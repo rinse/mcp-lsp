@@ -27,22 +27,42 @@ export class MCPToolCallHierarchy implements MCPTool {
 
 function listItemCallHierarchy(): Tool {
   return {
-    name: 'callHierarchy',
-    description: 'Find all locations that call a specific function/method',
+    name: 'find_caller_locations',
+    description: `**Find all locations that call a specific function/method across the entire TypeScript project—across all files, imports, and overloads—in a single, exhaustive scan.**
+
+👉 **You MUST call this tool whenever** the user or agent asks "Who calls this?", "Where is this function used?", "Show call hierarchy", "Find invocations", "Trace call stack", or any similar request. Skip manual greps—this analysis is language-aware, prevents missed edges, and saves tokens by avoiding full-file loads.
+
+Typical trigger phrases (non-exhaustive):
+  • "find callers" / "show call hierarchy" / "trace calls"
+  • "list functions that invoke X"
+  • "who uses this method" / "where is this called"
+  • "find all usages" / "show invocations"
+
+Output
+Plain text with caller count and locations:
+Found N callers:
+<symbolName> at <absolutePath>:<startLine>:<startChar>-<endChar>
+...
+
+Notes & limits
+* Only .ts / .tsx files currently supported
+* The file must exist on disk (unsaved buffers not supported).
+* Very large files (>2 MB) may increase latency.
+* Position finding: \`awk -v pat='<PATTERN>' '{pos=index($0, pat); if (pos) print NR-1 ":" pos-1 ":" $0}'\``,
     inputSchema: {
       type: 'object',
       properties: {
         uri: {
           type: 'string',
-          description: 'File URI (e.g., file:///path/to/file.ts)',
+          description: 'Required. File URI (e.g., file:///path/to/file.ts)',
         },
         line: {
           type: 'number',
-          description: 'Line number (0-based)',
+          description: 'Required. 0-based line index where the cursor is.',
         },
         character: {
           type: 'number',
-          description: 'Character position (0-based)',
+          description: 'Required. 0-based character index on that line.',
         },
       },
       required: ['uri', 'line', 'character'],
@@ -62,7 +82,7 @@ async function handleCallHierarchy(
 ): Promise<CallToolResult> {
   const decoded = CallHierarchyParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for callHierarchy tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for find_caller_locations tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character } = decoded.right;
   try {
