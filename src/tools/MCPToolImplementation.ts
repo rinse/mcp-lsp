@@ -28,8 +28,34 @@ export class MCPToolImplementation implements MCPTool {
 
 function listItemImplementation(): Tool {
   return {
-    name: 'implementation',
-    description: 'Get implementation location for a symbol at a specific position in a TypeScript file',
+    name: 'find_implementation_locations',
+    description: `Locate and return source-code implementation sites for the symbol at the given cursor position in a TypeScript file.
+
+## When to call
+* The user / agent asks "Where is this interface/method implemented?", "Show all overrides of X", "Find concrete subclasses".
+* Typical trigger phrases: "find implementations", "list implementations", "find overrides", "list overrides", "who implements", "show concrete classes of", "subclasses of".
+
+## Locating a symbol
+\`\`\`
+awk -v pat='<PATTERN>' '{pos=index($0, pat); if (pos) print NR-1 ":" pos-1 ":" $0}'
+\`\`\`
+
+## Output
+Plain-text block:
+Found <N> implementations:
+<absPath>:<startLine>:<startCol>-<endLine>:<endCol>
+...
+
+## Output Example:
+Found 3 implementations:
+/home/user/project/src/services/UserService.ts:15:13-15:28
+/home/user/project/src/mocks/MockUserService.ts:8:13-8:28
+/home/user/project/src/tests/TestUserService.ts:12:13-12:28
+
+## Notes & limits
+* Only .ts / .tsx files currently supported
+* The file must exist on disk (unsaved buffers not supported).
+* Very large files (> 2 MB) may increase latency.`,
     inputSchema: {
       type: 'object',
       properties: {
