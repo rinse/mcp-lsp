@@ -14,6 +14,7 @@ export function createMCPServer(toolMap: Map<string, MCPTool>): Server {
       capabilities: {
         tools: {},
       },
+      instructions: "", // TODO
     },
   );
   // Set up request handlers

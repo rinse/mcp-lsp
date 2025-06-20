@@ -1,4 +1,4 @@
-import { spawn, type ChildProcess } from 'child_process';
+import { spawn } from 'child_process';
 
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
@@ -42,16 +42,19 @@ async function main(): Promise<void> {
   const toolMap = createToolMap(lspManager);
   const mcpServer = createMCPServer(toolMap);
 
-  const preShutdownProcess = async () => {
+  const preShutdownProcess = async (): Promise<void> => {
     await safeClose("MCP Server", () => mcpServer.close());
-    await safeClose("LSP Process", async () => { void lspProcess.kill(); });
+    await safeClose("LSP Process", (): Promise<void> => {
+      void lspProcess.kill();
+      return Promise.resolve();
+    });
     await safeClose("LSP Server", () => lspServer.close());
   };
   // Finish the process on EOF
-  process.stdin.on("end", preShutdownProcess);
+  process.stdin.on("end", () => void preShutdownProcess());
   // Graceful shutdown for signals
   for (const signal of ['SIGHUP', 'SIGINT', 'SIGTERM', 'exit', 'uncaughtException'] as const) {
-    process.on(signal, preShutdownProcess);
+    process.on(signal, () => void preShutdownProcess());
   }
 
   try {
@@ -74,9 +77,9 @@ async function main(): Promise<void> {
   }
 }
 
-async function safeClose(name: string, close: () => Promise<void>) {
+async function safeClose(name: string, close: () => Promise<void>): Promise<void> {
   try {
-    logger.info(`[MCP] Closing ${name}.`)
+    logger.info(`[MCP] Closing ${name}.`);
     await close();
   } catch (error) {
     logger.error(`[MCP] Error during close ${name}`, { error });
