@@ -334,14 +334,14 @@ describe('MCPToolExecuteCodeAction', () => {
       };
 
       await expect(mcpToolExecuteCodeAction.handle(invalidParams)).rejects.toThrow(McpError);
-      await expect(mcpToolExecuteCodeAction.handle(invalidParams)).rejects.toThrow('Invalid parameters for executeCodeAction tool');
+      await expect(mcpToolExecuteCodeAction.handle(invalidParams)).rejects.toThrow('Invalid parameters for run_code_action tool');
     });
 
     it('should throw error when missing required codeAction parameter', async () => {
       const missingParams = {};
 
       await expect(mcpToolExecuteCodeAction.handle(missingParams)).rejects.toThrow(McpError);
-      await expect(mcpToolExecuteCodeAction.handle(missingParams)).rejects.toThrow('Invalid parameters for executeCodeAction tool');
+      await expect(mcpToolExecuteCodeAction.handle(missingParams)).rejects.toThrow('Invalid parameters for run_code_action tool');
     });
 
     it('should handle Command with null result', async () => {
@@ -374,7 +374,7 @@ describe('MCPToolExecuteCodeAction', () => {
     it('should return correct tool definition', () => {
       const toolDefinition = mcpToolExecuteCodeAction.listItem();
 
-      expect(toolDefinition.name).toBe('executeCodeAction');
+      expect(toolDefinition.name).toBe('run_code_action');
       expect(toolDefinition.description).toContain('Execute a code action');
       expect(toolDefinition.inputSchema.properties).toHaveProperty('codeAction');
       expect(toolDefinition.inputSchema.required).toEqual(['codeAction']);

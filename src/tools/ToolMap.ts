@@ -20,7 +20,7 @@ export function createToolMap(lspManager: LSPManager): Map<string, MCPTool> {
   toolMap.set('goto_type_declaration', new MCPToolTypeDefinition(lspManager));
   toolMap.set('refactor_rename_symbol', new MCPToolRename(lspManager));
   toolMap.set('get_code_actions', new MCPToolCodeAction(lspManager));
-  toolMap.set('executeCodeAction', new MCPToolExecuteCodeAction(lspManager));
+  toolMap.set('run_code_action', new MCPToolExecuteCodeAction(lspManager));
   toolMap.set('find_caller_locations', new MCPToolCallHierarchy(lspManager));
   toolMap.set('find_callee_locations', new MCPToolCallees(lspManager));
   return toolMap;
