@@ -12,7 +12,7 @@ Claude commands are available in `.claude/commands/` directory for automated wor
 
 - **LSPManager**: Central coordinator for LSP operations
 - **LSPServerStream**: Manages stdio communication with TypeScript language server
-- **Tools**: `src/tools/` - MCP tool implementations (get_hover_info, get_definition_locations, find_implementation_locations, get_symbol_references, rename, codeAction, executeCodeAction)
+- **Tools**: `src/tools/` - MCP tool implementations (get_hover_info, get_definition_locations, find_implementation_locations, get_symbol_references, refactor_rename_symbol, codeAction, executeCodeAction)
 - **Transport**: stdio using `@modelcontextprotocol/sdk`
 
 ## Commands and Tools
@@ -61,9 +61,9 @@ npm run inspector-tool -- --tool-name get_symbol_references --tool-arg uri=file:
 npm run inspector-tool -- --tool-name goto_type_declaration --tool-arg uri=file:///path/to/file.ts --tool-arg line=20 --tool-arg character=15
 ```
 
-**Test rename tool (rename symbol across project):**
+**Test refactor_rename_symbol tool (rename symbol across project):**
 ```bash
-npm run inspector-tool -- --tool-name rename --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg newName=newVariableName
+npm run inspector-tool -- --tool-name refactor_rename_symbol --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg newName=newVariableName
 ```
 
 **Test codeAction tool (get available quick fixes/refactorings):**

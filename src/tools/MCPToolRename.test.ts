@@ -53,6 +53,37 @@ describe('MCPToolRename', () => {
     mcpToolRename = new MCPToolRename(lspManager);
   });
 
+  describe('listItem', () => {
+    it('should return the correct tool description', () => {
+      const tool = mcpToolRename.listItem();
+
+      expect(tool.name).toBe('refactor_rename_symbol');
+      expect(tool.description).toContain('Always rename the target symbol everywhere it appears');
+      expect(tool.inputSchema).toEqual({
+        type: 'object',
+        properties: {
+          uri: {
+            type: 'string',
+            description: 'Required. File URI (e.g., file:///path/to/file.ts)',
+          },
+          line: {
+            type: 'number',
+            description: 'Required. 0-based line index where the symbol is located.',
+          },
+          character: {
+            type: 'number',
+            description: 'Required. 0-based character index on that line.',
+          },
+          newName: {
+            type: 'string',
+            description: 'Required. The new identifier name.',
+          },
+        },
+        required: ['uri', 'line', 'character', 'newName'],
+      });
+    });
+  });
+
   describe('handle', () => {
     const validParams = {
       uri: 'file:///test/file.ts',
@@ -166,7 +197,7 @@ describe('MCPToolRename', () => {
         newName: 'newSymbolName',
       };
       await expect(mcpToolRename.handle(invalidParams)).rejects.toThrow(McpError);
-      await expect(mcpToolRename.handle(invalidParams)).rejects.toThrow('Invalid parameters for rename tool');
+      await expect(mcpToolRename.handle(invalidParams)).rejects.toThrow('Invalid parameters for refactor_rename_symbol tool');
     });
 
     it('should throw error when missing required parameters', async () => {
@@ -177,7 +208,7 @@ describe('MCPToolRename', () => {
         // Missing newName
       };
       await expect(mcpToolRename.handle(missingParams)).rejects.toThrow(McpError);
-      await expect(mcpToolRename.handle(missingParams)).rejects.toThrow('Invalid parameters for rename tool');
+      await expect(mcpToolRename.handle(missingParams)).rejects.toThrow('Invalid parameters for refactor_rename_symbol tool');
     });
 
     it('should handle errors from LSP server during rename', async () => {
