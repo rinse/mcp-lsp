@@ -49,8 +49,8 @@ Found <N> references:
 
 Output Example:
 Found 27 references:
-/home/rinse/w/mcp/mcp-lsp/.wt/1/src/tools/MCPTool.ts:6:17-6:24
-/home/rinse/w/mcp/mcp-lsp/.wt/1/src/mcp/MCPServer.ts:3:9-3:16
+/home/user/project/src/tools/MCPTool.ts:6:17-6:24
+/home/user/project/src/mcp/MCPServer.ts:3:9-3:16
 ...
 
 Notes & limits

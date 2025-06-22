@@ -89,7 +89,7 @@ async function handleHover(
 ): Promise<CallToolResult> {
   const decoded = HoverParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for hover tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for get_hover_info tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character } = decoded.right;
   try {

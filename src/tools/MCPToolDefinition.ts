@@ -44,7 +44,7 @@ Found <N> definitions:
 
 Output Example (single hit):
 Found 1 definitions:
-/home/rinse/w/mcp/mcp-lsp/.wt/1/src/lsp/LSPServerStream.ts:11:13-11:28
+/home/user/project/src/lsp/LSPServerStream.ts:11:13-11:28
 
 Notes & limits
 * Only .ts / .tsx files currently supported
@@ -84,7 +84,7 @@ async function handleDefinition(
 ): Promise<CallToolResult> {
   const decoded = DefinitionParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for definition tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for get_definition_locations tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character } = decoded.right;
   try {

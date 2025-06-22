@@ -94,7 +94,7 @@ async function handleTypeDefinition(
 ): Promise<CallToolResult> {
   const decoded = TypeDefinitionParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for typeDefinition tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for goto_type_declaration tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character } = decoded.right;
   try {

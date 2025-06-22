@@ -89,7 +89,7 @@ async function handleImplementation(
 ): Promise<CallToolResult> {
   const decoded = ImplementationParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for implementation tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for find_implementation_locations tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character } = decoded.right;
   try {

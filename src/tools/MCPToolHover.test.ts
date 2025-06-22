@@ -162,7 +162,7 @@ describe('MCPToolHover', () => {
         character: 5,
       };
       await expect(mcpToolHover.handle(invalidParams)).rejects.toThrow(McpError);
-      await expect(mcpToolHover.handle(invalidParams)).rejects.toThrow('Invalid parameters for hover tool');
+      await expect(mcpToolHover.handle(invalidParams)).rejects.toThrow('Invalid parameters for get_hover_info tool');
     });
 
     it('should throw error when missing required parameters', async () => {
@@ -171,7 +171,7 @@ describe('MCPToolHover', () => {
         // Missing line and character
       };
       await expect(mcpToolHover.handle(missingParams)).rejects.toThrow(McpError);
-      await expect(mcpToolHover.handle(missingParams)).rejects.toThrow('Invalid parameters for hover tool');
+      await expect(mcpToolHover.handle(missingParams)).rejects.toThrow('Invalid parameters for get_hover_info tool');
     });
 
     it('should handle errors from LSP server', async () => {
