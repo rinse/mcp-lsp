@@ -26,7 +26,7 @@ export class MCPToolCodeAction implements MCPTool {
 
 function listItemCodeAction(): Tool {
   return {
-    name: 'list_code_actions',
+    name: 'list_available_code_actions',
     description: 'Get code actions (quick fixes, refactorings, source actions) for a range in a TypeScript file',
     inputSchema: {
       type: 'object',
@@ -139,7 +139,7 @@ async function handleCodeAction(
 ): Promise<CallToolResult> {
   const decoded = CodeActionParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for list_code_actions tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for list_available_code_actions tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character, endLine, endCharacter, diagnostics, only } = decoded.right;
   try {

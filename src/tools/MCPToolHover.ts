@@ -33,7 +33,7 @@ export class MCPToolHover implements MCPTool {
 
 function listItemHover(): Tool {
   return {
-    name: 'list_hover_info',
+    name: 'get_hover_info',
     description: `Retrieve hover information (type signature and inline documentation) for the symbol located at a specific cursor position in a TypeScript. Use it whenever the agent—or the end-user—asks “What is the type / doc of this identifier?” or needs quick symbol details without parsing the whole file.
 
 When to call
@@ -89,7 +89,7 @@ async function handleHover(
 ): Promise<CallToolResult> {
   const decoded = HoverParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for list_hover_info tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for get_hover_info tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character } = decoded.right;
   try {

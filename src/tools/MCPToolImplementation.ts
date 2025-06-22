@@ -28,7 +28,7 @@ export class MCPToolImplementation implements MCPTool {
 
 function listItemImplementation(): Tool {
   return {
-    name: 'find_implementation_locations',
+    name: 'list_implementation_locations',
     description: `Locate and return source-code implementation sites for the symbol at the given cursor position in a TypeScript file.
 
 ## When to call
@@ -89,7 +89,7 @@ async function handleImplementation(
 ): Promise<CallToolResult> {
   const decoded = ImplementationParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for find_implementation_locations tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for list_implementation_locations tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character } = decoded.right;
   try {

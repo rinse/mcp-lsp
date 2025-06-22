@@ -60,7 +60,7 @@ describe('MCPToolCallHierarchy', () => {
     it('should return the correct tool description', () => {
       const tool = mcpToolCallHierarchy.listItem();
 
-      expect(tool.name).toBe('find_caller_locations');
+      expect(tool.name).toBe('list_caller_locations');
       expect(tool.description).toContain('Find all locations that call a specific function/method');
       expect(tool.inputSchema).toEqual({
         type: 'object',
@@ -176,7 +176,7 @@ describe('MCPToolCallHierarchy', () => {
       };
 
       await expect(mcpToolCallHierarchy.handle(invalidParams)).rejects.toThrow(McpError);
-      await expect(mcpToolCallHierarchy.handle(invalidParams)).rejects.toThrow('Invalid parameters for find_caller_locations tool');
+      await expect(mcpToolCallHierarchy.handle(invalidParams)).rejects.toThrow('Invalid parameters for list_caller_locations tool');
     });
 
     it('should handle when prepareCallHierarchy returns empty results', async () => {

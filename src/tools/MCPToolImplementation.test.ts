@@ -43,7 +43,7 @@ describe('MCPToolImplementation', () => {
   describe('listItem', () => {
     it('should return the correct tool description', () => {
       const tool = mcpToolImplementation.listItem();
-      expect(tool.name).toBe('find_implementation_locations');
+      expect(tool.name).toBe('list_implementation_locations');
       expect(tool.description).toContain('Locate and return source-code implementation sites for the symbol at the given cursor position');
       expect(tool.inputSchema).toEqual({
         type: 'object',

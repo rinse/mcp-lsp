@@ -44,7 +44,7 @@ describe('MCPToolTypeDefinition', () => {
     it('should return the correct tool description', () => {
       const tool = mcpToolTypeDefinition.listItem();
 
-      expect(tool.name).toBe('goto_type_declaration');
+      expect(tool.name).toBe('get_type_declaration');
       expect(tool.description).toContain('Always jump straight to the canonical type declaration');
       expect(tool.inputSchema).toEqual({
         type: 'object',

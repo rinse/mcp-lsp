@@ -27,7 +27,7 @@ export class MCPToolCallHierarchy implements MCPTool {
 
 function listItemCallHierarchy(): Tool {
   return {
-    name: 'find_caller_locations',
+    name: 'list_caller_locations',
     description: `**Find all locations that call a specific function/method across the entire TypeScript project—across all files, imports, and overloads—in a single, exhaustive scan.**
 
 **You MUST call this tool whenever** the user or agent asks "Who calls this?", "Where is this function used?", "Show call hierarchy", "Find invocations", "Trace call stack", or any similar request. Skip manual greps—this analysis is language-aware, prevents missed edges, and saves tokens by avoiding full-file loads.
@@ -82,7 +82,7 @@ async function handleCallHierarchy(
 ): Promise<CallToolResult> {
   const decoded = CallHierarchyParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for find_caller_locations tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for list_caller_locations tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character } = decoded.right;
   try {

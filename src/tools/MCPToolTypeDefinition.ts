@@ -28,7 +28,7 @@ export class MCPToolTypeDefinition implements MCPTool {
 
 function listItemTypeDefinition(): Tool {
   return {
-    name: 'goto_type_declaration',
+    name: 'get_type_declaration',
     description: `**Always jump straight to the canonical type declaration**
 (interface / type alias / enum / class / primitive wrapper) that
 defines the compile-time shape of the symbol at the given cursor
@@ -94,7 +94,7 @@ async function handleTypeDefinition(
 ): Promise<CallToolResult> {
   const decoded = TypeDefinitionParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for goto_type_declaration tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for get_type_declaration tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character } = decoded.right;
   try {
