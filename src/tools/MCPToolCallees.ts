@@ -30,7 +30,7 @@ function listItemCallees(): Tool {
     name: 'find_callee_locations',
     description: `Find all functions/methods that a specific function calls across the entire TypeScript project—including dynamic dispatch, overloads, and imported helpers—in a single, exhaustive, language-aware scan.
 
-👉 **You MUST call this tool whenever** the user or agent asks "What does this function call?", "Show callee list", "Trace outbound calls", "Expand call hierarchy ↓", "List invoked helpers", or any similar request. Skip manual code reading—this analysis is language-aware, prevents missed callees, and saves tokens by avoiding the need to load every file into context.
+**You MUST call this tool whenever** the user or agent asks "What does this function call?", "Show callee list", "Trace outbound calls", "Expand call hierarchy ↓", "List invoked helpers", or any similar request. Skip manual code reading—this analysis is language-aware, prevents missed callees, and saves tokens by avoiding the need to load every file into context.
 
 Typical trigger phrases (non-exhaustive):
   • "find callees" / "show callee hierarchy" / "trace outbound calls"
@@ -43,6 +43,14 @@ Plain text with callee count and locations:
 Found N callees:
 <calleeName> at <absolutePath>:<startLine>:<startChar>-<endChar>
 ...
+
+Output Examples:
+\`\`\`
+Found 3 callees:
+readFile at /home/user/project/src/utils/fileUtils.ts:15:8-15:16
+writeFile at /home/user/project/src/utils/fileUtils.ts:25:8-25:17
+logger.info at /home/user/project/src/utils/logger.ts:10:0-10:11
+\`\`\`
 
 Notes & limits
 * Only .ts / .tsx files currently supported

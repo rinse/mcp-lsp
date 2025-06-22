@@ -44,7 +44,7 @@ describe('MCPToolReferences', () => {
     it('should return the correct tool description', () => {
       const tool = mcpToolReferences.listItem();
 
-      expect(tool.name).toBe('get_symbol_references');
+      expect(tool.name).toBe('list_symbol_references');
       expect(tool.description).toContain('Get all references to a symbol at a specific position in a TypeScript file');
       expect(tool.inputSchema).toEqual({
         type: 'object',

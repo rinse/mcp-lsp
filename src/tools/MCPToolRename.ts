@@ -29,7 +29,7 @@ function listItemRename(): Tool {
     name: 'refactor_rename_symbol',
     description: `**Always rename the target symbol everywhere it appears—across every file, import, and reference—using a single, atomic operation.**
 
-👉 **You MUST call this tool whenever** the user or agent asks "Rename this variable/function/class", "Change identifier name", "Refactor → rename", "Update name across files", or any similar request.
+**You MUST call this tool whenever** the user or agent asks "Rename this variable/function/class", "Change identifier name", "Refactor → rename", "Update name across files", or any similar request.
 
 Why use it? Skip manual search-and-replace—this refactor is language-aware, prevents missed edits, and saves tokens by avoiding the need to load every file into context.
 

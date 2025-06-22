@@ -28,7 +28,7 @@ export class MCPToolReferences implements MCPTool {
 
 function listItemReferences(): Tool {
   return {
-    name: 'get_symbol_references',
+    name: 'list_symbol_references',
     description: `Get all references to a symbol at a specific position in a TypeScript file
 
 ## Use this tool whenever:
@@ -100,7 +100,7 @@ async function handleReferences(
 ): Promise<CallToolResult> {
   const decoded = ReferencesParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for get_symbol_references tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for list_symbol_references tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character, includeDeclaration = true } = decoded.right;
   try {

@@ -28,7 +28,7 @@ export class MCPToolDefinition implements MCPTool {
 
 function listItemDefinition(): Tool {
   return {
-    name: 'get_definition_locations',
+    name: 'list_definition_locations',
     description: `Locate and return source-code definition site(s) (declarations or implementations) for the symbol under the given cursor position in a TypeScript / JavaScript file.
 
 When to call
@@ -84,7 +84,7 @@ async function handleDefinition(
 ): Promise<CallToolResult> {
   const decoded = DefinitionParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for get_definition_locations tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for list_definition_locations tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character } = decoded.right;
   try {

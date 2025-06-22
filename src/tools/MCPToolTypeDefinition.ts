@@ -34,7 +34,7 @@ function listItemTypeDefinition(): Tool {
 defines the compile-time shape of the symbol at the given cursor
 position in a TypeScript file.
 
-👉 **You MUST call this tool whenever** the user or the agent asks
+**You MUST call this tool whenever** the user or the agent asks
 "Where is this type defined?", "Go to type", "Reveal declared
 shape", "Open original interface", or any similar request.
 Skip manual greps—this tool is faster, language-aware, and

@@ -30,7 +30,7 @@ function listItemCallHierarchy(): Tool {
     name: 'find_caller_locations',
     description: `**Find all locations that call a specific function/method across the entire TypeScript project—across all files, imports, and overloads—in a single, exhaustive scan.**
 
-👉 **You MUST call this tool whenever** the user or agent asks "Who calls this?", "Where is this function used?", "Show call hierarchy", "Find invocations", "Trace call stack", or any similar request. Skip manual greps—this analysis is language-aware, prevents missed edges, and saves tokens by avoiding full-file loads.
+**You MUST call this tool whenever** the user or agent asks "Who calls this?", "Where is this function used?", "Show call hierarchy", "Find invocations", "Trace call stack", or any similar request. Skip manual greps—this analysis is language-aware, prevents missed edges, and saves tokens by avoiding full-file loads.
 
 Typical trigger phrases (non-exhaustive):
   • "find callers" / "show call hierarchy" / "trace calls"

@@ -13,13 +13,13 @@ import { LSPManager } from "../lsp/LSPManager.js";
 
 export function createToolMap(lspManager: LSPManager): Map<string, MCPTool> {
   const toolMap = new Map<string, MCPTool>();
-  toolMap.set('get_hover_info', new MCPToolHover(lspManager));
-  toolMap.set('get_definition_locations', new MCPToolDefinition(lspManager));
+  toolMap.set('list_hover_info', new MCPToolHover(lspManager));
+  toolMap.set('list_definition_locations', new MCPToolDefinition(lspManager));
   toolMap.set('find_implementation_locations', new MCPToolImplementation(lspManager));
-  toolMap.set('get_symbol_references', new MCPToolReferences(lspManager));
+  toolMap.set('list_symbol_references', new MCPToolReferences(lspManager));
   toolMap.set('goto_type_declaration', new MCPToolTypeDefinition(lspManager));
   toolMap.set('refactor_rename_symbol', new MCPToolRename(lspManager));
-  toolMap.set('get_code_actions', new MCPToolCodeAction(lspManager));
+  toolMap.set('list_code_actions', new MCPToolCodeAction(lspManager));
   toolMap.set('run_code_action', new MCPToolExecuteCodeAction(lspManager));
   toolMap.set('find_caller_locations', new MCPToolCallHierarchy(lspManager));
   toolMap.set('find_callee_locations', new MCPToolCallees(lspManager));

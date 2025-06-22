@@ -12,7 +12,7 @@ Claude commands are available in `.claude/commands/` directory for automated wor
 
 - **LSPManager**: Central coordinator for LSP operations
 - **LSPServerStream**: Manages stdio communication with TypeScript language server
-- **Tools**: `src/tools/` - MCP tool implementations (get_hover_info, get_definition_locations, find_implementation_locations, get_symbol_references, refactor_rename_symbol, get_code_actions, run_code_action, find_caller_locations, find_callee_locations)
+- **Tools**: `src/tools/` - MCP tool implementations (list_hover_info, list_definition_locations, find_implementation_locations, list_symbol_references, goto_type_declaration, refactor_rename_symbol, list_code_actions, run_code_action, find_caller_locations, find_callee_locations)
 - **Transport**: stdio using `@modelcontextprotocol/sdk`
 
 ## Commands and Tools
@@ -32,14 +32,14 @@ npm run inspector-tool -- --tool-name <TOOL_NAME> [--tool-arg <KEY>=<VALUE>]...
 ```
 
 Examples:
-**Test get_hover_info tool (get type info and documentation):**
+**Test list_hover_info tool (get type info and documentation):**
 ```bash
-npm run inspector-tool -- --tool-name get_hover_info --tool-arg uri=file:///path/to/file.ts --tool-arg line=10 --tool-arg character=5
+npm run inspector-tool -- --tool-name list_hover_info --tool-arg uri=file:///path/to/file.ts --tool-arg line=10 --tool-arg character=5
 ```
 
-**Test get_definition_locations tool (jump to symbol definition):**
+**Test list_definition_locations tool (jump to symbol definition):**
 ```bash
-npm run inspector-tool -- --tool-name get_definition_locations --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10
+npm run inspector-tool -- --tool-name list_definition_locations --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10
 ```
 
 **Test find_implementation_locations tool (find interface/abstract class implementations):**
@@ -47,13 +47,13 @@ npm run inspector-tool -- --tool-name get_definition_locations --tool-arg uri=fi
 npm run inspector-tool -- --tool-name find_implementation_locations --tool-arg uri=file:///path/to/file.ts --tool-arg line=15 --tool-arg character=8
 ```
 
-**Test get_symbol_references tool (find all symbol references):**
+**Test list_symbol_references tool (find all symbol references):**
 ```bash
 # Include declaration
-npm run inspector-tool -- --tool-name get_symbol_references --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg includeDeclaration=true
+npm run inspector-tool -- --tool-name list_symbol_references --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg includeDeclaration=true
 
 # Exclude declaration
-npm run inspector-tool -- --tool-name get_symbol_references --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg includeDeclaration=false
+npm run inspector-tool -- --tool-name list_symbol_references --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg includeDeclaration=false
 ```
 
 **Test goto_type_declaration tool (jump to type declaration):**
@@ -66,9 +66,9 @@ npm run inspector-tool -- --tool-name goto_type_declaration --tool-arg uri=file:
 npm run inspector-tool -- --tool-name refactor_rename_symbol --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg newName=newVariableName
 ```
 
-**Test get_code_actions tool (get available quick fixes/refactorings):**
+**Test list_code_actions tool (get available quick fixes/refactorings):**
 ```bash
-npm run inspector-tool -- --tool-name get_code_actions --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg endLine=5 --tool-arg endCharacter=20
+npm run inspector-tool -- --tool-name list_code_actions --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg endLine=5 --tool-arg endCharacter=20
 ```
 
 **Test run_code_action tool (apply a code action):**

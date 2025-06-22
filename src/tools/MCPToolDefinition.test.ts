@@ -44,7 +44,7 @@ describe('MCPToolDefinition', () => {
     it('should return the correct tool description', () => {
       const tool = mcpToolDefinition.listItem();
 
-      expect(tool.name).toBe('get_definition_locations');
+      expect(tool.name).toBe('list_definition_locations');
       expect(tool.description).toContain('Locate and return source-code definition site(s)');
       expect(tool.inputSchema).toEqual({
         type: 'object',
