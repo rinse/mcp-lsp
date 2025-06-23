@@ -16,8 +16,12 @@ import { CallHierarchyIncomingCall } from "../lsp/types/CallHierarchyRequest";
 export class MCPToolCallHierarchy implements MCPTool {
   constructor(private manager: LSPManager) {}
 
+  getName(): string {
+    return 'list_caller_locations_of';
+  }
+
   listItem(): Tool {
-    return listItemCallHierarchy();
+    return listItemCallHierarchy(this.getName());
   }
 
   async handle(params: CallToolRequest["params"]["arguments"]): Promise<CallToolResult> {
@@ -25,9 +29,9 @@ export class MCPToolCallHierarchy implements MCPTool {
   }
 }
 
-function listItemCallHierarchy(): Tool {
+function listItemCallHierarchy(toolName: string): Tool {
   return {
-    name: 'list_caller_locations_of',
+    name: toolName,
     description: `**Find all locations that call a specific function/method across the entire TypeScript project—across all files, imports, and overloads—in a single, exhaustive scan.**
 
 **You MUST call this tool whenever** the user or agent asks "Who calls this?", "Where is this function used?", "Show call hierarchy", "Find invocations", "Trace call stack", or any similar request. Skip manual greps—this analysis is language-aware, prevents missed edges, and saves tokens by avoiding full-file loads.

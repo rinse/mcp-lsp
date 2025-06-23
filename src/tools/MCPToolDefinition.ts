@@ -17,8 +17,12 @@ import { Location } from "../lsp/types/Location";
 export class MCPToolDefinition implements MCPTool {
   constructor(private manager: LSPManager) {}
 
+  getName(): string {
+    return 'list_definition_locations';
+  }
+
   listItem(): Tool {
-    return listItemDefinition();
+    return listItemDefinition(this.getName());
   }
 
   async handle(params: CallToolRequest["params"]["arguments"]): Promise<CallToolResult> {
@@ -26,9 +30,9 @@ export class MCPToolDefinition implements MCPTool {
   }
 }
 
-function listItemDefinition(): Tool {
+function listItemDefinition(toolName: string): Tool {
   return {
-    name: 'list_definition_locations',
+    name: toolName,
     description: `Locate and return source-code definition site(s) (declarations or implementations) for the symbol under the given cursor position in a TypeScript / JavaScript file.
 
 When to call

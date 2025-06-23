@@ -15,8 +15,12 @@ import { WorkspaceEdit, WorkspaceEditT } from "../lsp/types/WorkspaceEdit";
 export class MCPToolExecuteCodeAction implements MCPTool {
   constructor(private manager: LSPManager) {}
 
+  getName(): string {
+    return 'run_code_action';
+  }
+
   listItem(): Tool {
-    return listItemExecuteCodeAction();
+    return listItemExecuteCodeAction(this.getName());
   }
 
   async handle(params: CallToolRequest["params"]["arguments"]): Promise<CallToolResult> {
@@ -24,9 +28,9 @@ export class MCPToolExecuteCodeAction implements MCPTool {
   }
 }
 
-function listItemExecuteCodeAction(): Tool {
+function listItemExecuteCodeAction(toolName: string): Tool {
   return {
-    name: 'run_code_action',
+    name: toolName,
     description: 'Execute a code action by applying its WorkspaceEdit or running its Command',
     inputSchema: {
       type: 'object',

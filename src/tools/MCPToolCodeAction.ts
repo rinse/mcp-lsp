@@ -15,8 +15,12 @@ import { CodeAction, CodeActionKind, CodeActionResult, Command, DiagnosticSeveri
 export class MCPToolCodeAction implements MCPTool {
   constructor(private manager: LSPManager) {}
 
+  getName(): string {
+    return 'list_available_code_actions';
+  }
+
   listItem(): Tool {
-    return listItemCodeAction();
+    return listItemCodeAction(this.getName());
   }
 
   async handle(params: CallToolRequest["params"]["arguments"]): Promise<CallToolResult> {
@@ -24,9 +28,9 @@ export class MCPToolCodeAction implements MCPTool {
   }
 }
 
-function listItemCodeAction(): Tool {
+function listItemCodeAction(toolName: string): Tool {
   return {
-    name: 'list_available_code_actions',
+    name: toolName,
     description: 'Get code actions (quick fixes, refactorings, source actions) for a range in a TypeScript file',
     inputSchema: {
       type: 'object',
