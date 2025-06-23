@@ -15,7 +15,7 @@ describe('MCPClientRunner', () => {
 
   it('should list tools', async () => {
     const result = await runner.listTools();
-    
+
     if (isRight(result)) {
       expect(result.right).toContain('Available tools:');
       // Should include at least one of our MCP tools
@@ -29,7 +29,7 @@ describe('MCPClientRunner', () => {
 
   it('should handle tool call errors gracefully', async () => {
     const result = await runner.runTool('non_existent_tool', {});
-    
+
     expect(isRight(result)).toBe(false);
     if (!isRight(result)) {
       expect(result.left).toContain('Failed to run tool');

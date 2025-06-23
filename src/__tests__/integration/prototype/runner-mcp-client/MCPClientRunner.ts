@@ -11,11 +11,11 @@ interface Tool {
 }
 
 interface ToolCallResult {
-  content: Array<{
+  content: {
     type: string;
     text?: string;
     [key: string]: unknown;
-  }>;
+  }[];
 }
 
 export class MCPClientRunner implements TestRunner {
@@ -30,7 +30,7 @@ export class MCPClientRunner implements TestRunner {
       },
       {
         capabilities: {},
-      }
+      },
     );
   }
 
@@ -55,7 +55,7 @@ export class MCPClientRunner implements TestRunner {
       await this.client.close();
       this.client = null;
     }
-    
+
     if (this.transport) {
       await this.transport.close();
       this.transport = null;
@@ -67,7 +67,7 @@ export class MCPClientRunner implements TestRunner {
       await this.connect();
 
       const response = await this.client!.listTools();
-      
+
       if (!response.tools || response.tools.length === 0) {
         return right('No tools found');
       }
@@ -75,7 +75,7 @@ export class MCPClientRunner implements TestRunner {
       const toolNames = response.tools
         .map((tool: Tool) => tool.name)
         .join('\n');
-      
+
       return right(`Available tools:\n${toolNames}`);
     } catch (error) {
       return left(`Failed to list tools: ${error instanceof Error ? error.message : String(error)}`);
@@ -100,10 +100,10 @@ export class MCPClientRunner implements TestRunner {
       // Extract text content from the response
       const textContent = response.content
         .filter((item) => item.type === 'text')
-        .map((item) => item.text || '')
+        .map((item) => item.text ?? '')
         .join('\n');
 
-      return right(textContent || JSON.stringify(response.content, null, 2));
+      return right(textContent ?? JSON.stringify(response.content, null, 2));
     } catch (error) {
       return left(`Failed to run tool '${toolName}': ${error instanceof Error ? error.message : String(error)}`);
     } finally {
@@ -111,3 +111,4 @@ export class MCPClientRunner implements TestRunner {
     }
   }
 }
+
