@@ -108,5 +108,13 @@ export class InspectorRunner implements TestRunner {
       });
     });
   }
+
+  async init(): Promise<void> {
+    // do nothing
+  }
+
+  async close(): Promise<void> {
+    // do nothing
+  }
 }
 

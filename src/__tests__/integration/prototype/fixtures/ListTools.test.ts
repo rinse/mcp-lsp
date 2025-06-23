@@ -1,11 +1,25 @@
 import { isRight } from 'fp-ts/Either';
 
-import { testRunners } from '../TestRunner';
+import { testRunners, TestRunner } from '../TestRunner';
 
 describe('ListTools Integration Test', () => {
-  test.each(testRunners)('[%s] should successfully list tools with concrete expected output', async (_, runner) => {
-    const result = await runner.listTools();
+  const runners: [string, TestRunner][] = testRunners.map(([name, init]) => [name, init()]);
 
+  beforeAll(async () => {
+    const promises = runners.map(([, runner]) => runner.init());
+    await Promise.all(promises);
+  });
+
+  afterAll(async () => {
+    const promises = runners.map(([, runner]) => runner.close());
+    await Promise.all(promises);
+  });
+
+  test.each(runners)('[%s] should successfully list tools with concrete expected output', async (name, runner) => {
+    const result = await runner.listTools();
+    if (!isRight(result)) {
+      console.error(`${name} failed:`, result.left);
+    }
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
       const expectedTools = `Available tools:

@@ -25,4 +25,12 @@ list_callee_locations_in`;
     }
     return Promise.resolve(right(`Mock response for ${toolName}`));
   }
+
+  async init(): Promise<void> {
+    // do nothing
+  }
+
+  async close(): Promise<void> {
+    // do nothing
+  }
 }

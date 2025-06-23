@@ -3,6 +3,7 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { Either, left, right } from 'fp-ts/Either';
 
 import { TestRunner } from '../TestRunner.js';
+import { ChildProcess } from 'child_process';
 
 interface Tool {
   name: string;
@@ -19,11 +20,7 @@ interface ToolCallResult {
 }
 
 export class MCPClientRunner implements TestRunner {
-  private client: Client | null = null;
-  private transport: StdioClientTransport | null = null;
-
-  constructor() {
-    this.client = new Client(
+  private client: Client = new Client(
       {
         name: 'mcp-client-test-runner',
         version: '1.0.0',
@@ -32,63 +29,59 @@ export class MCPClientRunner implements TestRunner {
         capabilities: {},
       },
     );
+
+  private transport: StdioClientTransport = new StdioClientTransport({
+    command: 'node',
+    args: ['out/index.js'],
+    stderr: 'pipe',
+  });
+
+  async init(): Promise<void> {
+    await this.client.connect(this.transport);
   }
 
-  private async connect(): Promise<void> {
-    if (this.transport) {
-      return; // Already connected
+  async close(): Promise<void> {
+    // Transport.close() leaks the inner process.
+    const transportProcess = this.transport as unknown as { _process?: ChildProcess };
+    if (transportProcess._process) {
+      try {
+        transportProcess._process.kill('SIGKILL');
+      } catch (error) {
+        console.error("Failed to kill the transport process", error);
+      }
     }
 
-    // Create transport that will spawn the server
-    this.transport = new StdioClientTransport({
-      command: 'node',
-      args: ['out/index.js'],
-      stderr: 'pipe',
-    });
-
-    // Connect the client
-    await this.client!.connect(this.transport);
-  }
-
-  private async disconnect(): Promise<void> {
-    if (this.client) {
+    try {
       await this.client.close();
-      this.client = null;
+    } catch (error) {
+      console.error("Failed to close the client.", error);
     }
 
-    if (this.transport) {
+    try {
       await this.transport.close();
-      this.transport = null;
+    } catch (error) {
+      console.error("Failed to close the transport.", error);
     }
   }
 
   async listTools(): Promise<Either<string, string>> {
     try {
-      await this.connect();
-
-      const response = await this.client!.listTools();
-
+      const response = await this.client.listTools();
       if (!response.tools || response.tools.length === 0) {
         return right('No tools found');
       }
-
       const toolNames = response.tools
         .map((tool: Tool) => tool.name)
         .join('\n');
-
       return right(`Available tools:\n${toolNames}`);
     } catch (error) {
       return left(`Failed to list tools: ${error instanceof Error ? error.message : String(error)}`);
-    } finally {
-      await this.disconnect();
     }
   }
 
   async runTool(toolName: string, args: Record<string, unknown>): Promise<Either<string, string>> {
     try {
-      await this.connect();
-
-      const response = await this.client!.callTool({
+      const response = await this.client.callTool({
         name: toolName,
         arguments: args,
       }) as ToolCallResult;
@@ -106,8 +99,6 @@ export class MCPClientRunner implements TestRunner {
       return right(textContent ?? JSON.stringify(response.content, null, 2));
     } catch (error) {
       return left(`Failed to run tool '${toolName}': ${error instanceof Error ? error.message : String(error)}`);
-    } finally {
-      await this.disconnect();
     }
   }
 }
