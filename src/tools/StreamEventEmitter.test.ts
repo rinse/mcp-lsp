@@ -21,7 +21,7 @@ function createJsonLineParser(): (buffer: Buffer) => StreamParseResult<TestData>
     let item: unknown;
     try {
       item = JSON.parse(elem);
-    } catch (error) {
+    } catch {
       return { kind: 'error', consume: separatorIndex + 1, message: `Invalid JSON object: ${elem}` };
     }
     const data: TestData | undefined = TestDataT.is(item) ? item : undefined;
