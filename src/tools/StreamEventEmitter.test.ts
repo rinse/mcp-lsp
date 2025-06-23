@@ -22,7 +22,6 @@ function createJsonLineParser(): (buffer: Buffer) => StreamParseResult<TestData>
     try {
       item = JSON.parse(elem);
     } catch (error) {
-      console.error('Failed to parse JSON:', error);
       return { kind: 'error', consume: separatorIndex + 1, message: `Invalid JSON object: ${elem}` };
     }
     const data: TestData | undefined = TestDataT.is(item) ? item : undefined;
