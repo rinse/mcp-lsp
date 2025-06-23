@@ -40,7 +40,7 @@ async function main(): Promise<void> {
   const lspServerEx: LSPServerEx = new LSPServerExImpl(lspServer);
   const lspManager = new LSPManager(lspServerEx);
   const toolMap = createToolMap(lspManager);
-  const mcpServer = createMCPServer(toolMap);
+  const mcpServer = createMCPServer("TypeScript", toolMap);
 
   const preShutdownProcess = async (): Promise<void> => {
     await safeClose("MCP Server", () => mcpServer.close());

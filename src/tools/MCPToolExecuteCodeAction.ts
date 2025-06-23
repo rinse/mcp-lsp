@@ -26,7 +26,7 @@ export class MCPToolExecuteCodeAction implements MCPTool {
 
 function listItemExecuteCodeAction(): Tool {
   return {
-    name: 'executeCodeAction',
+    name: 'run_code_action',
     description: 'Execute a code action by applying its WorkspaceEdit or running its Command',
     inputSchema: {
       type: 'object',
@@ -93,7 +93,7 @@ async function handleExecuteCodeAction(
 ): Promise<CallToolResult> {
   const decoded = ExecuteCodeActionParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for executeCodeAction tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for run_code_action tool: ${JSON.stringify(decoded.left)}`);
   }
   const { codeAction } = decoded.right;
   try {

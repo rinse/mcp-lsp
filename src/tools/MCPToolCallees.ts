@@ -27,22 +27,50 @@ export class MCPToolCallees implements MCPTool {
 
 function listItemCallees(): Tool {
   return {
-    name: 'callees',
-    description: 'Find all functions/methods that a specific function calls',
+    name: 'list_callee_locations_in',
+    description: `Find all functions/methods that a specific function calls across the entire TypeScript project—including dynamic dispatch, overloads, and imported helpers—in a single, exhaustive, language-aware scan.
+
+**You MUST call this tool whenever** the user or agent asks "What does this function call?", "Show callee list", "Trace outbound calls", "Expand call hierarchy ↓", "List invoked helpers", or any similar request. Skip manual code reading—this analysis is language-aware, prevents missed callees, and saves tokens by avoiding the need to load every file into context.
+
+Typical trigger phrases (non-exhaustive):
+  • "find callees" / "show callee hierarchy" / "trace outbound calls"
+  • "list functions called by X"
+  • "what does this method invoke" / "where does this function delegate to"
+  • "show downstream calls" / "expand call tree"
+
+Output
+Plain text with callee count and locations:
+Found N callees:
+<calleeName> at <absolutePath>:<startLine>:<startChar>-<endChar>
+...
+
+Output Examples:
+\`\`\`
+Found 3 callees:
+readFile at /home/user/project/src/utils/fileUtils.ts:15:8-15:16
+writeFile at /home/user/project/src/utils/fileUtils.ts:25:8-25:17
+logger.info at /home/user/project/src/utils/logger.ts:10:0-10:11
+\`\`\`
+
+Notes & limits
+* Only .ts / .tsx files currently supported
+* The file must exist on disk (unsaved buffers not supported)
+* Very large files (>2 MB) may increase latency
+* Position finding: \`awk -v pat='<PATTERN>' '{pos=index($0, pat); if (pos) print NR-1 ":" pos-1 ":" $0}'\``,
     inputSchema: {
       type: 'object',
       properties: {
         uri: {
           type: 'string',
-          description: 'File URI (e.g., file:///path/to/file.ts)',
+          description: 'Required. File URI (e.g., file:///path/to/file.ts)',
         },
         line: {
           type: 'number',
-          description: 'Line number (0-based)',
+          description: 'Required. 0-based line index where the cursor is located',
         },
         character: {
           type: 'number',
-          description: 'Character position (0-based)',
+          description: 'Required. 0-based character index on that line',
         },
       },
       required: ['uri', 'line', 'character'],
@@ -62,7 +90,7 @@ async function handleCallees(
 ): Promise<CallToolResult> {
   const decoded = CalleesParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for callees tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for list_callee_locations_in tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character } = decoded.right;
   try {

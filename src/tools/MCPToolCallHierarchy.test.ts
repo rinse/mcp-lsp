@@ -60,13 +60,26 @@ describe('MCPToolCallHierarchy', () => {
     it('should return the correct tool description', () => {
       const tool = mcpToolCallHierarchy.listItem();
 
-      expect(tool.name).toBe('callHierarchy');
-      expect(tool.description).toBe('Find all locations that call a specific function/method');
-      expect(tool.inputSchema.type).toBe('object');
-      expect(tool.inputSchema.properties).toHaveProperty('uri');
-      expect(tool.inputSchema.properties).toHaveProperty('line');
-      expect(tool.inputSchema.properties).toHaveProperty('character');
-      expect(tool.inputSchema.required).toEqual(['uri', 'line', 'character']);
+      expect(tool.name).toBe('list_caller_locations_of');
+      expect(tool.description).toContain('Find all locations that call a specific function/method');
+      expect(tool.inputSchema).toEqual({
+        type: 'object',
+        properties: {
+          uri: {
+            type: 'string',
+            description: 'Required. File URI (e.g., file:///path/to/file.ts)',
+          },
+          line: {
+            type: 'number',
+            description: 'Required. 0-based line index where the cursor is.',
+          },
+          character: {
+            type: 'number',
+            description: 'Required. 0-based character index on that line.',
+          },
+        },
+        required: ['uri', 'line', 'character'],
+      });
     });
   });
 
@@ -163,6 +176,7 @@ describe('MCPToolCallHierarchy', () => {
       };
 
       await expect(mcpToolCallHierarchy.handle(invalidParams)).rejects.toThrow(McpError);
+      await expect(mcpToolCallHierarchy.handle(invalidParams)).rejects.toThrow('Invalid parameters for list_caller_locations_of tool');
     });
 
     it('should handle when prepareCallHierarchy returns empty results', async () => {

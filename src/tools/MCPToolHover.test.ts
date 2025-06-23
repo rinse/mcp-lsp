@@ -42,6 +42,33 @@ describe('MCPToolHover', () => {
     mcpToolHover = new MCPToolHover(lspManager);
   });
 
+  describe('listItem', () => {
+    it('should return the correct tool description', () => {
+      const tool = mcpToolHover.listItem();
+
+      expect(tool.name).toBe('get_hover_info');
+      expect(tool.description).toContain('Retrieve hover information (type signature and inline documentation)');
+      expect(tool.inputSchema).toEqual({
+        type: 'object',
+        properties: {
+          uri: {
+            type: 'string',
+            description: 'Required. File URI (e.g., file:///path/to/file.ts)',
+          },
+          line: {
+            type: 'number',
+            description: 'Required. 0-based line index where the cursor is.',
+          },
+          character: {
+            type: 'number',
+            description: 'Required. 0-based character (column) index on that line.',
+          },
+        },
+        required: ['uri', 'line', 'character'],
+      });
+    });
+  });
+
   describe('handle', () => {
     const validParams = {
       uri: 'file:///test/file.ts',
@@ -135,7 +162,7 @@ describe('MCPToolHover', () => {
         character: 5,
       };
       await expect(mcpToolHover.handle(invalidParams)).rejects.toThrow(McpError);
-      await expect(mcpToolHover.handle(invalidParams)).rejects.toThrow('Invalid parameters for hover tool');
+      await expect(mcpToolHover.handle(invalidParams)).rejects.toThrow('Invalid parameters for get_hover_info tool');
     });
 
     it('should throw error when missing required parameters', async () => {
@@ -144,7 +171,7 @@ describe('MCPToolHover', () => {
         // Missing line and character
       };
       await expect(mcpToolHover.handle(missingParams)).rejects.toThrow(McpError);
-      await expect(mcpToolHover.handle(missingParams)).rejects.toThrow('Invalid parameters for hover tool');
+      await expect(mcpToolHover.handle(missingParams)).rejects.toThrow('Invalid parameters for get_hover_info tool');
     });
 
     it('should handle errors from LSP server', async () => {

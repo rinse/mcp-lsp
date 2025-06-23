@@ -28,22 +28,53 @@ export class MCPToolTypeDefinition implements MCPTool {
 
 function listItemTypeDefinition(): Tool {
   return {
-    name: 'typeDefinition',
-    description: 'Get type definition location for a symbol at a specific position in a TypeScript file',
+    name: 'get_type_declaration',
+    description: `**Always jump straight to the canonical type declaration**
+(interface / type alias / enum / class / primitive wrapper) that
+defines the compile-time shape of the symbol at the given cursor
+position in a TypeScript file.
+
+**You MUST call this tool whenever** the user or the agent asks
+"Where is this type defined?", "Go to type", "Reveal declared
+shape", "Open original interface", or any similar request.
+Skip manual greps—this tool is faster, language-aware, and
+guaranteed to return the precise location.
+
+Typical trigger phrases (non-exhaustive):
+  • "go to type declaration" / "goto type" / "jump to type"
+  • "show original type alias"
+  • "open enum definition"
+  • "where is this interface declared"
+
+Output
+Plain-text block:
+Found <N> type definitions:
+<absPath>:<startLine>:<startCol>-<endLine>:<endCol>
+...
+
+Output Example:
+Found 1 type definitions:
+/home/user/project/src/types/User.ts:5:10-5:23
+
+Notes & limits
+* Only .ts / .tsx files currently supported
+* The file must exist on disk (unsaved buffers not supported).
+* Very large files (> 2 MB) may increase latency.
+* Position finding: \`awk -v pat='<PATTERN>' '{pos=index($0, pat); if (pos) print NR-1 ":" pos-1 ":" $0}'\``,
     inputSchema: {
       type: 'object',
       properties: {
         uri: {
           type: 'string',
-          description: 'File URI (e.g., file:///path/to/file.ts)',
+          description: 'Required. File URI (e.g. file:///path/to/file.ts)',
         },
         line: {
           type: 'number',
-          description: 'Line number (0-based)',
+          description: 'Required. 0-based line index',
         },
         character: {
           type: 'number',
-          description: 'Character position (0-based)',
+          description: 'Required. 0-based character index',
         },
       },
       required: ['uri', 'line', 'character'],
@@ -63,7 +94,7 @@ async function handleTypeDefinition(
 ): Promise<CallToolResult> {
   const decoded = TypeDefinitionParamsT.decode(params);
   if (decoded._tag === 'Left') {
-    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for typeDefinition tool: ${JSON.stringify(decoded.left)}`);
+    throw new McpError(ErrorCode.InvalidParams, `Invalid parameters for get_type_declaration tool: ${JSON.stringify(decoded.left)}`);
   }
   const { uri, line, character } = decoded.right;
   try {

@@ -12,7 +12,7 @@ Claude commands are available in `.claude/commands/` directory for automated wor
 
 - **LSPManager**: Central coordinator for LSP operations
 - **LSPServerStream**: Manages stdio communication with TypeScript language server
-- **Tools**: `src/tools/` - MCP tool implementations (hover, definition, rename, codeAction, executeCodeAction)
+- **Tools**: `src/tools/` - MCP tool implementations (get_hover_info, list_definition_locations, list_implementation_locations, list_symbol_references, get_type_declaration, refactor_rename_symbol, list_available_code_actions, run_code_action, list_caller_locations_of, list_callee_locations_in)
 - **Transport**: stdio using `@modelcontextprotocol/sdk`
 
 ## Commands and Tools
@@ -26,102 +26,65 @@ Claude commands are available in `.claude/commands/` directory for automated wor
 Use MCP Inspector to test newly developed MCP tools.
 
 #### Command Examples
-
-**Test hover tool (get type info and documentation):**
+Basic syntax:
 ```bash
-npm run inspector-tool -- --tool-name hover --tool-arg uri=file:///path/to/file.ts --tool-arg line=10 --tool-arg character=5
+npm run inspector-tool -- --tool-name <TOOL_NAME> [--tool-arg <KEY>=<VALUE>]...
 ```
 
-**Test definition tool (jump to symbol definition):**
+Examples:
+**Test get_hover_info tool (get type info and documentation):**
 ```bash
-npm run inspector-tool -- --tool-name definition --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10
+npm run inspector-tool -- --tool-name get_hover_info --tool-arg uri=file:///path/to/file.ts --tool-arg line=10 --tool-arg character=5
 ```
 
-**Test implementation tool (find interface/abstract class implementations):**
+**Test list_definition_locations tool (jump to symbol definition):**
 ```bash
-npm run inspector-tool -- --tool-name implementation --tool-arg uri=file:///path/to/file.ts --tool-arg line=15 --tool-arg character=8
+npm run inspector-tool -- --tool-name list_definition_locations --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10
 ```
 
-**Test references tool (find all symbol references):**
+**Test list_implementation_locations tool (find interface/abstract class implementations):**
+```bash
+npm run inspector-tool -- --tool-name list_implementation_locations --tool-arg uri=file:///path/to/file.ts --tool-arg line=15 --tool-arg character=8
+```
+
+**Test list_symbol_references tool (find all symbol references):**
 ```bash
 # Include declaration
-npm run inspector-tool -- --tool-name references --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg includeDeclaration=true
+npm run inspector-tool -- --tool-name list_symbol_references --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg includeDeclaration=true
 
 # Exclude declaration
-npm run inspector-tool -- --tool-name references --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg includeDeclaration=false
+npm run inspector-tool -- --tool-name list_symbol_references --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg includeDeclaration=false
 ```
 
-**Test typeDefinition tool (jump to type definition):**
+**Test get_type_declaration tool (jump to type declaration):**
 ```bash
-npm run inspector-tool -- --tool-name typeDefinition --tool-arg uri=file:///path/to/file.ts --tool-arg line=20 --tool-arg character=15
+npm run inspector-tool -- --tool-name get_type_declaration --tool-arg uri=file:///path/to/file.ts --tool-arg line=20 --tool-arg character=15
 ```
 
-**Test rename tool (rename symbol across project):**
+**Test refactor_rename_symbol tool (rename symbol across project):**
 ```bash
-npm run inspector-tool -- --tool-name rename --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg newName=newVariableName
+npm run inspector-tool -- --tool-name refactor_rename_symbol --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg newName=newVariableName
 ```
 
-**Test codeAction tool (get available quick fixes/refactorings):**
+**Test list_available_code_actions tool (get available quick fixes/refactorings):**
 ```bash
-npm run inspector-tool -- --tool-name codeAction --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg endLine=5 --tool-arg endCharacter=20
+npm run inspector-tool -- --tool-name list_available_code_actions --tool-arg uri=file:///path/to/file.ts --tool-arg line=5 --tool-arg character=10 --tool-arg endLine=5 --tool-arg endCharacter=20
 ```
 
-**Test executeCodeAction tool (apply a code action):**
+**Test run_code_action tool (apply a code action):**
 ```bash
 # First get code actions, then use the returned action object
-npm run inspector-tool -- --tool-name executeCodeAction --tool-arg 'codeAction={"title":"Add missing import","kind":"quickfix","edit":{"changes":{...}}}'
+npm run inspector-tool -- --tool-name run_code_action --tool-arg 'codeAction={"title":"Add missing import","kind":"quickfix","edit":{"changes":{...}}}'
 ```
 
-**Test callHierarchy tool (find incoming calls to a function):**
+**Test list_caller_locations_of tool (find incoming calls to a function):**
 ```bash
-npm run inspector-tool -- --tool-name callHierarchy --tool-arg uri=file:///path/to/file.ts --tool-arg line=25 --tool-arg character=5
+npm run inspector-tool -- --tool-name list_caller_locations_of --tool-arg uri=file:///path/to/file.ts --tool-arg line=25 --tool-arg character=5
 ```
 
-**Test callees tool (find outgoing calls from a function):**
+**Test list_callee_locations_in tool (find outgoing calls from a function):**
 ```bash
-npm run inspector-tool -- --tool-name callees --tool-arg uri=file:///path/to/file.ts --tool-arg line=30 --tool-arg character=10
+npm run inspector-tool -- --tool-name list_callee_locations_in --tool-arg uri=file:///path/to/file.ts --tool-arg line=30 --tool-arg character=10
 ```
-
-### MCP-LSP Tools (USE THESE INSTEAD OF MANUAL EDITING)
 
 **Position finding:** `awk -v pat='<PATTERN>' '{pos=index($0, pat); if (pos) print NR-1 ":" pos-1 ":" $0}'`
-
-#### mcp__mcp-lsp__rename
-**REQUIRED** for renaming symbols. Updates all references across project.
-- Parameters: `uri`, `line`, `character`, `newName`
-
-#### mcp__mcp-lsp__definition  
-**REQUIRED** for finding symbol definitions. More accurate than grep.
-- Parameters: `uri`, `line`, `character`
-
-#### mcp__mcp-lsp__hover
-**REQUIRED** for understanding types and documentation.
-- Parameters: `uri`, `line`, `character`
-
-#### mcp__mcp-lsp__implementation
-REQUIRED for finding where interfaces/abstract classes are implemented.
-- Parameters: `uri`, `line`, `character`
-
-#### mcp__mcp-lsp__references
-REQUIRED for finding references to a symbol.
-- Parameters: `uri`, `line`, `character`, `includeDeclaration` (optional)
-
-#### mcp__mcp-lsp__typeDefinition
-REQUIRED for jumping to type definition of a symbol.
-- Parameters: `uri`, `line`, `character`
-
-#### mcp__mcp-lsp__codeAction
-REQUIRED for getting available code actions (quick fixes, refactorings).
-- Parameters: `uri`, `line`, `character`, `endLine`, `endCharacter`
-
-#### mcp__mcp-lsp__executeCodeAction
-Apply code actions from codeAction tool.
-- Parameters: `codeAction` object from codeAction results
-
-#### mcp__mcp-lsp__callHierarchy
-REQUIRED for finding all locations that call a specific function/method.
-- Parameters: `uri`, `line`, `character`
-
-#### mcp__mcp-lsp__callees
-REQUIRED for finding all functions/methods that a specific function calls.
-- Parameters: `uri`, `line`, `character`
