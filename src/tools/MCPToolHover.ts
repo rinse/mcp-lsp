@@ -49,7 +49,7 @@ Plain-text block in the form:
 Output Example:
 /test/file.ts:10:5
   Type: function listItemCallees(): Tool
-  Docs: Prints how to use the Callees tool.
+  Docs: Prints how to use the list_callee_locations tool.
 
 Limits / notes
 * Only .ts / .tsx files currently supported

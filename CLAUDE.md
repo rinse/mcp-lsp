@@ -12,7 +12,7 @@ Claude commands are available in `.claude/commands/` directory for automated wor
 
 - **LSPManager**: Central coordinator for LSP operations
 - **LSPServerStream**: Manages stdio communication with TypeScript language server
-- **Tools**: `src/tools/` - MCP tool implementations (get_hover_info, list_definition_locations, list_implementation_locations, list_symbol_references, get_type_declaration, refactor_rename_symbol, list_available_code_actions, run_code_action, list_caller_locations, list_callee_locations)
+- **Tools**: `src/tools/` - MCP tool implementations (get_hover_info, list_definition_locations, list_implementation_locations, list_symbol_references, get_type_declaration, refactor_rename_symbol, list_available_code_actions, run_code_action, list_caller_locations_of, list_callee_locations_in)
 - **Transport**: stdio using `@modelcontextprotocol/sdk`
 
 ## Commands and Tools
@@ -77,14 +77,14 @@ npm run inspector-tool -- --tool-name list_available_code_actions --tool-arg uri
 npm run inspector-tool -- --tool-name run_code_action --tool-arg 'codeAction={"title":"Add missing import","kind":"quickfix","edit":{"changes":{...}}}'
 ```
 
-**Test list_caller_locations tool (find incoming calls to a function):**
+**Test list_caller_locations_of tool (find incoming calls to a function):**
 ```bash
-npm run inspector-tool -- --tool-name list_caller_locations --tool-arg uri=file:///path/to/file.ts --tool-arg line=25 --tool-arg character=5
+npm run inspector-tool -- --tool-name list_caller_locations_of --tool-arg uri=file:///path/to/file.ts --tool-arg line=25 --tool-arg character=5
 ```
 
-**Test list_callee_locations tool (find outgoing calls from a function):**
+**Test list_callee_locations_in tool (find outgoing calls from a function):**
 ```bash
-npm run inspector-tool -- --tool-name list_callee_locations --tool-arg uri=file:///path/to/file.ts --tool-arg line=30 --tool-arg character=10
+npm run inspector-tool -- --tool-name list_callee_locations_in --tool-arg uri=file:///path/to/file.ts --tool-arg line=30 --tool-arg character=10
 ```
 
 **Position finding:** `awk -v pat='<PATTERN>' '{pos=index($0, pat); if (pos) print NR-1 ":" pos-1 ":" $0}'`

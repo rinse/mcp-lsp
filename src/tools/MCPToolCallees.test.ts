@@ -60,7 +60,7 @@ describe('MCPToolCallees', () => {
     it('should return the correct tool description', () => {
       const tool = mcpToolCallees.listItem();
 
-      expect(tool.name).toBe('list_callee_locations');
+      expect(tool.name).toBe('list_callee_locations_in');
       expect(tool.description).toContain('Find all functions/methods that a specific function calls');
       expect(tool.inputSchema).toEqual({
         type: 'object',
@@ -194,7 +194,7 @@ describe('MCPToolCallees', () => {
       };
 
       await expect(mcpToolCallees.handle(invalidParams)).rejects.toThrow(McpError);
-      await expect(mcpToolCallees.handle(invalidParams)).rejects.toThrow('Invalid parameters for list_callee_locations tool');
+      await expect(mcpToolCallees.handle(invalidParams)).rejects.toThrow('Invalid parameters for list_callee_locations_in tool');
     });
 
     it('should throw McpError when LSP request fails', async () => {

@@ -21,9 +21,9 @@ export function createMCPServer(
 
 ## You MUST use this MCP whenever:
 - Finding a symbol based on a symbol
-  * implementation, references, callers, type definitions, etc.
+  * list_implementation_locations, list_symbol_references, list_caller_locations_of, get_type_declaration, etc.
 - Renaming a symbol
-  * Rename
+  * refactor_rename_symbol
 - Applying quick fix
   * Find an available imports for unresolved symbol.
 
