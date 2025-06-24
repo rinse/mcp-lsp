@@ -17,8 +17,12 @@ import { References } from "../lsp/types/ReferencesRequest";
 export class MCPToolReferences implements MCPTool {
   constructor(private manager: LSPManager) {}
 
+  getName(): string {
+    return 'list_symbol_references';
+  }
+
   listItem(): Tool {
-    return listItemReferences();
+    return listItemReferences(this.getName());
   }
 
   async handle(params: CallToolRequest["params"]["arguments"]): Promise<CallToolResult> {
@@ -26,9 +30,9 @@ export class MCPToolReferences implements MCPTool {
   }
 }
 
-function listItemReferences(): Tool {
+function listItemReferences(toolName: string): Tool {
   return {
-    name: 'list_symbol_references',
+    name: toolName,
     description: `Get all references to a symbol at a specific position in a TypeScript file
 
 ## Use this tool whenever:

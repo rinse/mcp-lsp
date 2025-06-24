@@ -22,8 +22,12 @@ import { MarkupContentT } from "../lsp/types/MarkupContent";
 export class MCPToolHover implements MCPTool {
   constructor(private manager: LSPManager) {}
 
+  getName(): string {
+    return 'get_hover_info';
+  }
+
   listItem(): Tool {
-    return listItemHover();
+    return listItemHover(this.getName());
   }
 
   async handle(params: CallToolRequest["params"]["arguments"]): Promise<CallToolResult> {
@@ -31,9 +35,9 @@ export class MCPToolHover implements MCPTool {
   }
 }
 
-function listItemHover(): Tool {
+function listItemHover(toolName: string): Tool {
   return {
-    name: 'get_hover_info',
+    name: toolName,
     description: `Retrieve hover information (type signature and inline documentation) for the symbol located at a specific cursor position in a TypeScript. Use it whenever the agent—or the end-user—asks “What is the type / doc of this identifier?” or needs quick symbol details without parsing the whole file.
 
 When to call

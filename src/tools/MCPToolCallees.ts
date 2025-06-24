@@ -16,8 +16,12 @@ import { CallHierarchyOutgoingCall } from "../lsp/types/CallHierarchyRequest";
 export class MCPToolCallees implements MCPTool {
   constructor(private manager: LSPManager) {}
 
+  getName(): string {
+    return 'list_callee_locations_in';
+  }
+
   listItem(): Tool {
-    return listItemCallees();
+    return listItemCallees(this.getName());
   }
 
   async handle(params: CallToolRequest["params"]["arguments"]): Promise<CallToolResult> {
@@ -25,9 +29,9 @@ export class MCPToolCallees implements MCPTool {
   }
 }
 
-function listItemCallees(): Tool {
+function listItemCallees(toolName: string): Tool {
   return {
-    name: 'list_callee_locations_in',
+    name: toolName,
     description: `Find all functions/methods that a specific function calls across the entire TypeScript project—including dynamic dispatch, overloads, and imported helpers—in a single, exhaustive, language-aware scan.
 
 **You MUST call this tool whenever** the user or agent asks "What does this function call?", "Show callee list", "Trace outbound calls", "Expand call hierarchy ↓", "List invoked helpers", or any similar request. Skip manual code reading—this analysis is language-aware, prevents missed callees, and saves tokens by avoiding the need to load every file into context.

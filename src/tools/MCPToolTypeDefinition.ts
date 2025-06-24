@@ -17,8 +17,12 @@ import { TypeDefinition } from "../lsp/types/TypeDefinitionRequest";
 export class MCPToolTypeDefinition implements MCPTool {
   constructor(private manager: LSPManager) {}
 
+  getName(): string {
+    return 'get_type_declaration';
+  }
+
   listItem(): Tool {
-    return listItemTypeDefinition();
+    return listItemTypeDefinition(this.getName());
   }
 
   async handle(params: CallToolRequest["params"]["arguments"]): Promise<CallToolResult> {
@@ -26,9 +30,9 @@ export class MCPToolTypeDefinition implements MCPTool {
   }
 }
 
-function listItemTypeDefinition(): Tool {
+function listItemTypeDefinition(toolName: string): Tool {
   return {
-    name: 'get_type_declaration',
+    name: toolName,
     description: `**Always jump straight to the canonical type declaration**
 (interface / type alias / enum / class / primitive wrapper) that
 defines the compile-time shape of the symbol at the given cursor

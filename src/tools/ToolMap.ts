@@ -12,16 +12,22 @@ import { MCPToolTypeDefinition } from "./MCPToolTypeDefinition.js";
 import { LSPManager } from "../lsp/LSPManager.js";
 
 export function createToolMap(lspManager: LSPManager): Map<string, MCPTool> {
+  const tools = [
+    new MCPToolHover(lspManager),
+    new MCPToolDefinition(lspManager),
+    new MCPToolImplementation(lspManager),
+    new MCPToolReferences(lspManager),
+    new MCPToolTypeDefinition(lspManager),
+    new MCPToolRename(lspManager),
+    new MCPToolCodeAction(lspManager),
+    new MCPToolExecuteCodeAction(lspManager),
+    new MCPToolCallHierarchy(lspManager),
+    new MCPToolCallees(lspManager),
+  ];
+
   const toolMap = new Map<string, MCPTool>();
-  toolMap.set('get_hover_info', new MCPToolHover(lspManager));
-  toolMap.set('list_definition_locations', new MCPToolDefinition(lspManager));
-  toolMap.set('list_implementation_locations', new MCPToolImplementation(lspManager));
-  toolMap.set('list_symbol_references', new MCPToolReferences(lspManager));
-  toolMap.set('get_type_declaration', new MCPToolTypeDefinition(lspManager));
-  toolMap.set('refactor_rename_symbol', new MCPToolRename(lspManager));
-  toolMap.set('list_available_code_actions', new MCPToolCodeAction(lspManager));
-  toolMap.set('run_code_action', new MCPToolExecuteCodeAction(lspManager));
-  toolMap.set('list_caller_locations_of', new MCPToolCallHierarchy(lspManager));
-  toolMap.set('list_callee_locations_in', new MCPToolCallees(lspManager));
+  for (const tool of tools) {
+    toolMap.set(tool.getName(), tool);
+  }
   return toolMap;
 }
