@@ -1,9 +1,10 @@
 import { ChildProcess } from 'child_process';
-import { Either, left, right } from 'fp-ts/Either';
+
 
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { Either, left, right } from 'fp-ts/Either';
 
 import { TestRunner } from '../../TestRunner';
 
@@ -28,7 +29,7 @@ export class McpClientRunner implements TestRunner {
       },
       {
         capabilities: {},
-      }
+      },
     );
   }
 
@@ -41,7 +42,7 @@ export class McpClientRunner implements TestRunner {
       // Connect client to transport
       await this.client.connect(this.transport);
     } catch (error) {
-      throw new Error(`Failed to initialize MCP client: ${error}`);
+      throw new Error(`Failed to initialize MCP client: ${String(error)}`);
     }
   }
 
@@ -55,7 +56,7 @@ export class McpClientRunner implements TestRunner {
     try {
       await this.client.close();
       await this.transport.close();
-      
+
       // Transport.close() leaks the inner process, so kill it manually
       const transportProcess = this.transport as unknown as { _process?: ChildProcess };
       if (transportProcess._process) {
@@ -78,7 +79,7 @@ export class McpClientRunner implements TestRunner {
 
     try {
       const response = await this.client.listTools();
-      
+
       if (!response.tools || response.tools.length === 0) {
         return left('No tools found');
       }
@@ -93,16 +94,16 @@ export class McpClientRunner implements TestRunner {
         'list_available_code_actions',
         'run_code_action',
         'list_caller_locations_of',
-        'list_callee_locations_in'
+        'list_callee_locations_in',
       ];
-      
+
       const toolNames = response.tools.map(tool => tool.name);
       const sortedTools = expectedOrder.filter(name => toolNames.includes(name));
       const toolList = `Available tools:\n${sortedTools.join('\n')}`;
-      
+
       return right(toolList);
     } catch (error) {
-      return left(`Failed to list tools: ${error}`);
+      return left(`Failed to list tools: ${String(error)}`);
     }
   }
 
@@ -129,7 +130,7 @@ export class McpClientRunner implements TestRunner {
 
       return right(textContent);
     } catch (error) {
-      return left(`Failed to run tool ${toolName}: ${error}`);
+      return left(`Failed to run tool ${toolName}: ${String(error)}`);
     }
   }
 }
