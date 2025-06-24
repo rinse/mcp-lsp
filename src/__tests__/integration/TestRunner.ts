@@ -1,5 +1,6 @@
 import { Either } from 'fp-ts/Either';
 
+import { McpClientRunner } from './prototype/runner-client/McpClientRunner';
 import { TestRunnerMock } from './runners/TestRunnerMock';
 
 export interface TestRunner {
@@ -11,4 +12,5 @@ export interface TestRunner {
 
 export const testRunners = [
   ["mock", (): TestRunnerMock => new TestRunnerMock()],
+  ["mcp-client", (): McpClientRunner => new McpClientRunner()],
 ] as const;
