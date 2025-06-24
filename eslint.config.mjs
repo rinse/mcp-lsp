@@ -6,7 +6,7 @@ import pluginImport from "eslint-plugin-import";
 import pluginStylistic from "@stylistic/eslint-plugin";
 
 export default eslintTs.config(
-  { ignores: ["**/node_modules/**", "out/**", "**/.git/**", ".wt/**", ".tmp/**", ".claude/**"] },
+  { ignores: ["**/node_modules/**", "out/**", "**/.git/**", ".wt/**", ".tmp/**"] },
   {
     files: ["**/*.ts"],
     plugins: {
