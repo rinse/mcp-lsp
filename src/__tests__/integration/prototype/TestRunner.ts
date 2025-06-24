@@ -12,7 +12,7 @@ export interface TestRunner {
 }
 
 export const testRunners = [
-  ["mock", () => new MockRunner()],
-  ["inspector-cli", () => new InspectorCliRunner()],
-  ["mcp-client", () => new MCPClientRunner()],
+  ["mock", (): MockRunner => new MockRunner()],
+  ["inspector-cli", (): InspectorCliRunner => new InspectorCliRunner()],
+  ["mcp-client", (): MCPClientRunner => new MCPClientRunner()],
 ] as const;

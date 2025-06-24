@@ -1,9 +1,10 @@
+import { ChildProcess } from 'child_process';
+
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { Either, left, right } from 'fp-ts/Either';
 
 import { TestRunner } from '../TestRunner.js';
-import { ChildProcess } from 'child_process';
 
 interface Tool {
   name: string;
@@ -21,14 +22,14 @@ interface ToolCallResult {
 
 export class MCPClientRunner implements TestRunner {
   private client: Client = new Client(
-      {
-        name: 'mcp-client-test-runner',
-        version: '1.0.0',
-      },
-      {
-        capabilities: {},
-      },
-    );
+    {
+      name: 'mcp-client-test-runner',
+      version: '1.0.0',
+    },
+    {
+      capabilities: {},
+    },
+  );
 
   private transport: StdioClientTransport = new StdioClientTransport({
     command: 'node',

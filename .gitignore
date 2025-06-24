@@ -7,3 +7,6 @@
 
 # worktree
 /.wt
+
+# temporary files
+/.tmp
