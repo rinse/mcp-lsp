@@ -21,7 +21,7 @@ list_callee_locations_in`;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   runTool(toolName: string, args: Record<string, unknown>): Promise<Either<string, string>> {
     if (toolName === 'get_hover_info') {
-      return Promise.resolve(right('src/__tests__/integration/test-subjects/GetHoverInfo.ts:10:16\n  Type: function exampleFunction(): void'));
+      return Promise.resolve(right('src/__tests__/integration/test-subjects/GetHoverInfo.ts:13:16\n  Type: function exampleFunction(): void\n  Docs: This is an example function for testing hover info'));
     }
     return Promise.resolve(right(`Mock response for ${toolName}`));
   }

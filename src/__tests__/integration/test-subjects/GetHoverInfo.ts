@@ -1,13 +1,16 @@
 // Test subject file for GetHoverInfo tests
 // This file contains code that the hover info tool can analyze
 
-export interface Promise<T> {
+export interface CustomPromise<T> {
   then<TResult1 = T, TResult2 = never>(
-    onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>)   | null,
-    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>)   | null
-  ): Promise<TResult1 | TResult2>;
+    onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
+    onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null
+  ): CustomPromise<TResult1 | TResult2>;
 }
 
+/**
+ * This is an example function for testing hover info
+ */
 export function exampleFunction(): void {
   console.log('This is an example function for testing hover info');
 }
