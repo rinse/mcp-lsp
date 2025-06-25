@@ -4,7 +4,6 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { Either, left, right } from 'fp-ts/Either';
 
-import { EXPECTED_TOOL_ORDER } from './ToolNames';
 import { isCallToolResult, isTextContent } from './TypeGuards';
 import { TestRunner } from '../../TestRunner';
 
@@ -114,8 +113,7 @@ export class McpClientRunner implements TestRunner {
 
       // Use tool names from actual implementations to avoid duplication
       const toolNames = response.tools.map(tool => tool.name);
-      const sortedTools = EXPECTED_TOOL_ORDER.filter(name => toolNames.includes(name));
-      const toolList = `Available tools:\n${sortedTools.join('\n')}`;
+      const toolList = `Available tools:\n${toolNames.join('\n')}`;
 
       return right(toolList);
     } catch (error) {
