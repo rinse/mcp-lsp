@@ -4,16 +4,16 @@
 
 MCP server that bridges TypeScript Language Server Protocol (LSP) capabilities to MCP tools, enabling Claude Code to interact with TypeScript projects through LSP features.
 
-## Claude Commands
-
-Claude commands are available in `.claude/commands/` directory for automated workflows.
-
 ## Architecture
 
 - **LSPManager**: Central coordinator for LSP operations
 - **LSPServerStream**: Manages stdio communication with TypeScript language server
 - **Tools**: `src/tools/` - MCP tool implementations (get_hover_info, list_definition_locations, list_implementation_locations, list_symbol_references, get_type_declaration, refactor_rename_symbol, list_available_code_actions, run_code_action, list_caller_locations_of, list_callee_locations_in)
 - **Transport**: stdio using `@modelcontextprotocol/sdk`
+
+## Specification
+Think about reading the LSP specification: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/
+Think about reading the MCP specification: https://modelcontextprotocol.io/specification/2025-03-26
 
 ## Commands and Tools
 
