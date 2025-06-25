@@ -1,0 +1,38 @@
+import { isRight } from 'fp-ts/Either';
+
+import { testRunners, TestRunner } from '../TestRunner';
+
+describe('ListAvailableCodeActions Integration Test', () => {
+  const runners: [string, TestRunner][] = testRunners.map(([name, init]) => [name, init()]);
+
+  beforeAll(async () => {
+    const promises = runners.map(([, runner]) => runner.init());
+    await Promise.all(promises);
+  });
+
+  afterAll(async () => {
+    const promises = runners.map(([, runner]) => runner.close());
+    await Promise.all(promises);
+  });
+
+  test.each(runners)('[%s] should find available code actions', async (name, runner) => {
+    const result = await runner.runTool('list_available_code_actions', {
+      uri: 'src/__tests__/integration/test-subjects/CodeActions.ts',
+      line: 7, // Line with unused parameter
+      character: 45, // Character position
+      endLine: 7,
+      endCharacter: 55,
+    });
+    if (!isRight(result)) {
+      console.error(`${name} failed:`, result.left);
+    }
+    expect(isRight(result)).toBe(true);
+    if (isRight(result)) {
+      if (name === 'mock') {
+        expect(result.right).toBe('Mock response for list_available_code_actions');
+      } else {
+        expect(result.right).toContain('code action');
+      }
+    }
+  }, 15000);
+});
