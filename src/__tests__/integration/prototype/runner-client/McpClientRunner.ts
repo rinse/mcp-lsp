@@ -68,13 +68,13 @@ export class McpClientRunner implements TestRunner {
     this.isClosed = true;
 
     try {
-      await this.client.close();
-      await this.transport.close();
-
       // KNOWN LIMITATION: StdioClientTransport.close() may leak the spawned process
       // This is a workaround that accesses internal implementation details and may
       // break with SDK updates. This should be replaced with a proper SDK API when available.
       this._killTransportProcessSafely();
+
+      await this.client.close();
+      await this.transport.close();
     } catch (error) {
       // Log error but don't throw to ensure cleanup continues
       console.error('Error during MCP client cleanup:', error);
