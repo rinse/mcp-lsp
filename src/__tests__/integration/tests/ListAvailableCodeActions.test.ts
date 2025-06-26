@@ -9,17 +9,79 @@ describe('ListAvailableCodeActions Integration Test', () => {
   beforeAll(async () => await testSetup.beforeAllSetup());
   afterAll(async () => await testSetup.afterAllTeardown());
 
-  test.each(runners)('[%s] should find available code actions', async (name, runner) => {
+  test.each(runners)('[%s] should find available code actions for function with issues', async (name, runner) => {
     const result = await runner.runTool('list_available_code_actions', {
       uri: 'src/__tests__/integration/test-subjects/CodeActions.ts',
-      line: 7, // Line with unused parameter
-      character: 45, // Character position
-      endLine: 7,
-      endCharacter: 55,
+      line: 81, // Line with functionWithCodeActionOpportunities that has multiple issues
+      character: 16, // Character position on function name
+      endLine: 81,
+      endCharacter: 50,
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toBe('No code actions available.');
+      expect(result.right).toBe(
+        'Found 1 code action(s):\n\n' +
+        '1. Move to a new file (refactor.move)\n' +
+        '   📋 For executeCodeAction tool:\n' +
+        '{\n' +
+        '  "title": "Move to a new file",\n' +
+        '  "kind": "refactor.move",\n' +
+        '  "command": {\n' +
+        '    "title": "Move to a new file",\n' +
+        '    "command": "_typescript.applyRefactoring",\n' +
+        '    "arguments": [\n' +
+        '      {\n' +
+        '        "file": "/src/__tests__/integration/test-subjects/CodeActions.ts",\n' +
+        '        "startLine": 82,\n' +
+        '        "startOffset": 17,\n' +
+        '        "endLine": 82,\n' +
+        '        "endOffset": 51,\n' +
+        '        "refactor": "Move to a new file",\n' +
+        '        "action": "Move to a new file"\n' +
+        '      }\n' +
+        '    ]\n' +
+        '  }\n' +
+        '}\n' +
+        '   ⚡ Command: Move to a new file (_typescript.applyRefactoring)',
+      );
+    }
+  }, 15000);
+
+  test.each(runners)('[%s] should find code actions for another function', async (name, runner) => {
+    const result = await runner.runTool('list_available_code_actions', {
+      uri: 'src/__tests__/integration/test-subjects/CodeActions.ts',
+      line: 14, // Line with another function
+      character: 16, // Character position
+      endLine: 14,
+      endCharacter: 45,
+    });
+    expect(isRight(result)).toBe(true);
+    if (isRight(result)) {
+      expect(result.right).toBe(
+        'Found 1 code action(s):\n\n' +
+        '1. Move to a new file (refactor.move)\n' +
+        '   📋 For executeCodeAction tool:\n' +
+        '{\n' +
+        '  "title": "Move to a new file",\n' +
+        '  "kind": "refactor.move",\n' +
+        '  "command": {\n' +
+        '    "title": "Move to a new file",\n' +
+        '    "command": "_typescript.applyRefactoring",\n' +
+        '    "arguments": [\n' +
+        '      {\n' +
+        '        "file": "/src/__tests__/integration/test-subjects/CodeActions.ts",\n' +
+        '        "startLine": 15,\n' +
+        '        "startOffset": 17,\n' +
+        '        "endLine": 15,\n' +
+        '        "endOffset": 46,\n' +
+        '        "refactor": "Move to a new file",\n' +
+        '        "action": "Move to a new file"\n' +
+        '      }\n' +
+        '    ]\n' +
+        '  }\n' +
+        '}\n' +
+        '   ⚡ Command: Move to a new file (_typescript.applyRefactoring)',
+      );
     }
   }, 15000);
 });

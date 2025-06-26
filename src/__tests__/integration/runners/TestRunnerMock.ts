@@ -77,8 +77,17 @@ list_callee_locations_in`;
       }
       case 'refactor_rename_symbol':
         return Promise.resolve(right('Failed to apply rename: ENOENT: no such file or directory, open \'/src/__tests__/integration/test-subjects/Rename.ts\''));
-      case 'list_available_code_actions':
-        return Promise.resolve(right('No code actions available.'));
+      case 'list_available_code_actions': {
+        const line = args.line as number;
+        switch (line) {
+          case 81: // Function with issues - should have code actions
+            return Promise.resolve(right('Found 1 code action(s):\n\n1. Move to a new file (refactor.move)\n   📋 For executeCodeAction tool:\n{\n  "title": "Move to a new file",\n  "kind": "refactor.move",\n  "command": {\n    "title": "Move to a new file",\n    "command": "_typescript.applyRefactoring",\n    "arguments": [\n      {\n        "file": "/src/__tests__/integration/test-subjects/CodeActions.ts",\n        "startLine": 82,\n        "startOffset": 17,\n        "endLine": 82,\n        "endOffset": 51,\n        "refactor": "Move to a new file",\n        "action": "Move to a new file"\n      }\n    ]\n  }\n}\n   ⚡ Command: Move to a new file (_typescript.applyRefactoring)'));
+          case 14: // Clean function - should also have move to new file action
+            return Promise.resolve(right('Found 1 code action(s):\n\n1. Move to a new file (refactor.move)\n   📋 For executeCodeAction tool:\n{\n  "title": "Move to a new file",\n  "kind": "refactor.move",\n  "command": {\n    "title": "Move to a new file",\n    "command": "_typescript.applyRefactoring",\n    "arguments": [\n      {\n        "file": "/src/__tests__/integration/test-subjects/CodeActions.ts",\n        "startLine": 15,\n        "startOffset": 17,\n        "endLine": 15,\n        "endOffset": 46,\n        "refactor": "Move to a new file",\n        "action": "Move to a new file"\n      }\n    ]\n  }\n}\n   ⚡ Command: Move to a new file (_typescript.applyRefactoring)'));
+          default:
+            return Promise.resolve(right('No code actions available.'));
+        }
+      }
       case 'run_code_action':
         return Promise.resolve(right('⚠️ Code action "Test Code Action" has no WorkspaceEdit or Command to execute'));
       case 'list_caller_locations_of':

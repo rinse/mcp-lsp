@@ -74,3 +74,13 @@ export const mutableObject = {
 export function functionWithMagicNumbers(input: number): number {
   return input * 42 + 100; // Magic numbers that could be extracted
 }
+
+/**
+ * Function with clear code action opportunities
+ */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-unused-vars
+export function functionWithCodeActionOpportunities(unusedParam: string) {
+  // Missing return type annotation - should trigger "Add return type" code action
+  // Unused parameter - should trigger "Remove unused parameter" code action
+  console.log('Function executed');
+}
