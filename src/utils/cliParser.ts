@@ -1,15 +1,16 @@
 import { parseArgs as nodeParseArgs } from 'node:util';
 
 export interface CLIOptions {
-  rootUri?: string;
+  rootPath?: string;
   help?: boolean;
+  getRootUri(): string;
 }
 
 export function parseArgs(args: string[]): CLIOptions {
   const { values } = nodeParseArgs({
     args,
     options: {
-      'root-uri': {
+      'root-path': {
         type: 'string',
       },
       'help': {
@@ -21,19 +22,32 @@ export function parseArgs(args: string[]): CLIOptions {
     allowPositionals: true,
   });
 
-  const options: CLIOptions = {};
+  let rootPath: string | undefined;
 
-  if (values.help) {
-    options.help = true;
-    return options;
+  if (values['root-path']) {
+    rootPath = values['root-path'] as string;
+    // Basic validation - check if path exists or seems valid
+    if (rootPath.startsWith('http://') || rootPath.startsWith('https://')) {
+      throw new Error('Root path must be a file system path, not a URL');
+    }
   }
 
-  if (values['root-uri']) {
-    const rootUri = values['root-uri'] as string;
-    if (!rootUri.startsWith('file://')) {
-      throw new Error('Root URI must start with file://');
-    }
-    options.rootUri = rootUri;
+  const options: CLIOptions = {
+    rootPath,
+    help: Boolean(values.help),
+    getRootUri(): string {
+      if (rootPath) {
+        // Convert path to URI by prepending file://
+        // Handle both absolute and relative paths
+        const absolutePath = rootPath.startsWith('/') ? rootPath : `${process.cwd()}/${rootPath}`;
+        return `file://${absolutePath}`;
+      }
+      return `file://${process.cwd()}`;
+    },
+  };
+
+  if (values.help) {
+    return options;
   }
 
   return options;
@@ -46,12 +60,14 @@ mcp-lsp - MCP server that bridges TypeScript Language Server Protocol
 Usage: mcp-lsp [options]
 
 Options:
-  --root-uri <uri>    Specify the root URI for the TypeScript LSP server
-                      Must start with file://
-                      Default: file://\${process.cwd()}
+  --root-path <path>  Specify the root path for the TypeScript LSP server
+                      Can be absolute or relative path
+                      Default: current working directory
   -h, --help          Show this help message
 
-Example:
-  mcp-lsp --root-uri file:///home/user/my-project
+Examples:
+  mcp-lsp --root-path /home/user/my-project
+  mcp-lsp --root-path ./my-project
+  mcp-lsp --root-path ~/projects/my-app
 `);
 }

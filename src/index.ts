@@ -26,14 +26,14 @@ async function main(): Promise<void> {
   // Handle help option
   if (cliOptions.help) {
     showHelp();
-    process.exit(0);
+    return;
   }
 
   logger.info("======================================");
   logger.info("[MCP] Server Process had started. ::::");
   logger.info("======================================");
 
-  const rootUri = cliOptions.rootUri ?? `file://${process.cwd()}`;
+  const rootUri = cliOptions.getRootUri();
 
   logger.info(`[MCP] Using root URI: ${rootUri}`);
 
