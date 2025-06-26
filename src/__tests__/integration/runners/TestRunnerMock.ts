@@ -18,7 +18,7 @@ list_callee_locations_in`;
     return Promise.resolve(right(toolList));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   runTool(toolName: string, args: Record<string, unknown>): Promise<Either<string, string>> {
     switch (toolName) {
       case 'get_hover_info':
@@ -29,8 +29,21 @@ list_callee_locations_in`;
         return Promise.resolve(right('Found 2 implementations:\nsrc/__tests__/integration/test-subjects/Implementations.ts:15:13-15:32\nsrc/__tests__/integration/test-subjects/Implementations.ts:28:13-28:32'));
       case 'list_symbol_references':
         return Promise.resolve(right('Found 6 references:\nsrc/__tests__/integration/test-subjects/References.ts:7:16-7:40\nsrc/__tests__/integration/test-subjects/References.ts:23:11-23:35\nsrc/__tests__/integration/test-subjects/References.ts:29:19-29:43\nsrc/__tests__/integration/test-subjects/References.ts:31:19-31:43\nsrc/__tests__/integration/test-subjects/References.ts:42:13-42:37\nsrc/__tests__/integration/test-subjects/References.ts:52:9-52:33'));
-      case 'get_type_declaration':
-        return Promise.resolve(right('Found 1 type definitions:\nsrc/__tests__/integration/test-subjects/Types.ts:7:17-7:30'));
+      case 'get_type_declaration': {
+        const line = args.line as number;
+        switch (line) {
+          case 74: // TestTypeAlias usage in variable declaration
+            return Promise.resolve(right('Found 1 type definitions:\n/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30'));
+          case 22: // TestTypeAlias usage in interface
+            return Promise.resolve(right('Found 1 type definitions:\n/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30'));
+          case 31: // TestTypeAlias usage in generic type
+            return Promise.resolve(right('Found 1 type definitions:\n/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30'));
+          case 61: // TestEnum usage
+            return Promise.resolve(right('Found 1 type definitions:\n/src/__tests__/integration/test-subjects/Types.ts:37:12-37:20'));
+          default:
+            throw new Error(`Unexpected line number for get_type_declaration: ${line}`);
+        }
+      }
       case 'refactor_rename_symbol':
         return Promise.resolve(right('Success: Successfully renamed symbol to "newName"'));
       case 'list_available_code_actions':

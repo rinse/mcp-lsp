@@ -18,8 +18,10 @@ describe('GetTypeDeclaration Integration Test', () => {
 
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+ type definitions:/);
-      expect(result.right).toContain('Types.ts');
+      expect(result.right).toBe(
+        'Found 1 type definitions:\n' +
+        '/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30',
+      );
     }
   }, 15000);
 
@@ -32,8 +34,10 @@ describe('GetTypeDeclaration Integration Test', () => {
 
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+ type definitions:/);
-      expect(result.right).toContain('Types.ts');
+      expect(result.right).toBe(
+        'Found 1 type definitions:\n' +
+        '/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30',
+      );
     }
   }, 15000);
 
@@ -46,8 +50,10 @@ describe('GetTypeDeclaration Integration Test', () => {
 
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+ type definitions:/);
-      expect(result.right).toContain('Types.ts');
+      expect(result.right).toBe(
+        'Found 1 type definitions:\n' +
+        '/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30',
+      );
     }
   }, 15000);
 
@@ -60,8 +66,10 @@ describe('GetTypeDeclaration Integration Test', () => {
 
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      // Enum type declarations may not always be found, so we accept either result
-      expect(result.right).toMatch(/Found \d+ type definitions:|No type definition found/);
+      expect(result.right).toBe(
+        'Found 1 type definitions:\n' +
+        '/src/__tests__/integration/test-subjects/Types.ts:37:12-37:20',
+      );
     }
   }, 15000);
 });
