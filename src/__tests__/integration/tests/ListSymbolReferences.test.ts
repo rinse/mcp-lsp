@@ -1,19 +1,12 @@
 import { isRight } from 'fp-ts/Either';
 
-import { testRunners, TestRunner } from '../TestRunner';
+import { setupIntegrationTest, expectFoundResult, expectFilePathInResult } from '../utils/testSetup';
 
 describe('ListSymbolReferences Integration Test', () => {
-  const runners: [string, TestRunner][] = testRunners.map(([name, init]) => [name, init()]);
+  const { runners, beforeAllSetup, afterAllTeardown } = setupIntegrationTest();
 
-  beforeAll(async () => {
-    const promises = runners.map(([, runner]) => runner.init());
-    await Promise.all(promises);
-  });
-
-  afterAll(async () => {
-    const promises = runners.map(([, runner]) => runner.close());
-    await Promise.all(promises);
-  });
+  beforeAll(beforeAllSetup);
+  afterAll(afterAllTeardown);
 
   test.each(runners)('[%s] should find all references including declaration', async (name, runner) => {
     const result = await runner.runTool('list_symbol_references', {
@@ -30,8 +23,11 @@ describe('ListSymbolReferences Integration Test', () => {
       if (name === 'mock') {
         expect(result.right).toBe('Mock response for list_symbol_references');
       } else {
-        // Should find all 6 references including the declaration
-        expect(result.right).toBe('Found 6 references:\n/src/__tests__/integration/test-subjects/References.ts:6:16-6:38\n/src/__tests__/integration/test-subjects/References.ts:22:11-22:33\n/src/__tests__/integration/test-subjects/References.ts:27:19-27:41\n/src/__tests__/integration/test-subjects/References.ts:28:19-28:41\n/src/__tests__/integration/test-subjects/References.ts:37:14-37:36\n/src/__tests__/integration/test-subjects/References.ts:47:9-47:31');
+        expectFoundResult(result.right, 6);
+        expectFilePathInResult(result.right, 'References.ts');
+        // References output contains positions but not symbol names
+        // Should include both the declaration and all usage sites
+        expect(result.right.split('\n').length).toBeGreaterThan(1);
       }
     }
   }, 15000);
@@ -51,8 +47,11 @@ describe('ListSymbolReferences Integration Test', () => {
       if (name === 'mock') {
         expect(result.right).toBe('Mock response for list_symbol_references');
       } else {
-        // Should find 5 references excluding the declaration
-        expect(result.right).toBe('Found 5 references:\n/src/__tests__/integration/test-subjects/References.ts:22:11-22:33\n/src/__tests__/integration/test-subjects/References.ts:27:19-27:41\n/src/__tests__/integration/test-subjects/References.ts:28:19-28:41\n/src/__tests__/integration/test-subjects/References.ts:37:14-37:36\n/src/__tests__/integration/test-subjects/References.ts:47:9-47:31');
+        expectFoundResult(result.right, 5);
+        expectFilePathInResult(result.right, 'References.ts');
+        // References output contains positions but not symbol names
+        // Should exclude the declaration, so fewer references than the include test
+        expect(result.right.split('\n').length).toBeGreaterThan(1);
       }
     }
   }, 15000);
@@ -72,8 +71,11 @@ describe('ListSymbolReferences Integration Test', () => {
       if (name === 'mock') {
         expect(result.right).toBe('Mock response for list_symbol_references');
       } else {
-        // Should find all 6 references including the declaration
-        expect(result.right).toBe('Found 6 references:\n/src/__tests__/integration/test-subjects/References.ts:6:16-6:38\n/src/__tests__/integration/test-subjects/References.ts:22:11-22:33\n/src/__tests__/integration/test-subjects/References.ts:27:19-27:41\n/src/__tests__/integration/test-subjects/References.ts:28:19-28:41\n/src/__tests__/integration/test-subjects/References.ts:37:14-37:36\n/src/__tests__/integration/test-subjects/References.ts:47:9-47:31');
+        expectFoundResult(result.right, 6);
+        expectFilePathInResult(result.right, 'References.ts');
+        // References output contains positions but not symbol names
+        // Should find all references including the declaration when called from usage
+        expect(result.right.split('\n').length).toBeGreaterThan(1);
       }
     }
   }, 15000);

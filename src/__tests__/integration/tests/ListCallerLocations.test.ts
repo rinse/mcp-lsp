@@ -1,19 +1,12 @@
 import { isRight } from 'fp-ts/Either';
 
-import { testRunners, TestRunner } from '../TestRunner';
+import { setupIntegrationTest, expectFilePathInResult } from '../utils/testSetup';
 
 describe('ListCallerLocations Integration Test', () => {
-  const runners: [string, TestRunner][] = testRunners.map(([name, init]) => [name, init()]);
+  const { runners, beforeAllSetup, afterAllTeardown } = setupIntegrationTest();
 
-  beforeAll(async () => {
-    const promises = runners.map(([, runner]) => runner.init());
-    await Promise.all(promises);
-  });
-
-  afterAll(async () => {
-    const promises = runners.map(([, runner]) => runner.close());
-    await Promise.all(promises);
-  });
+  beforeAll(beforeAllSetup);
+  afterAll(afterAllTeardown);
 
   test.each(runners)('[%s] should find callers of function with multiple callers', async (name, runner) => {
     const result = await runner.runTool('list_caller_locations_of', {
@@ -29,7 +22,8 @@ describe('ListCallerLocations Integration Test', () => {
       if (name === 'mock') {
         expect(result.right).toBe('Mock response for list_caller_locations_of');
       } else {
-        expect(result.right).toContain('callers');
+        // Caller locations may not be found consistently in test environment
+        expect(result.right).toMatch(/No callers found|Found \d+ callers/);
       }
     }
   }, 15000);

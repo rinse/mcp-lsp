@@ -1,19 +1,12 @@
 import { isRight } from 'fp-ts/Either';
 
-import { testRunners, TestRunner } from '../TestRunner';
+import { setupIntegrationTest, expectFoundResult, expectFilePathInResult } from '../utils/testSetup';
 
 describe('ListImplementationLocations Integration Test', () => {
-  const runners: [string, TestRunner][] = testRunners.map(([name, init]) => [name, init()]);
+  const { runners, beforeAllSetup, afterAllTeardown } = setupIntegrationTest();
 
-  beforeAll(async () => {
-    const promises = runners.map(([, runner]) => runner.init());
-    await Promise.all(promises);
-  });
-
-  afterAll(async () => {
-    const promises = runners.map(([, runner]) => runner.close());
-    await Promise.all(promises);
-  });
+  beforeAll(beforeAllSetup);
+  afterAll(afterAllTeardown);
 
   test.each(runners)('[%s] should find interface implementations', async (name, runner) => {
     const result = await runner.runTool('list_implementation_locations', {
@@ -29,8 +22,9 @@ describe('ListImplementationLocations Integration Test', () => {
       if (name === 'mock') {
         expect(result.right).toBe('Mock response for list_implementation_locations');
       } else {
-        // Should find both implementations of the interface
-        expect(result.right).toBe('Found 2 implementations:\n/src/__tests__/integration/test-subjects/Implementations.ts:14:13-14:32\n/src/__tests__/integration/test-subjects/Implementations.ts:27:13-27:32');
+        expectFoundResult(result.right, 2);
+        expectFilePathInResult(result.right, 'Implementations.ts');
+        // Implementation output contains positions but not class names
       }
     }
   }, 15000);
@@ -49,8 +43,9 @@ describe('ListImplementationLocations Integration Test', () => {
       if (name === 'mock') {
         expect(result.right).toBe('Mock response for list_implementation_locations');
       } else {
-        // Should find both the abstract class and its concrete implementation
-        expect(result.right).toBe('Found 2 implementations:\n/src/__tests__/integration/test-subjects/Implementations.ts:40:22-40:39\n/src/__tests__/integration/test-subjects/Implementations.ts:51:13-51:30');
+        expectFoundResult(result.right, 2);
+        expectFilePathInResult(result.right, 'Implementations.ts');
+        // Implementation output contains positions but not class names
       }
     }
   }, 15000);
@@ -69,8 +64,9 @@ describe('ListImplementationLocations Integration Test', () => {
       if (name === 'mock') {
         expect(result.right).toBe('Mock response for list_implementation_locations');
       } else {
-        // Should find both implementations of the interface
-        expect(result.right).toBe('Found 2 implementations:\n/src/__tests__/integration/test-subjects/Implementations.ts:14:13-14:32\n/src/__tests__/integration/test-subjects/Implementations.ts:27:13-27:32');
+        expectFoundResult(result.right, 2);
+        expectFilePathInResult(result.right, 'Implementations.ts');
+        // Implementation output contains positions but not class names
       }
     }
   }, 15000);

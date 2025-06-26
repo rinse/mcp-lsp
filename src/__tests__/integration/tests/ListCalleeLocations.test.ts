@@ -1,19 +1,12 @@
 import { isRight } from 'fp-ts/Either';
 
-import { testRunners, TestRunner } from '../TestRunner';
+import { setupIntegrationTest, expectFilePathInResult } from '../utils/testSetup';
 
 describe('ListCalleeLocations Integration Test', () => {
-  const runners: [string, TestRunner][] = testRunners.map(([name, init]) => [name, init()]);
+  const { runners, beforeAllSetup, afterAllTeardown } = setupIntegrationTest();
 
-  beforeAll(async () => {
-    const promises = runners.map(([, runner]) => runner.init());
-    await Promise.all(promises);
-  });
-
-  afterAll(async () => {
-    const promises = runners.map(([, runner]) => runner.close());
-    await Promise.all(promises);
-  });
+  beforeAll(beforeAllSetup);
+  afterAll(afterAllTeardown);
 
   test.each(runners)('[%s] should find callees of function with multiple calls', async (name, runner) => {
     const result = await runner.runTool('list_callee_locations_in', {
@@ -29,7 +22,9 @@ describe('ListCalleeLocations Integration Test', () => {
       if (name === 'mock') {
         expect(result.right).toBe('Mock response for list_callee_locations_in');
       } else {
-        expect(result.right).toContain('callees');
+        expectFilePathInResult(result.right, 'CallHierarchy.ts');
+        expect(result.right).toContain('callee');
+        expect(result.right).toContain('helperFunction');
       }
     }
   }, 15000);

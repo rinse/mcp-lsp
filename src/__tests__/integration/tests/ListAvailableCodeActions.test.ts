@@ -1,19 +1,12 @@
 import { isRight } from 'fp-ts/Either';
 
-import { testRunners, TestRunner } from '../TestRunner';
+import { setupIntegrationTest, expectFilePathInResult } from '../utils/testSetup';
 
 describe('ListAvailableCodeActions Integration Test', () => {
-  const runners: [string, TestRunner][] = testRunners.map(([name, init]) => [name, init()]);
+  const { runners, beforeAllSetup, afterAllTeardown } = setupIntegrationTest();
 
-  beforeAll(async () => {
-    const promises = runners.map(([, runner]) => runner.init());
-    await Promise.all(promises);
-  });
-
-  afterAll(async () => {
-    const promises = runners.map(([, runner]) => runner.close());
-    await Promise.all(promises);
-  });
+  beforeAll(beforeAllSetup);
+  afterAll(afterAllTeardown);
 
   test.each(runners)('[%s] should find available code actions', async (name, runner) => {
     const result = await runner.runTool('list_available_code_actions', {
@@ -31,7 +24,9 @@ describe('ListAvailableCodeActions Integration Test', () => {
       if (name === 'mock') {
         expect(result.right).toBe('Mock response for list_available_code_actions');
       } else {
+        expectFilePathInResult(result.right, 'CodeActions.ts');
         expect(result.right).toContain('code action');
+        expect(result.right).toContain('Infer function return type');
       }
     }
   }, 15000);

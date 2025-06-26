@@ -1,19 +1,12 @@
 import { isRight } from 'fp-ts/Either';
 
-import { testRunners, TestRunner } from '../TestRunner';
+import { setupIntegrationTest } from '../utils/testSetup';
 
 describe('RunCodeAction Integration Test', () => {
-  const runners: [string, TestRunner][] = testRunners.map(([name, init]) => [name, init()]);
+  const { runners, beforeAllSetup, afterAllTeardown } = setupIntegrationTest();
 
-  beforeAll(async () => {
-    const promises = runners.map(([, runner]) => runner.init());
-    await Promise.all(promises);
-  });
-
-  afterAll(async () => {
-    const promises = runners.map(([, runner]) => runner.close());
-    await Promise.all(promises);
-  });
+  beforeAll(beforeAllSetup);
+  afterAll(afterAllTeardown);
 
   test.each(runners)('[%s] should run a code action', async (name, runner) => {
     const mockCodeAction = {
@@ -32,6 +25,7 @@ describe('RunCodeAction Integration Test', () => {
       if (name === 'mock') {
         expect(result.right).toBe('Mock response for run_code_action');
       } else {
+        expect(result.right).toContain('Test Code Action');
         expect(result.right).toContain('action');
       }
     }
