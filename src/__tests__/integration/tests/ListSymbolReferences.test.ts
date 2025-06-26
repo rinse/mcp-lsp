@@ -18,8 +18,15 @@ describe('ListSymbolReferences Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+/);
-      expect(result.right).toContain('References.ts');
+      expect(result.right).toBe(
+        'Found 6 references:\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:6:16-6:38\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:22:11-22:33\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:28:19-28:41\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:30:19-30:41\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:41:14-41:36\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:51:9-51:31',
+      );
     }
   }, 15000);
 
@@ -32,8 +39,14 @@ describe('ListSymbolReferences Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+/);
-      expect(result.right).toContain('References.ts');
+      expect(result.right).toBe(
+        'Found 5 references:\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:22:11-22:33\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:28:19-28:41\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:30:19-30:41\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:41:14-41:36\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:51:9-51:31',
+      );
     }
   }, 15000);
 
@@ -46,8 +59,15 @@ describe('ListSymbolReferences Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+/);
-      expect(result.right).toContain('References.ts');
+      expect(result.right).toBe(
+        'Found 6 references:\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:6:16-6:38\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:22:11-22:33\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:28:19-28:41\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:30:19-30:41\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:41:14-41:36\n' +
+        '/src/__tests__/integration/test-subjects/References.ts:51:9-51:31',
+      );
     }
   }, 15000);
 });

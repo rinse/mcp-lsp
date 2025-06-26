@@ -17,8 +17,11 @@ describe('ListCalleeLocations Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+/);
-      expect(result.right).toContain('CallHierarchy.ts');
+      expect(result.right).toBe(
+        'Found 2 callees:\n' +
+        'helperFunction at /src/__tests__/integration/test-subjects/CallHierarchy.ts:23:16-23:30\n' +
+        'validateInput at /src/__tests__/integration/test-subjects/CallHierarchy.ts:30:16-30:29',
+      );
     }
   }, 15000);
 });

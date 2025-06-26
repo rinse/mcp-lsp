@@ -17,8 +17,11 @@ describe('ListImplementationLocations Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+/);
-      expect(result.right).toContain('Implementations.ts');
+      expect(result.right).toBe(
+        'Found 2 implementations:\n' +
+        '/src/__tests__/integration/test-subjects/Implementations.ts:14:13-14:32\n' +
+        '/src/__tests__/integration/test-subjects/Implementations.ts:27:13-27:32',
+      );
     }
   }, 15000);
 
@@ -30,8 +33,11 @@ describe('ListImplementationLocations Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+/);
-      expect(result.right).toContain('Implementations.ts');
+      expect(result.right).toBe(
+        'Found 2 implementations:\n' +
+        '/src/__tests__/integration/test-subjects/Implementations.ts:40:22-40:39\n' +
+        '/src/__tests__/integration/test-subjects/Implementations.ts:51:13-51:30',
+      );
     }
   }, 15000);
 
@@ -43,8 +49,11 @@ describe('ListImplementationLocations Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+/);
-      expect(result.right).toContain('Implementations.ts');
+      expect(result.right).toBe(
+        'Found 2 implementations:\n' +
+        '/src/__tests__/integration/test-subjects/Implementations.ts:14:13-14:32\n' +
+        '/src/__tests__/integration/test-subjects/Implementations.ts:27:13-27:32',
+      );
     }
   }, 15000);
 });

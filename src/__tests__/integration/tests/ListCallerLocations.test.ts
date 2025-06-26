@@ -17,8 +17,9 @@ describe('ListCallerLocations Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+|No callers found/);
-      expect(result.right).toContain('CallHierarchy.ts');
+      expect(result.right).toBe(
+        'No callers found for symbol at src/__tests__/integration/test-subjects/CallHierarchy.ts:65:16',
+      );
     }
   }, 15000);
 });

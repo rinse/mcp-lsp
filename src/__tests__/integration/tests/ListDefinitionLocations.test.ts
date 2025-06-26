@@ -17,8 +17,10 @@ describe('ListDefinitionLocations Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+/);
-      expect(result.right).toContain('Definitions.ts');
+      expect(result.right).toBe(
+        'Found 1 definitions:\n' +
+        '/src/__tests__/integration/test-subjects/Definitions.ts:6:16-6:38',
+      );
     }
   }, 15000);
 
@@ -30,8 +32,10 @@ describe('ListDefinitionLocations Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+/);
-      expect(result.right).toContain('Definitions.ts');
+      expect(result.right).toBe(
+        'Found 1 definitions:\n' +
+        '/src/__tests__/integration/test-subjects/Definitions.ts:6:16-6:38',
+      );
     }
   }, 15000);
 
@@ -43,8 +47,10 @@ describe('ListDefinitionLocations Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+/);
-      expect(result.right).toContain('Definitions.ts');
+      expect(result.right).toBe(
+        'Found 1 definitions:\n' +
+        '/src/__tests__/integration/test-subjects/Definitions.ts:18:13-18:32',
+      );
     }
   }, 15000);
 
@@ -56,8 +62,10 @@ describe('ListDefinitionLocations Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+/);
-      expect(result.right).toContain('Definitions.ts');
+      expect(result.right).toBe(
+        'Found 1 definitions:\n' +
+        '/src/__tests__/integration/test-subjects/Definitions.ts:27:9-27:19',
+      );
     }
   }, 15000);
 });

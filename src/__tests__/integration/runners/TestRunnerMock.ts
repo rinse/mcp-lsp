@@ -23,12 +23,43 @@ list_callee_locations_in`;
     switch (toolName) {
       case 'get_hover_info':
         return Promise.resolve(right('src/__tests__/integration/test-subjects/GetHoverInfo.ts:13:16\n  Type: function exampleFunction(): void\n  Docs: This is an example function for testing hover info'));
-      case 'list_definition_locations':
-        return Promise.resolve(right('Found 1 definitions:\nsrc/__tests__/integration/test-subjects/Definitions.ts:7:16-7:40'));
-      case 'list_implementation_locations':
-        return Promise.resolve(right('Found 2 implementations:\nsrc/__tests__/integration/test-subjects/Implementations.ts:15:13-15:32\nsrc/__tests__/integration/test-subjects/Implementations.ts:28:13-28:32'));
-      case 'list_symbol_references':
-        return Promise.resolve(right('Found 6 references:\nsrc/__tests__/integration/test-subjects/References.ts:7:16-7:40\nsrc/__tests__/integration/test-subjects/References.ts:23:11-23:35\nsrc/__tests__/integration/test-subjects/References.ts:29:19-29:43\nsrc/__tests__/integration/test-subjects/References.ts:31:19-31:43\nsrc/__tests__/integration/test-subjects/References.ts:42:13-42:37\nsrc/__tests__/integration/test-subjects/References.ts:52:9-52:33'));
+      case 'list_definition_locations': {
+        const line = args.line as number;
+        const character = args.character as number;
+        switch (`${line}:${character}`) {
+          case '42:21': // testDefinitionFunction usage
+            return Promise.resolve(right('Found 1 definitions:\n/src/__tests__/integration/test-subjects/Definitions.ts:6:16-6:38'));
+          case '42:23': // TestDefinitionClass usage
+            return Promise.resolve(right('Found 1 definitions:\n/src/__tests__/integration/test-subjects/Definitions.ts:6:16-6:38'));
+          case '43:33': // testProperty usage
+            return Promise.resolve(right('Found 1 definitions:\n/src/__tests__/integration/test-subjects/Definitions.ts:18:13-18:32'));
+          case '47:31': // testMethod usage
+            return Promise.resolve(right('Found 1 definitions:\n/src/__tests__/integration/test-subjects/Definitions.ts:27:9-27:19'));
+          default:
+            throw new Error(`Unexpected line:character for list_definition_locations: ${line}:${character}`);
+        }
+      }
+      case 'list_implementation_locations': {
+        const line = args.line as number;
+        const character = args.character as number;
+        switch (`${line}:${character}`) {
+          case '6:17': // Interface definition
+          case '59:17': // Interface usage
+            return Promise.resolve(right('Found 2 implementations:\n/src/__tests__/integration/test-subjects/Implementations.ts:14:13-14:32\n/src/__tests__/integration/test-subjects/Implementations.ts:27:13-27:32'));
+          case '40:22': // Abstract class definition
+            return Promise.resolve(right('Found 2 implementations:\n/src/__tests__/integration/test-subjects/Implementations.ts:40:22-40:39\n/src/__tests__/integration/test-subjects/Implementations.ts:51:13-51:30'));
+          default:
+            throw new Error(`Unexpected line:character for list_implementation_locations: ${line}:${character}`);
+        }
+      }
+      case 'list_symbol_references': {
+        const includeDeclaration = args.includeDeclaration as boolean;
+        if (includeDeclaration === false) {
+          return Promise.resolve(right('Found 5 references:\n/src/__tests__/integration/test-subjects/References.ts:22:11-22:33\n/src/__tests__/integration/test-subjects/References.ts:28:19-28:41\n/src/__tests__/integration/test-subjects/References.ts:30:19-30:41\n/src/__tests__/integration/test-subjects/References.ts:41:14-41:36\n/src/__tests__/integration/test-subjects/References.ts:51:9-51:31'));
+        } else {
+          return Promise.resolve(right('Found 6 references:\n/src/__tests__/integration/test-subjects/References.ts:6:16-6:38\n/src/__tests__/integration/test-subjects/References.ts:22:11-22:33\n/src/__tests__/integration/test-subjects/References.ts:28:19-28:41\n/src/__tests__/integration/test-subjects/References.ts:30:19-30:41\n/src/__tests__/integration/test-subjects/References.ts:41:14-41:36\n/src/__tests__/integration/test-subjects/References.ts:51:9-51:31'));
+        }
+      }
       case 'get_type_declaration': {
         const line = args.line as number;
         switch (line) {
@@ -51,9 +82,9 @@ list_callee_locations_in`;
       case 'run_code_action':
         return Promise.resolve(right('Successfully applied code action: Add explicit return type annotation'));
       case 'list_caller_locations_of':
-        return Promise.resolve(right('Found 3 callers:\nsrc/__tests__/integration/test-subjects/CallHierarchy.ts:15:8-15:20\nsrc/__tests__/integration/test-subjects/CallHierarchy.ts:25:12-25:24\nsrc/__tests__/integration/test-subjects/CallHierarchy.ts:35:16-35:28'));
+        return Promise.resolve(right('No callers found for symbol at src/__tests__/integration/test-subjects/CallHierarchy.ts:65:16'));
       case 'list_callee_locations_in':
-        return Promise.resolve(right('Found 2 callees:\nsrc/__tests__/integration/test-subjects/CallHierarchy.ts:40:8-40:16\nsrc/__tests__/integration/test-subjects/CallHierarchy.ts:41:8-41:20'));
+        return Promise.resolve(right('Found 2 callees:\nhelperFunction at /src/__tests__/integration/test-subjects/CallHierarchy.ts:23:16-23:30\nvalidateInput at /src/__tests__/integration/test-subjects/CallHierarchy.ts:30:16-30:29'));
       default:
         return Promise.resolve(right(`Mock response for ${toolName}`));
     }
