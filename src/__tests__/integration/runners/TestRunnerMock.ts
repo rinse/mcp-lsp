@@ -84,16 +84,7 @@ list_callee_locations_in`;
 
         // Check if it's a temp test file
         if (uri.includes('temp-rename-test')) {
-          // Validate identifier - don't modify file if invalid
-          if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(newName)) {
-            return Promise.resolve(right(`Failed to rename: "${newName}" is not a valid identifier`));
-          }
-
-          // Check for TypeScript keywords - don't modify file if keyword
-          const keywords = ['function', 'class', 'const', 'let', 'var', 'interface', 'type', 'enum', 'namespace', 'module'];
-          if (keywords.includes(newName)) {
-            return Promise.resolve(right(`Failed to rename: "${newName}" is a reserved keyword`));
-          }
+          // No validation - TypeScript LSP allows any identifier (matching MCP client behavior)
 
           // Write new file content based on which symbol is being renamed
           let newContent: string;
