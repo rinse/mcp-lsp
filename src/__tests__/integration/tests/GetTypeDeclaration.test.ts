@@ -15,12 +15,10 @@ describe('GetTypeDeclaration Integration Test', () => {
       line: 74, // Line with TestTypeAlias usage in variable declaration
       character: 20, // Character position on TestTypeAlias
     });
-    
+
     expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+ type definitions:/);
-      expect(result.right).toContain('Types.ts');
-    }
+    expect(result.right).toMatch(/Found \d+ type definitions:/);
+    expect(result.right).toContain('Types.ts');
   }, 15000);
 
   test.each(runners)('[%s] should find type declaration for interface usage', async (name, runner) => {
@@ -29,12 +27,10 @@ describe('GetTypeDeclaration Integration Test', () => {
       line: 22, // Line with TestTypeAlias usage in interface
       character: 8, // Character position on TestTypeAlias
     });
-    
+
     expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+ type definitions:/);
-      expect(result.right).toContain('Types.ts');
-    }
+    expect(result.right).toMatch(/Found \d+ type definitions:/);
+    expect(result.right).toContain('Types.ts');
   }, 15000);
 
   test.each(runners)('[%s] should find type declaration for generic type usage', async (name, runner) => {
@@ -43,12 +39,10 @@ describe('GetTypeDeclaration Integration Test', () => {
       line: 31, // Line with TestTypeAlias usage in generic type
       character: 12, // Character position on TestTypeAlias
     });
-    
+
     expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right).toMatch(/Found \d+ type definitions:/);
-      expect(result.right).toContain('Types.ts');
-    }
+    expect(result.right).toMatch(/Found \d+ type definitions:/);
+    expect(result.right).toContain('Types.ts');
   }, 15000);
 
   test.each(runners)('[%s] should handle enum type declaration', async (name, runner) => {
@@ -57,11 +51,9 @@ describe('GetTypeDeclaration Integration Test', () => {
       line: 61, // Line with TestEnum usage
       character: 25, // Character position on TestEnum
     });
-    
+
     expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      // Enum type declarations may not always be found, so we accept either result
-      expect(result.right).toMatch(/Found \d+ type definitions:|No type definition found/);
-    }
+    // Enum type declarations may not always be found, so we accept either result
+    expect(result.right).toMatch(/Found \d+ type definitions:|No type definition found/);
   }, 15000);
 });
