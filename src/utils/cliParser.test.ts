@@ -14,23 +14,23 @@ describe('CLI Parser', () => {
       expect(result.rootPath).toBeUndefined();
     });
 
-    it('should convert absolute path to URI correctly', () => {
+    it('should return provided path from getRootPath when root-path is set', () => {
       const args = ['--root-path', '/home/user/project'];
       const result = parseArgs(args);
-      expect(result.getRootUri()).toBe('file:///home/user/project');
+      expect(result.getRootPath()).toBe('/home/user/project');
     });
 
-    it('should convert relative path to absolute URI correctly', () => {
-      const originalCwd = process.cwd();
-      const args = ['--root-path', './my-project'];
-      const result = parseArgs(args);
-      expect(result.getRootUri()).toBe(`file://${originalCwd}/./my-project`);
-    });
-
-    it('should return default URI when no root-path provided', () => {
+    it('should return current working directory from getRootPath when no root-path provided', () => {
       const args: string[] = [];
       const result = parseArgs(args);
-      expect(result.getRootUri()).toBe(`file://${process.cwd()}`);
+      expect(result.getRootPath()).toBe(process.cwd());
+    });
+
+    it('should safely handle string values for root-path', () => {
+      const args = ['--root-path', '/valid/path'];
+      const result = parseArgs(args);
+      expect(result.rootPath).toBe('/valid/path');
+      expect(result.getRootPath()).toBe('/valid/path');
     });
 
     it('should reject URLs as root path', () => {
@@ -47,20 +47,33 @@ describe('CLI Parser', () => {
       const args = ['--some-other-arg', 'value', '--root-path', '/path/to/project'];
       const result = parseArgs(args);
       expect(result.rootPath).toBe('/path/to/project');
-      expect(result.getRootUri()).toBe('file:///path/to/project');
+      expect(result.getRootPath()).toBe('/path/to/project');
     });
 
     it('should handle --root-path with equals sign', () => {
       const args = ['--root-path=/home/user/project'];
       const result = parseArgs(args);
       expect(result.rootPath).toBe('/home/user/project');
-      expect(result.getRootUri()).toBe('file:///home/user/project');
+      expect(result.getRootPath()).toBe('/home/user/project');
     });
 
     it('should handle help option correctly', () => {
       const args = ['--help'];
       const result = parseArgs(args);
       expect(result.help).toBe(true);
+    });
+
+    it('should handle short help option correctly', () => {
+      const args = ['-h'];
+      const result = parseArgs(args);
+      expect(result.help).toBe(true);
+    });
+
+    it('should handle relative paths correctly', () => {
+      const args = ['--root-path', './my-project'];
+      const result = parseArgs(args);
+      expect(result.rootPath).toBe('./my-project');
+      expect(result.getRootPath()).toBe('./my-project');
     });
   });
 });

@@ -16,6 +16,13 @@ import { createToolMap } from './tools/ToolMap.js';
 import { parseArgs, showHelp } from './utils/cliParser.js';
 import { logger } from './utils/loggers.js';
 
+// Convert a file path to a file:// URI
+function pathToFileUri(path: string): string {
+  // Handle both absolute and relative paths
+  const absolutePath = path.startsWith('/') ? path : `${process.cwd()}/${path}`;
+  return `file://${absolutePath}`;
+}
+
 // Call the main function, disregarding a returned promise object.
 void main();
 
@@ -33,7 +40,9 @@ async function main(): Promise<void> {
   logger.info("[MCP] Server Process had started. ::::");
   logger.info("======================================");
 
-  const rootUri = cliOptions.getRootUri();
+  // Convert root path to URI
+  const rootPath = cliOptions.getRootPath();
+  const rootUri = pathToFileUri(rootPath);
 
   logger.info(`[MCP] Using root URI: ${rootUri}`);
 

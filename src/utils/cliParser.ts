@@ -3,7 +3,7 @@ import { parseArgs as nodeParseArgs } from 'node:util';
 export interface CLIOptions {
   rootPath?: string;
   help?: boolean;
-  getRootUri(): string;
+  getRootPath(): string;
 }
 
 export function parseArgs(args: string[]): CLIOptions {
@@ -25,24 +25,24 @@ export function parseArgs(args: string[]): CLIOptions {
   let rootPath: string | undefined;
 
   if (values['root-path']) {
-    rootPath = values['root-path'] as string;
-    // Basic validation - check if path exists or seems valid
-    if (rootPath.startsWith('http://') || rootPath.startsWith('https://')) {
-      throw new Error('Root path must be a file system path, not a URL');
+    // Safe type checking before assignment
+    const rawValue = values['root-path'];
+    if (typeof rawValue === 'string') {
+      rootPath = rawValue;
+      // Basic validation - check if path exists or seems valid
+      if (rootPath.startsWith('http://') || rootPath.startsWith('https://')) {
+        throw new Error('Root path must be a file system path, not a URL');
+      }
+    } else {
+      throw new Error('Root path must be a string value');
     }
   }
 
   const options: CLIOptions = {
     rootPath,
     help: Boolean(values.help),
-    getRootUri(): string {
-      if (rootPath) {
-        // Convert path to URI by prepending file://
-        // Handle both absolute and relative paths
-        const absolutePath = rootPath.startsWith('/') ? rootPath : `${process.cwd()}/${rootPath}`;
-        return `file://${absolutePath}`;
-      }
-      return `file://${process.cwd()}`;
+    getRootPath(): string {
+      return rootPath ?? process.cwd();
     },
   };
 
