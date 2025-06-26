@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
 
-import { Either, right } from 'fp-ts/Either';
+import { Either, left, right } from 'fp-ts/Either';
 
 import { TestRunner } from '../TestRunner';
 
@@ -155,7 +155,8 @@ export class ${newName} {
         }
 
         // Default behavior for non-temp files (existing tests)
-        return Promise.resolve(right('Failed to apply rename: ENOENT: no such file or directory, open \'/src/__tests__/integration/test-subjects/Rename.ts\''));
+        // Return Left to match MCP client behavior for non-existent files
+        return Promise.resolve(left('Failed to run tool refactor_rename_symbol: MockError: File not found: ENOENT: no such file or directory'));
       }
       case 'list_available_code_actions': {
         const line = args.line as number;

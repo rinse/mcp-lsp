@@ -218,13 +218,11 @@ export class TargetClass {
       newName: 'newName',
     });
 
-    // For non-existent files, the result might be Left (error) or Right with error message
-    if (isRight(result)) {
-      expect(result.right).toContain('Failed');
-      expect(result.right).toContain('ENOENT');
-    } else {
-      // Left case - error was returned as expected
-      expect(typeof result.left).toBe('string');
+    // Both runners should return Left (error) for non-existent files
+    expect(isRight(result)).toBe(false);
+    if (!isRight(result)) {
+      expect(result.left).toContain('Failed to run tool refactor_rename_symbol');
+      expect(result.left).toContain('ENOENT');
     }
   }, 15000);
 });
