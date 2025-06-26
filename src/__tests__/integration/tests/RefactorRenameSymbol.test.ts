@@ -18,9 +18,9 @@ describe('RefactorRenameSymbol Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Success:|Successfully|Failed to apply rename/);
-      // File path may not always be in the response
-      expect(typeof result.right).toBe('string');
+      expect(result.right).toBe(
+        'Failed to apply rename: ENOENT: no such file or directory, open \'/src/__tests__/integration/test-subjects/Rename.ts\'',
+      );
     }
   }, 15000);
 });

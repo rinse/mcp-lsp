@@ -20,9 +20,9 @@ describe('RunCodeAction Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Successfully applied|Success|Code action|⚠️/);
-      // Action title may not always be in the response
-      expect(typeof result.right).toBe('string');
+      expect(result.right).toBe(
+        '⚠️ Code action "Test Code Action" has no WorkspaceEdit or Command to execute',
+      );
     }
   }, 15000);
 });

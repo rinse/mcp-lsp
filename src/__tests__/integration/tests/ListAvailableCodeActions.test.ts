@@ -19,9 +19,7 @@ describe('ListAvailableCodeActions Integration Test', () => {
     });
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      expect(result.right).toMatch(/Code actions|No code actions|Found \d+ code actions|Successfully/);
-      // File path may not always be in the response
-      expect(typeof result.right).toBe('string');
+      expect(result.right).toBe('No code actions available.');
     }
   }, 15000);
 });

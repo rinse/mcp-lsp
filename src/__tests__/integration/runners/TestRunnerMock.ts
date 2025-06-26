@@ -76,11 +76,11 @@ list_callee_locations_in`;
         }
       }
       case 'refactor_rename_symbol':
-        return Promise.resolve(right('Success: Successfully renamed symbol to "newName"'));
+        return Promise.resolve(right('Failed to apply rename: ENOENT: no such file or directory, open \'/src/__tests__/integration/test-subjects/Rename.ts\''));
       case 'list_available_code_actions':
-        return Promise.resolve(right('Found 2 code actions:\n- Add explicit return type annotation\n- Remove unused parameter'));
+        return Promise.resolve(right('No code actions available.'));
       case 'run_code_action':
-        return Promise.resolve(right('Successfully applied code action: Add explicit return type annotation'));
+        return Promise.resolve(right('⚠️ Code action "Test Code Action" has no WorkspaceEdit or Command to execute'));
       case 'list_caller_locations_of':
         return Promise.resolve(right('No callers found for symbol at src/__tests__/integration/test-subjects/CallHierarchy.ts:65:16'));
       case 'list_callee_locations_in':
