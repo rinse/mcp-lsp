@@ -67,29 +67,21 @@ export function useTargets(): void {
 
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      if (name === 'mock') {
-        expect(result.right).toContain('Successfully renamed symbol to "renamedFunction"');
-      } else {
-        // For mcp-client, it might succeed or fail depending on the LSP behavior
-        // The important thing is that it returns a valid response
-        expect(typeof result.right).toBe('string');
+      expect(result.right).toContain('Successfully renamed symbol to "renamedFunction"');
 
-        // Check if rename actually happened by looking at file content
-        const mainContent = await fs.readFile(mainFile, 'utf-8');
+      const mainContent = await fs.readFile(mainFile, 'utf-8');
+      expect(mainContent).toBe(`export function renamedFunction(param: string): string {
+  return 'Hello ' + param;
+}
 
-        if (mainContent.includes('renamedFunction')) {
-          // Rename succeeded in main file
-          expect(mainContent).toContain('export function renamedFunction');
-          expect(mainContent).not.toContain('export function targetFunction');
+export const TARGET_CONSTANT = 42;
 
-          // Usage file might or might not be updated (depends on LSP cross-file capabilities)
-          const usageContent = await fs.readFile(usageFile, 'utf-8');
-          expect(typeof usageContent).toBe('string');
-        } else {
-          // Rename failed or didn't happen - that's also valid
-          expect(mainContent).toContain('targetFunction');
-        }
-      }
+export class TargetClass {
+  method(): void {
+    console.log('test');
+  }
+}
+`);
     }
   }, 15000);
 
@@ -103,23 +95,21 @@ export function useTargets(): void {
 
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      if (name === 'mock') {
-        expect(result.right).toContain('Successfully renamed symbol to "RENAMED_CONSTANT"');
-      } else {
-        expect(typeof result.right).toBe('string');
+      expect(result.right).toContain('Successfully renamed symbol to "RENAMED_CONSTANT"');
 
-        const mainContent = await fs.readFile(mainFile, 'utf-8');
+      const mainContent = await fs.readFile(mainFile, 'utf-8');
+      expect(mainContent).toBe(`export function targetFunction(param: string): string {
+  return 'Hello ' + param;
+}
 
-        if (mainContent.includes('RENAMED_CONSTANT')) {
-          expect(mainContent).toContain('export const RENAMED_CONSTANT');
+export const RENAMED_CONSTANT = 42;
 
-          // Usage file might or might not be updated
-          const usageContent = await fs.readFile(usageFile, 'utf-8');
-          expect(typeof usageContent).toBe('string');
-        } else {
-          expect(mainContent).toContain('TARGET_CONSTANT');
-        }
-      }
+export class TargetClass {
+  method(): void {
+    console.log('test');
+  }
+}
+`);
     }
   }, 15000);
 
@@ -133,23 +123,21 @@ export function useTargets(): void {
 
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      if (name === 'mock') {
-        expect(result.right).toContain('Successfully renamed symbol to "RenamedClass"');
-      } else {
-        expect(typeof result.right).toBe('string');
+      expect(result.right).toContain('Successfully renamed symbol to "RenamedClass"');
 
-        const mainContent = await fs.readFile(mainFile, 'utf-8');
+      const mainContent = await fs.readFile(mainFile, 'utf-8');
+      expect(mainContent).toBe(`export function targetFunction(param: string): string {
+  return 'Hello ' + param;
+}
 
-        if (mainContent.includes('RenamedClass')) {
-          expect(mainContent).toContain('export class RenamedClass');
+export const TARGET_CONSTANT = 42;
 
-          // Usage file might or might not be updated
-          const usageContent = await fs.readFile(usageFile, 'utf-8');
-          expect(typeof usageContent).toBe('string');
-        } else {
-          expect(mainContent).toContain('TargetClass');
-        }
-      }
+export class RenamedClass {
+  method(): void {
+    console.log('test');
+  }
+}
+`);
     }
   }, 15000);
 
@@ -166,15 +154,25 @@ export function useTargets(): void {
       if (name === 'mock') {
         expect(result.right).toContain('Failed');
         expect(result.right).toContain('123invalid');
+
+        // File should remain unchanged for mock
+        const mainContent = await fs.readFile(mainFile, 'utf-8');
+        expect(mainContent).toBe(`export function targetFunction(param: string): string {
+  return 'Hello ' + param;
+}
+
+export const TARGET_CONSTANT = 42;
+
+export class TargetClass {
+  method(): void {
+    console.log('test');
+  }
+}
+`);
       } else {
         // MCP client might handle validation differently
         expect(typeof result.right).toBe('string');
       }
-
-      // Check what actually happened with the files
-      const mainContent = await fs.readFile(mainFile, 'utf-8');
-      // The rename might succeed or fail - both are valid behaviors
-      expect(typeof mainContent).toBe('string');
     }
   }, 15000);
 
@@ -190,14 +188,25 @@ export function useTargets(): void {
     if (isRight(result)) {
       if (name === 'mock') {
         expect(result.right).toContain('Failed');
+
+        // File should remain unchanged for mock
+        const mainContent = await fs.readFile(mainFile, 'utf-8');
+        expect(mainContent).toBe(`export function targetFunction(param: string): string {
+  return 'Hello ' + param;
+}
+
+export const TARGET_CONSTANT = 42;
+
+export class TargetClass {
+  method(): void {
+    console.log('test');
+  }
+}
+`);
       } else {
+        // MCP client might handle validation differently
         expect(typeof result.right).toBe('string');
       }
-
-      // Check what actually happened with the files
-      const mainContent = await fs.readFile(mainFile, 'utf-8');
-      // The rename might succeed or fail - both are valid behaviors
-      expect(typeof mainContent).toBe('string');
     }
   }, 15000);
 

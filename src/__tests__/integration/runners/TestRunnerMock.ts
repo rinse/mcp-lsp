@@ -1,3 +1,5 @@
+import { promises as fs } from 'fs';
+
 import { Either, right } from 'fp-ts/Either';
 
 import { TestRunner } from '../TestRunner';
@@ -19,7 +21,7 @@ list_callee_locations_in`;
   }
 
 
-  runTool(toolName: string, args: Record<string, unknown>): Promise<Either<string, string>> {
+  async runTool(toolName: string, args: Record<string, unknown>): Promise<Either<string, string>> {
     switch (toolName) {
       case 'get_hover_info':
         return Promise.resolve(right('src/__tests__/integration/test-subjects/GetHoverInfo.ts:13:16\n  Type: function exampleFunction(): void\n  Docs: This is an example function for testing hover info'));
@@ -78,21 +80,77 @@ list_callee_locations_in`;
       case 'refactor_rename_symbol': {
         const uri = args.uri as string;
         const newName = args.newName as string;
+        const line = args.line as number;
 
         // Check if it's a temp test file
         if (uri.includes('temp-rename-test')) {
-          // Validate identifier
+          // Validate identifier - don't modify file if invalid
           if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(newName)) {
             return Promise.resolve(right(`Failed to rename: "${newName}" is not a valid identifier`));
           }
 
-          // Check for TypeScript keywords
+          // Check for TypeScript keywords - don't modify file if keyword
           const keywords = ['function', 'class', 'const', 'let', 'var', 'interface', 'type', 'enum', 'namespace', 'module'];
           if (keywords.includes(newName)) {
             return Promise.resolve(right(`Failed to rename: "${newName}" is a reserved keyword`));
           }
 
-          // For mock runner, just return success
+          // Write new file content based on which symbol is being renamed
+          let newContent: string;
+
+          switch (line) {
+            case 0: // targetFunction at line 0
+              newContent = `export function ${newName}(param: string): string {
+  return 'Hello ' + param;
+}
+
+export const TARGET_CONSTANT = 42;
+
+export class TargetClass {
+  method(): void {
+    console.log('test');
+  }
+}
+`;
+              break;
+
+            case 4: // TARGET_CONSTANT at line 4
+              newContent = `export function targetFunction(param: string): string {
+  return 'Hello ' + param;
+}
+
+export const ${newName} = 42;
+
+export class TargetClass {
+  method(): void {
+    console.log('test');
+  }
+}
+`;
+              break;
+
+            case 6: // TargetClass at line 6
+              newContent = `export function targetFunction(param: string): string {
+  return 'Hello ' + param;
+}
+
+export const TARGET_CONSTANT = 42;
+
+export class ${newName} {
+  method(): void {
+    console.log('test');
+  }
+}
+`;
+              break;
+
+            default:
+              return Promise.resolve(right(`Failed to rename: Unknown symbol at line ${line}`));
+          }
+
+          // Write the new content to the file
+          await fs.writeFile(uri, newContent);
+
           return Promise.resolve(right(`Successfully renamed symbol to "${newName}"`));
         }
 
