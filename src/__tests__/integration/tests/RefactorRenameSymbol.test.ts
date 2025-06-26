@@ -218,11 +218,11 @@ export class TargetClass {
       newName: 'newName',
     });
 
-    // Both runners should return Left (error) for non-existent files
     expect(isRight(result)).toBe(false);
     if (!isRight(result)) {
-      expect(result.left).toContain('Failed to run tool refactor_rename_symbol');
-      expect(result.left).toContain('ENOENT');
+      expect(result.left).toBe(
+        "Failed to run tool refactor_rename_symbol: McpError: MCP error -32603: MCP error -32603: Failed to rename symbol: Error: ENOENT: no such file or directory, open 'src/__tests__/integration/test-subjects/NonExistent.ts'",
+      );
     }
   }, 15000);
 });

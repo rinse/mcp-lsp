@@ -156,7 +156,7 @@ export class ${newName} {
 
         // Default behavior for non-temp files (existing tests)
         // Return Left to match MCP client behavior for non-existent files
-        return Promise.resolve(left('Failed to run tool refactor_rename_symbol: MockError: File not found: ENOENT: no such file or directory'));
+        return Promise.resolve(left(`Failed to run tool refactor_rename_symbol: McpError: MCP error -32603: MCP error -32603: Failed to rename symbol: Error: ENOENT: no such file or directory, open '${uri}'`));
       }
       case 'list_available_code_actions': {
         const line = args.line as number;
