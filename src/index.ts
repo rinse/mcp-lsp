@@ -13,15 +13,38 @@ import { LSPServerExImpl } from './lsp/LSPServerExImpl.js';
 import { LSPServerStream } from './lsp/LSPServerStream.js';
 import { createMCPServer } from './mcp/MCPServer.js';
 import { createToolMap } from './tools/ToolMap.js';
+import { parseArgs, showHelp } from './utils/cliParser.js';
 import { logger } from './utils/loggers.js';
+
+// Convert a file path to a file:// URI
+function pathToFileUri(path: string): string {
+  // Handle both absolute and relative paths
+  const absolutePath = path.startsWith('/') ? path : `${process.cwd()}/${path}`;
+  return `file://${absolutePath}`;
+}
 
 // Call the main function, disregarding a returned promise object.
 void main();
 
 async function main(): Promise<void> {
+  // Parse CLI arguments
+  const cliOptions = parseArgs(process.argv.slice(2));
+
+  // Handle help option
+  if (cliOptions.help) {
+    showHelp();
+    return;
+  }
+
   logger.info("======================================");
   logger.info("[MCP] Server Process had started. ::::");
   logger.info("======================================");
+
+  // Convert root path to URI
+  const rootPath = cliOptions.getRootPath();
+  const rootUri = pathToFileUri(rootPath);
+
+  logger.info(`[MCP] Using root URI: ${rootUri}`);
 
   // Spawn the TypeScript language server process
   const lspProcess = spawn('npx', ['typescript-language-server', '--stdio'], {
@@ -62,7 +85,7 @@ async function main(): Promise<void> {
     await lspServer.start();
     const resultInitialize = await lspServerEx.initialize({
       processId: process.pid,
-      rootUri: `file://${process.cwd()}`,
+      rootUri: rootUri,
       capabilities: createLSPClientCapabilities(),
       trace: 'verbose',
     });
