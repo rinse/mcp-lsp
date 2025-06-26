@@ -151,6 +151,29 @@ export class ${newName} {
       }
       case 'list_available_code_actions': {
         const line = args.line as number;
+        const uri = args.uri as string;
+
+        // Handle temporary test files
+        if (uri?.includes('temp-code-action-test')) {
+          if (uri.includes('UnusedParam.ts')) {
+            // For UnusedParam.ts file
+            switch (line) {
+              case 0: // testFunc function with unused parameter
+                return Promise.resolve(right('Found 2 code action(s):\n\n1. Remove unused parameter(s) \'unused\' (quickfix.unusedIdentifier)\n   📋 For executeCodeAction tool:\n{\n  "title": "Remove unused parameter(s) \'unused\'",\n  "kind": "quickfix.unusedIdentifier",\n  "command": {\n    "title": "Remove unused parameter(s) \'unused\'",\n    "command": "_typescript.applyCodeAction",\n    "arguments": [\n      {\n        "file": "' + uri + '",\n        "startLine": 1,\n        "startOffset": 26,\n        "endLine": 1,\n        "endOffset": 41,\n        "errorCodes": [6133],\n        "fixId": "fixUnusedIdentifier"\n      }\n    ]\n  }\n}\n   ⚡ Command: Remove unused parameter(s) \'unused\' (_typescript.applyCodeAction)\n\n2. Prefix \'unused\' with an underscore (quickfix.unusedIdentifier)\n   📋 For executeCodeAction tool:\n{\n  "title": "Prefix \'unused\' with an underscore",\n  "kind": "quickfix.unusedIdentifier",\n  "command": {\n    "title": "Prefix \'unused\' with an underscore",\n    "command": "_typescript.applyCodeAction",\n    "arguments": [\n      {\n        "file": "' + uri + '",\n        "startLine": 1,\n        "startOffset": 26,\n        "endLine": 1,\n        "endOffset": 32,\n        "errorCodes": [6133],\n        "fixId": "unusedIdentifier_prefix"\n      }\n    ]\n  }\n}\n   ⚡ Command: Prefix \'unused\' with an underscore (_typescript.applyCodeAction)'));
+              default:
+                return Promise.resolve(right('No code actions available.'));
+            }
+          }
+
+          switch (line) {
+            case 1: // calculateSum function
+              return Promise.resolve(right('Found 3 code action(s):\n\n1. Move to a new file (refactor.move)\n   📋 For executeCodeAction tool:\n{\n  "title": "Move to a new file",\n  "kind": "refactor.move",\n  "command": {\n    "title": "Move to a new file",\n    "command": "_typescript.applyRefactoring",\n    "arguments": [\n      {\n        "file": "' + uri + '",\n        "startLine": 2,\n        "startOffset": 17,\n        "endLine": 2,\n        "endOffset": 29,\n        "refactor": "Move to a new file",\n        "action": "Move to a new file"\n      }\n    ]\n  }\n}\n   ⚡ Command: Move to a new file (_typescript.applyRefactoring)\n\n2. Convert parameters to destructured object (refactor)\n   📋 For executeCodeAction tool:\n{\n  "title": "Convert parameters to destructured object",\n  "kind": "refactor",\n  "command": {\n    "title": "Convert parameters to destructured object",\n    "command": "_typescript.applyRefactoring",\n    "arguments": [\n      {\n        "file": "' + uri + '",\n        "startLine": 2,\n        "startOffset": 17,\n        "endLine": 2,\n        "endOffset": 29,\n        "refactor": "Convert parameters to destructured object",\n        "action": "Convert parameters to destructured object"\n      }\n    ]\n  }\n}\n   ⚡ Command: Convert parameters to destructured object (_typescript.applyRefactoring)\n\n3. Infer function return type (refactor)\n   📋 For executeCodeAction tool:\n{\n  "title": "Infer function return type",\n  "kind": "refactor",\n  "command": {\n    "title": "Infer function return type",\n    "command": "_typescript.applyRefactoring",\n    "arguments": [\n      {\n        "file": "' + uri + '",\n        "startLine": 2,\n        "startOffset": 17,\n        "endLine": 2,\n        "endOffset": 29,\n        "refactor": "Infer function return type",\n        "action": "Infer function return type"\n      }\n    ]\n  }\n}\n   ⚡ Command: Infer function return type (_typescript.applyRefactoring)'));
+            default:
+              return Promise.resolve(right('No code actions available.'));
+          }
+        }
+
+        // Default behavior for test-subjects files
         switch (line) {
           case 81: // Function with issues - should have code actions
             return Promise.resolve(right('Found 3 code action(s):\n\n1. Move to a new file (refactor.move)\n   📋 For executeCodeAction tool:\n{\n  "title": "Move to a new file",\n  "kind": "refactor.move",\n  "command": {\n    "title": "Move to a new file",\n    "command": "_typescript.applyRefactoring",\n    "arguments": [\n      {\n        "file": "/src/__tests__/integration/test-subjects/CodeActions.ts",\n        "startLine": 82,\n        "startOffset": 17,\n        "endLine": 82,\n        "endOffset": 51,\n        "refactor": "Move to a new file",\n        "action": "Move to a new file"\n      }\n    ]\n  }\n}\n   ⚡ Command: Move to a new file (_typescript.applyRefactoring)\n\n2. Convert parameters to destructured object (refactor)\n   📋 For executeCodeAction tool:\n{\n  "title": "Convert parameters to destructured object",\n  "kind": "refactor",\n  "command": {\n    "title": "Convert parameters to destructured object",\n    "command": "_typescript.applyRefactoring",\n    "arguments": [\n      {\n        "file": "/src/__tests__/integration/test-subjects/CodeActions.ts",\n        "startLine": 82,\n        "startOffset": 17,\n        "endLine": 82,\n        "endOffset": 51,\n        "refactor": "Convert parameters to destructured object",\n        "action": "Convert parameters to destructured object"\n      }\n    ]\n  }\n}\n   ⚡ Command: Convert parameters to destructured object (_typescript.applyRefactoring)\n\n3. Infer function return type (refactor)\n   📋 For executeCodeAction tool:\n{\n  "title": "Infer function return type",\n  "kind": "refactor",\n  "command": {\n    "title": "Infer function return type",\n    "command": "_typescript.applyRefactoring",\n    "arguments": [\n      {\n        "file": "/src/__tests__/integration/test-subjects/CodeActions.ts",\n        "startLine": 82,\n        "startOffset": 17,\n        "endLine": 82,\n        "endOffset": 51,\n        "refactor": "Infer function return type",\n        "action": "Infer function return type"\n      }\n    ]\n  }\n}\n   ⚡ Command: Infer function return type (_typescript.applyRefactoring)'));
@@ -160,8 +183,85 @@ export class ${newName} {
             return Promise.resolve(right('No code actions available.'));
         }
       }
-      case 'run_code_action':
-        return Promise.resolve(right('⚠️ Code action "Test Code Action" has no WorkspaceEdit or Command to execute'));
+      case 'run_code_action': {
+        interface CodeAction {
+          title: string;
+          kind?: string;
+          edit?: unknown;
+          command?: {
+            title: string;
+            command: string;
+            arguments: {
+              file: string;
+              [key: string]: unknown;
+            }[];
+          };
+        }
+
+        const codeAction = args.codeAction as CodeAction;
+
+        // Check if the code action has no edit or command
+        if (!codeAction.edit && !codeAction.command) {
+          return Promise.resolve(right(`⚠️ Code action "${codeAction.title}" has no WorkspaceEdit or Command to execute`));
+        }
+
+        // Handle "Infer function return type" action
+        if (codeAction.title === 'Infer function return type' && codeAction.command) {
+          const filePath = codeAction.command.arguments[0].file;
+
+          // Check if it's a temp test file
+          if (filePath?.includes('temp-code-action-test')) {
+            // Update the file content with inferred return type
+            const updatedContent = `// Test file for code actions
+export function calculateSum(a: number, b: number): number {
+  return a + b;
+}
+
+export function processData(data: any[]) {
+  const result = data.map(item => item.value);
+  return result;
+}
+
+// Function with unused parameter
+export function functionWithUnusedParam(unused: string, used: number): number {
+  return used * 2;
+}
+`;
+            await fs.writeFile(filePath, updatedContent);
+            return Promise.resolve(right(`✅ Successfully executed command "${codeAction.command.command}" for "${codeAction.title}"`));
+          }
+        }
+
+        // Handle "Convert parameters to destructured object" action
+        if (codeAction.title === 'Convert parameters to destructured object' && codeAction.command) {
+          const filePath = codeAction.command.arguments[0].file;
+
+          // Check if it's a temp test file
+          if (filePath?.includes('temp-code-action-test')) {
+            // Update the file content with destructured parameters
+            const updatedContent = `// Test file for code actions
+export function calculateSum({ a, b }: { a: number; b: number; }): number {
+  return a + b;
+}
+
+export function processData(data: any[]) {
+  const result = data.map(item => item.value);
+  return result;
+}
+
+// Function with unused parameter
+export function functionWithUnusedParam(unused: string, used: number): number {
+  return used * 2;
+}
+`;
+            await fs.writeFile(filePath, updatedContent);
+            return Promise.resolve(right(`✅ Successfully executed command "${codeAction.command.command}" for "${codeAction.title}"`));
+          }
+        }
+
+        // Default response
+        return Promise.resolve(right(`✅ Applied code action "${codeAction.title}"`));
+      }
       case 'list_caller_locations_of':
         return Promise.resolve(right('No callers found for symbol at src/__tests__/integration/test-subjects/CallHierarchy.ts:65:16'));
       case 'list_callee_locations_in':
