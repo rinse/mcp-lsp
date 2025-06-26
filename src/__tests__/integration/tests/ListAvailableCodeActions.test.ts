@@ -3,10 +3,11 @@ import { isRight } from 'fp-ts/Either';
 import { setupIntegrationTest, expectFilePathInResult } from '../utils/testSetup';
 
 describe('ListAvailableCodeActions Integration Test', () => {
-  const { runners, beforeAllSetup, afterAllTeardown } = setupIntegrationTest();
+  const testSetup = setupIntegrationTest();
+  const runners = testSetup.runners;
 
-  beforeAll(beforeAllSetup);
-  afterAll(afterAllTeardown);
+  beforeAll(async () => await testSetup.beforeAllSetup());
+  afterAll(async () => await testSetup.afterAllTeardown());
 
   test.each(runners)('[%s] should find available code actions', async (name, runner) => {
     const result = await runner.runTool('list_available_code_actions', {

@@ -1,12 +1,13 @@
 import { isRight } from 'fp-ts/Either';
 
-import { setupIntegrationTest, expectFilePathInResult } from '../utils/testSetup';
+import { setupIntegrationTest } from '../utils/testSetup';
 
 describe('RefactorRenameSymbol Integration Test', () => {
-  const { runners, beforeAllSetup, afterAllTeardown } = setupIntegrationTest();
+  const testSetup = setupIntegrationTest();
+  const runners = testSetup.runners;
 
-  beforeAll(beforeAllSetup);
-  afterAll(afterAllTeardown);
+  beforeAll(async () => await testSetup.beforeAllSetup());
+  afterAll(async () => await testSetup.afterAllTeardown());
 
   test.each(runners)('[%s] should rename symbol across references', async (name, runner) => {
     const result = await runner.runTool('refactor_rename_symbol', {

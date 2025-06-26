@@ -47,10 +47,14 @@ export interface RenameableType {
 }
 
 // Multiple usages of renameable symbols to test renaming across references
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const usage1 = renameableFunction('test1');
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const usage2 = renameableVariable;
 const usage3 = new RenameableClass();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const usage4 = usage3.renameableProperty;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const usage5 = usage3.renameableMethod();
 
 /**

@@ -3,10 +3,11 @@ import { isRight } from 'fp-ts/Either';
 import { setupIntegrationTest, expectFilePathInResult } from '../utils/testSetup';
 
 describe('ListCalleeLocations Integration Test', () => {
-  const { runners, beforeAllSetup, afterAllTeardown } = setupIntegrationTest();
+  const testSetup = setupIntegrationTest();
+  const runners = testSetup.runners;
 
-  beforeAll(beforeAllSetup);
-  afterAll(afterAllTeardown);
+  beforeAll(async () => await testSetup.beforeAllSetup());
+  afterAll(async () => await testSetup.afterAllTeardown());
 
   test.each(runners)('[%s] should find callees of function with multiple calls', async (name, runner) => {
     const result = await runner.runTool('list_callee_locations_in', {

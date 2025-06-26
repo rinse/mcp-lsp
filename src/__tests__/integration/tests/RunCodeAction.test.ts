@@ -3,10 +3,11 @@ import { isRight } from 'fp-ts/Either';
 import { setupIntegrationTest } from '../utils/testSetup';
 
 describe('RunCodeAction Integration Test', () => {
-  const { runners, beforeAllSetup, afterAllTeardown } = setupIntegrationTest();
+  const testSetup = setupIntegrationTest();
+  const runners = testSetup.runners;
 
-  beforeAll(beforeAllSetup);
-  afterAll(afterAllTeardown);
+  beforeAll(async () => await testSetup.beforeAllSetup());
+  afterAll(async () => await testSetup.afterAllTeardown());
 
   test.each(runners)('[%s] should run a code action', async (name, runner) => {
     const mockCodeAction = {

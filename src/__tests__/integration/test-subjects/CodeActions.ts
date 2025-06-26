@@ -11,13 +11,14 @@ export function functionWithUnusedParameter(unusedParam: string, usedParam: numb
 /**
  * Function with missing return type annotation
  */
-export function functionWithoutReturnType(input: string) {
+export function functionWithoutReturnType(input: string): number {
   return input.length;
 }
 
 /**
  * Variable that is declared but never used
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const unusedVariable = 'this variable is never used';
 
 /**
@@ -42,7 +43,7 @@ export interface IncompleteInterface {
 export class ClassWithMissingModifiers {
   property = 'default'; // Could suggest adding public/private
 
-  method() { // Could suggest adding return type and access modifier
+  method(): string { // Could suggest adding return type and access modifier
     return this.property;
   }
 }

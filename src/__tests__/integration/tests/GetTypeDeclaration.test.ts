@@ -3,10 +3,11 @@ import { isRight } from 'fp-ts/Either';
 import { setupIntegrationTest, expectFoundResult, expectFilePathInResult } from '../utils/testSetup';
 
 describe('GetTypeDeclaration Integration Test', () => {
-  const { runners, beforeAllSetup, afterAllTeardown } = setupIntegrationTest();
+  const testSetup = setupIntegrationTest();
+  const runners = testSetup.runners;
 
-  beforeAll(beforeAllSetup);
-  afterAll(afterAllTeardown);
+  beforeAll(async () => await testSetup.beforeAllSetup());
+  afterAll(async () => await testSetup.afterAllTeardown());
 
   test.each(runners)('[%s] should find type declaration for type alias usage', async (name, runner) => {
     const result = await runner.runTool('get_type_declaration', {

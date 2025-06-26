@@ -78,12 +78,14 @@ const aliasExample: TestTypeAlias = {
   active: true,
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const interfaceExample: TestTypeInterface = {
   id: 1,
   data: aliasExample,
   status: 'active',
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const genericExample: TestGenericType<number> = {
   value: 42,
   metadata: aliasExample,

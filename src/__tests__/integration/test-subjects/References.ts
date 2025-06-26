@@ -25,10 +25,14 @@ export class TestReferencedClass {
 }
 
 // Multiple references to test symbol references tool
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const reference1 = testReferencedFunction('first');
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const reference2 = testReferencedFunction('second');
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const reference3 = testReferencedVariable;
 const reference4 = new TestReferencedClass();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const reference5 = reference4.method();
 
 /**

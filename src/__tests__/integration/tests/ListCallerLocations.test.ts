@@ -1,12 +1,13 @@
 import { isRight } from 'fp-ts/Either';
 
-import { setupIntegrationTest, expectFilePathInResult } from '../utils/testSetup';
+import { setupIntegrationTest } from '../utils/testSetup';
 
 describe('ListCallerLocations Integration Test', () => {
-  const { runners, beforeAllSetup, afterAllTeardown } = setupIntegrationTest();
+  const testSetup = setupIntegrationTest();
+  const runners = testSetup.runners;
 
-  beforeAll(beforeAllSetup);
-  afterAll(afterAllTeardown);
+  beforeAll(async () => await testSetup.beforeAllSetup());
+  afterAll(async () => await testSetup.afterAllTeardown());
 
   test.each(runners)('[%s] should find callers of function with multiple callers', async (name, runner) => {
     const result = await runner.runTool('list_caller_locations_of', {

@@ -39,7 +39,10 @@ export interface TestDefinitionInterface {
 }
 
 // Usage of the defined symbols to test navigation
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const usageExample = testDefinitionFunction('world');
 const usageClass = new TestDefinitionClass();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const usageProperty = usageClass.testProperty;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const usageMethod = usageClass.testMethod();

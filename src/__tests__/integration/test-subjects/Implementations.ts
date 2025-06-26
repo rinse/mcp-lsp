@@ -56,6 +56,9 @@ export class TestConcreteClass extends TestAbstractClass {
 }
 
 // Usage examples to test implementation navigation
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const instanceA: TestImplementationInterface = new TestImplementationA();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const instanceB: TestImplementationInterface = new TestImplementationB();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const concrete = new TestConcreteClass();
