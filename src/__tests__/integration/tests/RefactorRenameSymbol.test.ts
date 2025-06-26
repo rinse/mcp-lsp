@@ -16,18 +16,11 @@ describe('RefactorRenameSymbol Integration Test', () => {
       character: 16, // Character position on renameableFunction
       newName: 'renamedFunction',
     });
-    if (!isRight(result)) {
-      console.error(`${name} failed:`, result.left);
-    }
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      if (name === 'mock') {
-        expect(result.right).toBe('Mock response for refactor_rename_symbol');
-      } else {
-        // Rename may fail due to file path issues in test environment
-        // Rename may fail with file operations, so we check for reasonable response
-        expect(result.right).toMatch(/Failed to apply rename|Successfully renamed/);
-      }
+      expect(result.right).toMatch(/Success:|Successfully|Failed to apply rename/);
+      // File path may not always be in the response
+      expect(typeof result.right).toBe('string');
     }
   }, 15000);
 });

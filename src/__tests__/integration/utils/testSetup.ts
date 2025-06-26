@@ -27,28 +27,3 @@ export function setupIntegrationTest(): {
   };
 }
 
-/**
- * Helper to check if a result contains expected elements without being brittle about exact formatting
- */
-export function expectResultContains(result: string, expectedElements: string[]): void {
-  for (const element of expectedElements) {
-    expect(result).toContain(element);
-  }
-}
-
-/**
- * Helper to check if a result indicates a successful find operation
- */
-export function expectFoundResult(result: string, expectedCount?: number): void {
-  expect(result).toMatch(/Found \d+/);
-  if (expectedCount !== undefined) {
-    expect(result).toContain(`Found ${expectedCount}`);
-  }
-}
-
-/**
- * Helper to check file path in result without being brittle about absolute paths
- */
-export function expectFilePathInResult(result: string, relativeFilePath: string): void {
-  expect(result).toContain(relativeFilePath);
-}

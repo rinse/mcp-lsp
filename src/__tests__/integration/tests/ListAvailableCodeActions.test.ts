@@ -1,6 +1,6 @@
 import { isRight } from 'fp-ts/Either';
 
-import { setupIntegrationTest, expectFilePathInResult } from '../utils/testSetup';
+import { setupIntegrationTest } from '../utils/testSetup';
 
 describe('ListAvailableCodeActions Integration Test', () => {
   const testSetup = setupIntegrationTest();
@@ -17,19 +17,11 @@ describe('ListAvailableCodeActions Integration Test', () => {
       endLine: 7,
       endCharacter: 55,
     });
-    if (!isRight(result)) {
-      console.error(`${name} failed:`, result.left);
-    }
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      if (name === 'mock') {
-        expect(result.right).toBe('Mock response for list_available_code_actions');
-      } else {
-        // Code actions may not be available depending on LSP configuration
-        // Just verify the tool runs successfully and returns a response
-        expect(result.right).toBeDefined();
-        expect(typeof result.right).toBe('string');
-      }
+      expect(result.right).toMatch(/Code actions|No code actions|Found \d+ code actions|Successfully/);
+      // File path may not always be in the response
+      expect(typeof result.right).toBe('string');
     }
   }, 15000);
 });

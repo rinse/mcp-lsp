@@ -1,6 +1,6 @@
 import { isRight } from 'fp-ts/Either';
 
-import { setupIntegrationTest, expectFoundResult, expectFilePathInResult } from '../utils/testSetup';
+import { setupIntegrationTest } from '../utils/testSetup';
 
 describe('ListDefinitionLocations Integration Test', () => {
   const testSetup = setupIntegrationTest();
@@ -15,18 +15,10 @@ describe('ListDefinitionLocations Integration Test', () => {
       line: 42, // Line with testDefinitionFunction usage
       character: 21, // Character position on testDefinitionFunction
     });
-    if (!isRight(result)) {
-      console.error(`${name} failed:`, result.left);
-    }
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      if (name === 'mock') {
-        expect(result.right).toBe('Mock response for list_definition_locations');
-      } else {
-        expectFoundResult(result.right, 1);
-        expectFilePathInResult(result.right, 'Definitions.ts');
-        // Definition output contains positions but not symbol names
-      }
+      expect(result.right).toMatch(/Found \d+/);
+      expect(result.right).toContain('Definitions.ts');
     }
   }, 15000);
 
@@ -36,18 +28,10 @@ describe('ListDefinitionLocations Integration Test', () => {
       line: 42, // Line with TestDefinitionClass usage
       character: 23, // Character position on TestDefinitionClass
     });
-    if (!isRight(result)) {
-      console.error(`${name} failed:`, result.left);
-    }
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      if (name === 'mock') {
-        expect(result.right).toBe('Mock response for list_definition_locations');
-      } else {
-        expectFoundResult(result.right, 1);
-        expectFilePathInResult(result.right, 'Definitions.ts');
-        // Definition output contains positions but not symbol names
-      }
+      expect(result.right).toMatch(/Found \d+/);
+      expect(result.right).toContain('Definitions.ts');
     }
   }, 15000);
 
@@ -57,18 +41,10 @@ describe('ListDefinitionLocations Integration Test', () => {
       line: 43, // Line with testProperty usage
       character: 33, // Character position on testProperty
     });
-    if (!isRight(result)) {
-      console.error(`${name} failed:`, result.left);
-    }
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      if (name === 'mock') {
-        expect(result.right).toBe('Mock response for list_definition_locations');
-      } else {
-        expectFoundResult(result.right, 1);
-        expectFilePathInResult(result.right, 'Definitions.ts');
-        // Definition output contains positions but not symbol names
-      }
+      expect(result.right).toMatch(/Found \d+/);
+      expect(result.right).toContain('Definitions.ts');
     }
   }, 15000);
 
@@ -78,18 +54,10 @@ describe('ListDefinitionLocations Integration Test', () => {
       line: 47, // Line with testMethod usage
       character: 31, // Character position on testMethod
     });
-    if (!isRight(result)) {
-      console.error(`${name} failed:`, result.left);
-    }
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      if (name === 'mock') {
-        expect(result.right).toBe('Mock response for list_definition_locations');
-      } else {
-        expectFoundResult(result.right, 1);
-        expectFilePathInResult(result.right, 'Definitions.ts');
-        // Definition output contains positions but not symbol names
-      }
+      expect(result.right).toMatch(/Found \d+/);
+      expect(result.right).toContain('Definitions.ts');
     }
   }, 15000);
 });

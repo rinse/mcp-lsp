@@ -15,17 +15,10 @@ describe('ListCallerLocations Integration Test', () => {
       line: 65, // Line with multipleCallerTarget definition
       character: 16, // Character position on multipleCallerTarget
     });
-    if (!isRight(result)) {
-      console.error(`${name} failed:`, result.left);
-    }
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      if (name === 'mock') {
-        expect(result.right).toBe('Mock response for list_caller_locations_of');
-      } else {
-        // Caller locations may not be found consistently in test environment
-        expect(result.right).toMatch(/No callers found|Found \d+ callers/);
-      }
+      expect(result.right).toMatch(/Found \d+|No callers found/);
+      expect(result.right).toContain('CallHierarchy.ts');
     }
   }, 15000);
 });

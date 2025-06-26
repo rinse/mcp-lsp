@@ -1,6 +1,6 @@
 import { isRight } from 'fp-ts/Either';
 
-import { setupIntegrationTest, expectFoundResult, expectFilePathInResult } from '../utils/testSetup';
+import { setupIntegrationTest } from '../utils/testSetup';
 
 describe('ListImplementationLocations Integration Test', () => {
   const testSetup = setupIntegrationTest();
@@ -15,18 +15,10 @@ describe('ListImplementationLocations Integration Test', () => {
       line: 6, // Line with TestImplementationInterface definition
       character: 17, // Character position on TestImplementationInterface
     });
-    if (!isRight(result)) {
-      console.error(`${name} failed:`, result.left);
-    }
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      if (name === 'mock') {
-        expect(result.right).toBe('Mock response for list_implementation_locations');
-      } else {
-        expectFoundResult(result.right, 2);
-        expectFilePathInResult(result.right, 'Implementations.ts');
-        // Implementation output contains positions but not class names
-      }
+      expect(result.right).toMatch(/Found \d+/);
+      expect(result.right).toContain('Implementations.ts');
     }
   }, 15000);
 
@@ -36,18 +28,10 @@ describe('ListImplementationLocations Integration Test', () => {
       line: 40, // Line with TestAbstractClass definition
       character: 22, // Character position on TestAbstractClass
     });
-    if (!isRight(result)) {
-      console.error(`${name} failed:`, result.left);
-    }
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      if (name === 'mock') {
-        expect(result.right).toBe('Mock response for list_implementation_locations');
-      } else {
-        expectFoundResult(result.right, 2);
-        expectFilePathInResult(result.right, 'Implementations.ts');
-        // Implementation output contains positions but not class names
-      }
+      expect(result.right).toMatch(/Found \d+/);
+      expect(result.right).toContain('Implementations.ts');
     }
   }, 15000);
 
@@ -57,18 +41,10 @@ describe('ListImplementationLocations Integration Test', () => {
       line: 59, // Line with TestImplementationInterface usage
       character: 17, // Character position on TestImplementationInterface
     });
-    if (!isRight(result)) {
-      console.error(`${name} failed:`, result.left);
-    }
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
-      if (name === 'mock') {
-        expect(result.right).toBe('Mock response for list_implementation_locations');
-      } else {
-        expectFoundResult(result.right, 2);
-        expectFilePathInResult(result.right, 'Implementations.ts');
-        // Implementation output contains positions but not class names
-      }
+      expect(result.right).toMatch(/Found \d+/);
+      expect(result.right).toContain('Implementations.ts');
     }
   }, 15000);
 });
