@@ -54,7 +54,7 @@ describe('ListImplementationLocations Integration Test', () => {
   test.each(runners)('[%s] should find interface implementations from usage', async (name, runner) => {
     const result = await runner.runTool('list_implementation_locations', {
       uri: 'src/__tests__/integration/test-subjects/Implementations.ts',
-      line: 58, // Line with TestImplementationInterface usage
+      line: 59, // Line with TestImplementationInterface usage
       character: 17, // Character position on TestImplementationInterface
     });
     if (!isRight(result)) {

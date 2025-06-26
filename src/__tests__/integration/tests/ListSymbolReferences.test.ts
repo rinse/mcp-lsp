@@ -60,7 +60,7 @@ describe('ListSymbolReferences Integration Test', () => {
   test.each(runners)('[%s] should find references from usage point', async (name, runner) => {
     const result = await runner.runTool('list_symbol_references', {
       uri: 'src/__tests__/integration/test-subjects/References.ts',
-      line: 27, // Line with testReferencedFunction usage
+      line: 28, // Line with testReferencedFunction usage
       character: 19, // Character position on testReferencedFunction
       includeDeclaration: true,
     });

@@ -12,7 +12,7 @@ describe('ListDefinitionLocations Integration Test', () => {
   test.each(runners)('[%s] should find definition location for function', async (name, runner) => {
     const result = await runner.runTool('list_definition_locations', {
       uri: 'src/__tests__/integration/test-subjects/Definitions.ts',
-      line: 41, // Line with testDefinitionFunction usage
+      line: 42, // Line with testDefinitionFunction usage
       character: 21, // Character position on testDefinitionFunction
     });
     if (!isRight(result)) {
@@ -75,7 +75,7 @@ describe('ListDefinitionLocations Integration Test', () => {
   test.each(runners)('[%s] should find definition location for method', async (name, runner) => {
     const result = await runner.runTool('list_definition_locations', {
       uri: 'src/__tests__/integration/test-subjects/Definitions.ts',
-      line: 44, // Line with testMethod usage
+      line: 47, // Line with testMethod usage
       character: 31, // Character position on testMethod
     });
     if (!isRight(result)) {
