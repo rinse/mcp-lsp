@@ -1,4 +1,4 @@
-import { isRight } from 'fp-ts/Either';
+import { either } from 'fp-ts';
 
 import { testRunners, TestRunner } from '../TestRunner';
 
@@ -17,12 +17,7 @@ describe('ListTools Integration Test', () => {
 
   test.each(runners)('[%s] should successfully list tools with concrete expected output', async (name, runner) => {
     const result = await runner.listTools();
-    if (!isRight(result)) {
-      console.error(`${name} failed:`, result.left);
-    }
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      const expectedTools = `Available tools:
+    const expectedTools = `Available tools:
 get_hover_info
 list_definition_locations
 list_implementation_locations
@@ -33,7 +28,6 @@ list_available_code_actions
 run_code_action
 list_caller_locations_of
 list_callee_locations_in`;
-      expect(result.right).toBe(expectedTools);
-    }
-  }, 15000); // timeout
+    expect(result).toEqual(either.right(expectedTools));
+  }, 10000); // timeout
 });
