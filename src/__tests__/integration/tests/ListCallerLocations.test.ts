@@ -1,4 +1,4 @@
-import { isRight } from 'fp-ts/Either';
+import { either } from 'fp-ts';
 
 import { setupIntegrationTest } from '../utils/testSetup';
 
@@ -15,11 +15,8 @@ describe('ListCallerLocations Integration Test', () => {
       line: 65, // Line with multipleCallerTarget definition
       character: 16, // Character position on multipleCallerTarget
     });
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right).toBe(
-        'No callers found for symbol at src/__tests__/integration/test-subjects/CallHierarchy.ts:65:16',
-      );
-    }
+    expect(result).toEqual(either.right(
+      'No callers found for symbol at src/__tests__/integration/test-subjects/CallHierarchy.ts:65:16',
+    ));
   }, 10000);
 });

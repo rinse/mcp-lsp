@@ -1,4 +1,4 @@
-import { isRight } from 'fp-ts/Either';
+import { either } from 'fp-ts';
 
 import { setupIntegrationTest } from '../utils/testSetup';
 
@@ -16,18 +16,15 @@ describe('ListSymbolReferences Integration Test', () => {
       character: 16, // Character position on testReferencedFunction
       includeDeclaration: true,
     });
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right).toBe(
-        'Found 6 references:\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:6:16-6:38\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:22:11-22:33\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:28:19-28:41\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:30:19-30:41\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:41:14-41:36\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:51:9-51:31',
-      );
-    }
+    expect(result).toEqual(either.right(
+      'Found 6 references:\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:6:16-6:38\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:22:11-22:33\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:28:19-28:41\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:30:19-30:41\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:41:14-41:36\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:51:9-51:31',
+    ));
   }, 10000);
 
   test.each(runners)('[%s] should find references excluding declaration', async (name, runner) => {
@@ -37,17 +34,14 @@ describe('ListSymbolReferences Integration Test', () => {
       character: 16, // Character position on testReferencedFunction
       includeDeclaration: false,
     });
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right).toBe(
-        'Found 5 references:\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:22:11-22:33\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:28:19-28:41\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:30:19-30:41\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:41:14-41:36\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:51:9-51:31',
-      );
-    }
+    expect(result).toEqual(either.right(
+      'Found 5 references:\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:22:11-22:33\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:28:19-28:41\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:30:19-30:41\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:41:14-41:36\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:51:9-51:31',
+    ));
   }, 10000);
 
   test.each(runners)('[%s] should find references from usage point', async (name, runner) => {
@@ -57,17 +51,14 @@ describe('ListSymbolReferences Integration Test', () => {
       character: 19, // Character position on testReferencedFunction
       includeDeclaration: true,
     });
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right).toBe(
-        'Found 6 references:\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:6:16-6:38\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:22:11-22:33\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:28:19-28:41\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:30:19-30:41\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:41:14-41:36\n' +
-        '/src/__tests__/integration/test-subjects/References.ts:51:9-51:31',
-      );
-    }
+    expect(result).toEqual(either.right(
+      'Found 6 references:\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:6:16-6:38\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:22:11-22:33\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:28:19-28:41\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:30:19-30:41\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:41:14-41:36\n' +
+      '/src/__tests__/integration/test-subjects/References.ts:51:9-51:31',
+    ));
   }, 10000);
 });

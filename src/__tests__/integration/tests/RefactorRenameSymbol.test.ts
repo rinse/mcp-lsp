@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 
-import { isRight } from 'fp-ts/Either';
+import { either } from 'fp-ts';
 
 import { setupIntegrationTest } from '../utils/testSetup';
 
@@ -65,9 +65,10 @@ export function useTargets(): void {
       newName: 'renamedFunction',
     });
 
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right).toContain('Successfully renamed symbol to "renamedFunction"');
+    expect(result).toEqual(either.right(
+      expect.stringContaining('Successfully renamed symbol to "renamedFunction"'),
+    ));
+    if (either.isRight(result)) {
 
       const mainContent = await fs.readFile(mainFile, 'utf-8');
       expect(mainContent).toBe(`export function renamedFunction(param: string): string {
@@ -93,9 +94,10 @@ export class TargetClass {
       newName: 'RENAMED_CONSTANT',
     });
 
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right).toContain('Successfully renamed symbol to "RENAMED_CONSTANT"');
+    expect(result).toEqual(either.right(
+      expect.stringContaining('Successfully renamed symbol to "RENAMED_CONSTANT"'),
+    ));
+    if (either.isRight(result)) {
 
       const mainContent = await fs.readFile(mainFile, 'utf-8');
       expect(mainContent).toBe(`export function targetFunction(param: string): string {
@@ -121,9 +123,10 @@ export class TargetClass {
       newName: 'RenamedClass',
     });
 
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right).toContain('Successfully renamed symbol to "RenamedClass"');
+    expect(result).toEqual(either.right(
+      expect.stringContaining('Successfully renamed symbol to "RenamedClass"'),
+    ));
+    if (either.isRight(result)) {
 
       const mainContent = await fs.readFile(mainFile, 'utf-8');
       expect(mainContent).toBe(`export function targetFunction(param: string): string {
@@ -149,11 +152,9 @@ export class RenamedClass {
       newName: '123invalid', // Invalid identifier
     });
 
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      // TypeScript LSP allows invalid identifiers
-      expect(result.right).toBe('Successfully renamed symbol to "123invalid"');
-    }
+    expect(result).toEqual(either.right(
+      'Successfully renamed symbol to "123invalid"',
+    ));
   }, 10000);
 
   test.each(runners)('[%s] should allow TypeScript keywords', async (name, runner) => {
@@ -164,11 +165,9 @@ export class RenamedClass {
       newName: 'function', // Reserved keyword
     });
 
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      // TypeScript LSP allows reserved keywords
-      expect(result.right).toBe('Successfully renamed symbol to "function"');
-    }
+    expect(result).toEqual(either.right(
+      'Successfully renamed symbol to "function"',
+    ));
   }, 10000);
 
   test.each(runners)('[%s] should handle non-existent files', async (name, runner) => {
@@ -179,11 +178,8 @@ export class RenamedClass {
       newName: 'newName',
     });
 
-    expect(isRight(result)).toBe(false);
-    if (!isRight(result)) {
-      expect(result.left).toBe(
-        "Failed to run tool refactor_rename_symbol: McpError: MCP error -32603: MCP error -32603: Failed to rename symbol: Error: ENOENT: no such file or directory, open 'src/__tests__/integration/test-subjects/NonExistent.ts'",
-      );
-    }
+    expect(result).toEqual(either.left(
+      "Failed to run tool refactor_rename_symbol: McpError: MCP error -32603: MCP error -32603: Failed to rename symbol: Error: ENOENT: no such file or directory, open 'src/__tests__/integration/test-subjects/NonExistent.ts'",
+    ));
   }, 10000);
 });

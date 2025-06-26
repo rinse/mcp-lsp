@@ -1,4 +1,4 @@
-import { isRight } from 'fp-ts/Either';
+import { either } from 'fp-ts';
 
 import { setupIntegrationTest } from '../utils/testSetup';
 
@@ -16,13 +16,10 @@ describe('GetTypeDeclaration Integration Test', () => {
       character: 20, // Character position on TestTypeAlias
     });
 
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right).toBe(
-        'Found 1 type definitions:\n' +
-        '/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30',
-      );
-    }
+    expect(result).toEqual(either.right(
+      'Found 1 type definitions:\n' +
+      '/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30',
+    ));
   }, 10000);
 
   test.each(runners)('[%s] should find type declaration for interface usage', async (name, runner) => {
@@ -32,13 +29,10 @@ describe('GetTypeDeclaration Integration Test', () => {
       character: 8, // Character position on TestTypeAlias
     });
 
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right).toBe(
-        'Found 1 type definitions:\n' +
-        '/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30',
-      );
-    }
+    expect(result).toEqual(either.right(
+      'Found 1 type definitions:\n' +
+      '/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30',
+    ));
   }, 10000);
 
   test.each(runners)('[%s] should find type declaration for generic type usage', async (name, runner) => {
@@ -48,13 +42,10 @@ describe('GetTypeDeclaration Integration Test', () => {
       character: 12, // Character position on TestTypeAlias
     });
 
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right).toBe(
-        'Found 1 type definitions:\n' +
-        '/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30',
-      );
-    }
+    expect(result).toEqual(either.right(
+      'Found 1 type definitions:\n' +
+      '/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30',
+    ));
   }, 10000);
 
   test.each(runners)('[%s] should handle enum type declaration', async (name, runner) => {
@@ -64,12 +55,9 @@ describe('GetTypeDeclaration Integration Test', () => {
       character: 25, // Character position on TestEnum
     });
 
-    expect(isRight(result)).toBe(true);
-    if (isRight(result)) {
-      expect(result.right).toBe(
-        'Found 1 type definitions:\n' +
-        '/src/__tests__/integration/test-subjects/Types.ts:37:12-37:20',
-      );
-    }
+    expect(result).toEqual(either.right(
+      'Found 1 type definitions:\n' +
+      '/src/__tests__/integration/test-subjects/Types.ts:37:12-37:20',
+    ));
   }, 10000);
 });
