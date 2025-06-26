@@ -20,7 +20,7 @@ describe('ListAvailableCodeActions Integration Test', () => {
     expect(isRight(result)).toBe(true);
     if (isRight(result)) {
       expect(result.right).toBe(
-        'Found 1 code action(s):\n\n' +
+        'Found 3 code action(s):\n\n' +
         '1. Move to a new file (refactor.move)\n' +
         '   📋 For executeCodeAction tool:\n' +
         '{\n' +
@@ -42,7 +42,51 @@ describe('ListAvailableCodeActions Integration Test', () => {
         '    ]\n' +
         '  }\n' +
         '}\n' +
-        '   ⚡ Command: Move to a new file (_typescript.applyRefactoring)',
+        '   ⚡ Command: Move to a new file (_typescript.applyRefactoring)\n\n' +
+        '2. Convert parameters to destructured object (refactor)\n' +
+        '   📋 For executeCodeAction tool:\n' +
+        '{\n' +
+        '  "title": "Convert parameters to destructured object",\n' +
+        '  "kind": "refactor",\n' +
+        '  "command": {\n' +
+        '    "title": "Convert parameters to destructured object",\n' +
+        '    "command": "_typescript.applyRefactoring",\n' +
+        '    "arguments": [\n' +
+        '      {\n' +
+        '        "file": "/src/__tests__/integration/test-subjects/CodeActions.ts",\n' +
+        '        "startLine": 82,\n' +
+        '        "startOffset": 17,\n' +
+        '        "endLine": 82,\n' +
+        '        "endOffset": 51,\n' +
+        '        "refactor": "Convert parameters to destructured object",\n' +
+        '        "action": "Convert parameters to destructured object"\n' +
+        '      }\n' +
+        '    ]\n' +
+        '  }\n' +
+        '}\n' +
+        '   ⚡ Command: Convert parameters to destructured object (_typescript.applyRefactoring)\n\n' +
+        '3. Infer function return type (refactor)\n' +
+        '   📋 For executeCodeAction tool:\n' +
+        '{\n' +
+        '  "title": "Infer function return type",\n' +
+        '  "kind": "refactor",\n' +
+        '  "command": {\n' +
+        '    "title": "Infer function return type",\n' +
+        '    "command": "_typescript.applyRefactoring",\n' +
+        '    "arguments": [\n' +
+        '      {\n' +
+        '        "file": "/src/__tests__/integration/test-subjects/CodeActions.ts",\n' +
+        '        "startLine": 82,\n' +
+        '        "startOffset": 17,\n' +
+        '        "endLine": 82,\n' +
+        '        "endOffset": 51,\n' +
+        '        "refactor": "Infer function return type",\n' +
+        '        "action": "Infer function return type"\n' +
+        '      }\n' +
+        '    ]\n' +
+        '  }\n' +
+        '}\n' +
+        '   ⚡ Command: Infer function return type (_typescript.applyRefactoring)',
       );
     }
   }, 15000);

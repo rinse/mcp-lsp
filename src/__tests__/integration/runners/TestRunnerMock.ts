@@ -75,13 +75,35 @@ list_callee_locations_in`;
             throw new Error(`Unexpected line number for get_type_declaration: ${line}`);
         }
       }
-      case 'refactor_rename_symbol':
+      case 'refactor_rename_symbol': {
+        const uri = args.uri as string;
+        const newName = args.newName as string;
+
+        // Check if it's a temp test file
+        if (uri.includes('temp-rename-test')) {
+          // Validate identifier
+          if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(newName)) {
+            return Promise.resolve(right(`Failed to rename: "${newName}" is not a valid identifier`));
+          }
+
+          // Check for TypeScript keywords
+          const keywords = ['function', 'class', 'const', 'let', 'var', 'interface', 'type', 'enum', 'namespace', 'module'];
+          if (keywords.includes(newName)) {
+            return Promise.resolve(right(`Failed to rename: "${newName}" is a reserved keyword`));
+          }
+
+          // For mock runner, just return success
+          return Promise.resolve(right(`Successfully renamed symbol to "${newName}"`));
+        }
+
+        // Default behavior for non-temp files (existing tests)
         return Promise.resolve(right('Failed to apply rename: ENOENT: no such file or directory, open \'/src/__tests__/integration/test-subjects/Rename.ts\''));
+      }
       case 'list_available_code_actions': {
         const line = args.line as number;
         switch (line) {
           case 81: // Function with issues - should have code actions
-            return Promise.resolve(right('Found 1 code action(s):\n\n1. Move to a new file (refactor.move)\n   📋 For executeCodeAction tool:\n{\n  "title": "Move to a new file",\n  "kind": "refactor.move",\n  "command": {\n    "title": "Move to a new file",\n    "command": "_typescript.applyRefactoring",\n    "arguments": [\n      {\n        "file": "/src/__tests__/integration/test-subjects/CodeActions.ts",\n        "startLine": 82,\n        "startOffset": 17,\n        "endLine": 82,\n        "endOffset": 51,\n        "refactor": "Move to a new file",\n        "action": "Move to a new file"\n      }\n    ]\n  }\n}\n   ⚡ Command: Move to a new file (_typescript.applyRefactoring)'));
+            return Promise.resolve(right('Found 3 code action(s):\n\n1. Move to a new file (refactor.move)\n   📋 For executeCodeAction tool:\n{\n  "title": "Move to a new file",\n  "kind": "refactor.move",\n  "command": {\n    "title": "Move to a new file",\n    "command": "_typescript.applyRefactoring",\n    "arguments": [\n      {\n        "file": "/src/__tests__/integration/test-subjects/CodeActions.ts",\n        "startLine": 82,\n        "startOffset": 17,\n        "endLine": 82,\n        "endOffset": 51,\n        "refactor": "Move to a new file",\n        "action": "Move to a new file"\n      }\n    ]\n  }\n}\n   ⚡ Command: Move to a new file (_typescript.applyRefactoring)\n\n2. Convert parameters to destructured object (refactor)\n   📋 For executeCodeAction tool:\n{\n  "title": "Convert parameters to destructured object",\n  "kind": "refactor",\n  "command": {\n    "title": "Convert parameters to destructured object",\n    "command": "_typescript.applyRefactoring",\n    "arguments": [\n      {\n        "file": "/src/__tests__/integration/test-subjects/CodeActions.ts",\n        "startLine": 82,\n        "startOffset": 17,\n        "endLine": 82,\n        "endOffset": 51,\n        "refactor": "Convert parameters to destructured object",\n        "action": "Convert parameters to destructured object"\n      }\n    ]\n  }\n}\n   ⚡ Command: Convert parameters to destructured object (_typescript.applyRefactoring)\n\n3. Infer function return type (refactor)\n   📋 For executeCodeAction tool:\n{\n  "title": "Infer function return type",\n  "kind": "refactor",\n  "command": {\n    "title": "Infer function return type",\n    "command": "_typescript.applyRefactoring",\n    "arguments": [\n      {\n        "file": "/src/__tests__/integration/test-subjects/CodeActions.ts",\n        "startLine": 82,\n        "startOffset": 17,\n        "endLine": 82,\n        "endOffset": 51,\n        "refactor": "Infer function return type",\n        "action": "Infer function return type"\n      }\n    ]\n  }\n}\n   ⚡ Command: Infer function return type (_typescript.applyRefactoring)'));
           case 14: // Clean function - should also have move to new file action
             return Promise.resolve(right('Found 1 code action(s):\n\n1. Move to a new file (refactor.move)\n   📋 For executeCodeAction tool:\n{\n  "title": "Move to a new file",\n  "kind": "refactor.move",\n  "command": {\n    "title": "Move to a new file",\n    "command": "_typescript.applyRefactoring",\n    "arguments": [\n      {\n        "file": "/src/__tests__/integration/test-subjects/CodeActions.ts",\n        "startLine": 15,\n        "startOffset": 17,\n        "endLine": 15,\n        "endOffset": 46,\n        "refactor": "Move to a new file",\n        "action": "Move to a new file"\n      }\n    ]\n  }\n}\n   ⚡ Command: Move to a new file (_typescript.applyRefactoring)'));
           default:
