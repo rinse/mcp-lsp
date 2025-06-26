@@ -17,8 +17,10 @@ describe('GetTypeDeclaration Integration Test', () => {
     });
 
     expect(isRight(result)).toBe(true);
-    expect(result.right).toMatch(/Found \d+ type definitions:/);
-    expect(result.right).toContain('Types.ts');
+    if (isRight(result)) {
+      expect(result.right).toMatch(/Found \d+ type definitions:/);
+      expect(result.right).toContain('Types.ts');
+    }
   }, 15000);
 
   test.each(runners)('[%s] should find type declaration for interface usage', async (name, runner) => {
@@ -29,8 +31,10 @@ describe('GetTypeDeclaration Integration Test', () => {
     });
 
     expect(isRight(result)).toBe(true);
-    expect(result.right).toMatch(/Found \d+ type definitions:/);
-    expect(result.right).toContain('Types.ts');
+    if (isRight(result)) {
+      expect(result.right).toMatch(/Found \d+ type definitions:/);
+      expect(result.right).toContain('Types.ts');
+    }
   }, 15000);
 
   test.each(runners)('[%s] should find type declaration for generic type usage', async (name, runner) => {
@@ -41,8 +45,10 @@ describe('GetTypeDeclaration Integration Test', () => {
     });
 
     expect(isRight(result)).toBe(true);
-    expect(result.right).toMatch(/Found \d+ type definitions:/);
-    expect(result.right).toContain('Types.ts');
+    if (isRight(result)) {
+      expect(result.right).toMatch(/Found \d+ type definitions:/);
+      expect(result.right).toContain('Types.ts');
+    }
   }, 15000);
 
   test.each(runners)('[%s] should handle enum type declaration', async (name, runner) => {
@@ -53,7 +59,9 @@ describe('GetTypeDeclaration Integration Test', () => {
     });
 
     expect(isRight(result)).toBe(true);
-    // Enum type declarations may not always be found, so we accept either result
-    expect(result.right).toMatch(/Found \d+ type definitions:|No type definition found/);
+    if (isRight(result)) {
+      // Enum type declarations may not always be found, so we accept either result
+      expect(result.right).toMatch(/Found \d+ type definitions:|No type definition found/);
+    }
   }, 15000);
 });
