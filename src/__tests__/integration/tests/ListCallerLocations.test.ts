@@ -21,5 +21,5 @@ describe('ListCallerLocations Integration Test', () => {
         'No callers found for symbol at src/__tests__/integration/test-subjects/CallHierarchy.ts:65:16',
       );
     }
-  }, 15000);
+  }, 10000);
 });

@@ -83,7 +83,7 @@ export class TargetClass {
 }
 `);
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should rename constant across files', async (name, runner) => {
     const result = await runner.runTool('refactor_rename_symbol', {
@@ -111,7 +111,7 @@ export class TargetClass {
 }
 `);
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should rename class across files', async (name, runner) => {
     const result = await runner.runTool('refactor_rename_symbol', {
@@ -139,7 +139,7 @@ export class RenamedClass {
 }
 `);
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should allow invalid identifier names', async (name, runner) => {
     const result = await runner.runTool('refactor_rename_symbol', {
@@ -154,7 +154,7 @@ export class RenamedClass {
       // TypeScript LSP allows invalid identifiers
       expect(result.right).toBe('Successfully renamed symbol to "123invalid"');
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should allow TypeScript keywords', async (name, runner) => {
     const result = await runner.runTool('refactor_rename_symbol', {
@@ -169,7 +169,7 @@ export class RenamedClass {
       // TypeScript LSP allows reserved keywords
       expect(result.right).toBe('Successfully renamed symbol to "function"');
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should handle non-existent files', async (name, runner) => {
     const result = await runner.runTool('refactor_rename_symbol', {
@@ -185,5 +185,5 @@ export class RenamedClass {
         "Failed to run tool refactor_rename_symbol: McpError: MCP error -32603: MCP error -32603: Failed to rename symbol: Error: ENOENT: no such file or directory, open 'src/__tests__/integration/test-subjects/NonExistent.ts'",
       );
     }
-  }, 15000);
+  }, 10000);
 });

@@ -23,5 +23,5 @@ describe('ListCalleeLocations Integration Test', () => {
         'validateInput at /src/__tests__/integration/test-subjects/CallHierarchy.ts:30:16-30:29',
       );
     }
-  }, 15000);
+  }, 10000);
 });

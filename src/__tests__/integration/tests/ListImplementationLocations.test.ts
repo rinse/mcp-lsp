@@ -23,7 +23,7 @@ describe('ListImplementationLocations Integration Test', () => {
         '/src/__tests__/integration/test-subjects/Implementations.ts:27:13-27:32',
       );
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should find abstract class implementations', async (name, runner) => {
     const result = await runner.runTool('list_implementation_locations', {
@@ -39,7 +39,7 @@ describe('ListImplementationLocations Integration Test', () => {
         '/src/__tests__/integration/test-subjects/Implementations.ts:51:13-51:30',
       );
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should find interface implementations from usage', async (name, runner) => {
     const result = await runner.runTool('list_implementation_locations', {
@@ -55,5 +55,5 @@ describe('ListImplementationLocations Integration Test', () => {
         '/src/__tests__/integration/test-subjects/Implementations.ts:27:13-27:32',
       );
     }
-  }, 15000);
+  }, 10000);
 });

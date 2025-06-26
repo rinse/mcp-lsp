@@ -35,5 +35,5 @@ list_caller_locations_of
 list_callee_locations_in`;
       expect(result.right).toBe(expectedTools);
     }
-  }, 15000); // timeout
+  }, 10000); // timeout
 });

@@ -89,7 +89,7 @@ describe('ListAvailableCodeActions Integration Test', () => {
         '   ⚡ Command: Infer function return type (_typescript.applyRefactoring)',
       );
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should find code actions for another function', async (name, runner) => {
     const result = await runner.runTool('list_available_code_actions', {
@@ -127,5 +127,5 @@ describe('ListAvailableCodeActions Integration Test', () => {
         '   ⚡ Command: Move to a new file (_typescript.applyRefactoring)',
       );
     }
-  }, 15000);
+  }, 10000);
 });

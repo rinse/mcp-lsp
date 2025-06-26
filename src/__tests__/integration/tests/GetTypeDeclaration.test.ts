@@ -23,7 +23,7 @@ describe('GetTypeDeclaration Integration Test', () => {
         '/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30',
       );
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should find type declaration for interface usage', async (name, runner) => {
     const result = await runner.runTool('get_type_declaration', {
@@ -39,7 +39,7 @@ describe('GetTypeDeclaration Integration Test', () => {
         '/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30',
       );
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should find type declaration for generic type usage', async (name, runner) => {
     const result = await runner.runTool('get_type_declaration', {
@@ -55,7 +55,7 @@ describe('GetTypeDeclaration Integration Test', () => {
         '/src/__tests__/integration/test-subjects/Types.ts:6:17-6:30',
       );
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should handle enum type declaration', async (name, runner) => {
     const result = await runner.runTool('get_type_declaration', {
@@ -71,5 +71,5 @@ describe('GetTypeDeclaration Integration Test', () => {
         '/src/__tests__/integration/test-subjects/Types.ts:37:12-37:20',
       );
     }
-  }, 15000);
+  }, 10000);
 });

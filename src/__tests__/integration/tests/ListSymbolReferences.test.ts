@@ -28,7 +28,7 @@ describe('ListSymbolReferences Integration Test', () => {
         '/src/__tests__/integration/test-subjects/References.ts:51:9-51:31',
       );
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should find references excluding declaration', async (name, runner) => {
     const result = await runner.runTool('list_symbol_references', {
@@ -48,7 +48,7 @@ describe('ListSymbolReferences Integration Test', () => {
         '/src/__tests__/integration/test-subjects/References.ts:51:9-51:31',
       );
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should find references from usage point', async (name, runner) => {
     const result = await runner.runTool('list_symbol_references', {
@@ -69,5 +69,5 @@ describe('ListSymbolReferences Integration Test', () => {
         '/src/__tests__/integration/test-subjects/References.ts:51:9-51:31',
       );
     }
-  }, 15000);
+  }, 10000);
 });

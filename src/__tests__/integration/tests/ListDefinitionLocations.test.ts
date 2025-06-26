@@ -22,7 +22,7 @@ describe('ListDefinitionLocations Integration Test', () => {
         '/src/__tests__/integration/test-subjects/Definitions.ts:6:16-6:38',
       );
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should find definition location for class', async (name, runner) => {
     const result = await runner.runTool('list_definition_locations', {
@@ -37,7 +37,7 @@ describe('ListDefinitionLocations Integration Test', () => {
         '/src/__tests__/integration/test-subjects/Definitions.ts:6:16-6:38',
       );
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should find definition location for property', async (name, runner) => {
     const result = await runner.runTool('list_definition_locations', {
@@ -52,7 +52,7 @@ describe('ListDefinitionLocations Integration Test', () => {
         '/src/__tests__/integration/test-subjects/Definitions.ts:18:13-18:32',
       );
     }
-  }, 15000);
+  }, 10000);
 
   test.each(runners)('[%s] should find definition location for method', async (name, runner) => {
     const result = await runner.runTool('list_definition_locations', {
@@ -67,5 +67,5 @@ describe('ListDefinitionLocations Integration Test', () => {
         '/src/__tests__/integration/test-subjects/Definitions.ts:27:9-27:19',
       );
     }
-  }, 15000);
+  }, 10000);
 });
