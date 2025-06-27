@@ -46,8 +46,12 @@ async function main(): Promise<void> {
 
   logger.info(`[MCP] Using root URI: ${rootUri}`);
 
-  // Spawn the TypeScript language server process
-  const lspProcess = spawn('npx', ['typescript-language-server', '--stdio'], {
+  // Get the LSP command from CLI options
+  const lspCommand = cliOptions.getCommand();
+  logger.info(`[MCP] Using LSP command: ${lspCommand.join(' ')}`);
+
+  // Spawn the language server process
+  const lspProcess = spawn(lspCommand[0], lspCommand.slice(1), {
     stdio: ['pipe', 'pipe', 'pipe'],
   });
   lspProcess.on('error', (error) => {

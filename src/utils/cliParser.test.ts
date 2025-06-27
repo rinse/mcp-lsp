@@ -75,5 +75,44 @@ describe('CLI Parser', () => {
       expect(result.rootPath).toBe('./my-project');
       expect(result.getRootPath()).toBe('./my-project');
     });
+
+    describe('positional arguments (LSP command)', () => {
+      it('should parse single command after --', () => {
+        const args = ['--', 'rust-analyzer'];
+        const result = parseArgs(args);
+        expect(result.command).toEqual(['rust-analyzer']);
+      });
+
+      it('should parse multiple arguments after --', () => {
+        const args = ['--', 'pylsp', '--log-file', '/tmp/pylsp.log'];
+        const result = parseArgs(args);
+        expect(result.command).toEqual(['pylsp', '--log-file', '/tmp/pylsp.log']);
+      });
+
+      it('should return undefined command when no -- provided', () => {
+        const args = ['--root-path', '/home/user/project'];
+        const result = parseArgs(args);
+        expect(result.command).toBeUndefined();
+      });
+
+      it('should handle -- with root-path option', () => {
+        const args = ['--root-path', '/home/user/rust-app', '--', 'rust-analyzer'];
+        const result = parseArgs(args);
+        expect(result.rootPath).toBe('/home/user/rust-app');
+        expect(result.command).toEqual(['rust-analyzer']);
+      });
+
+      it('should return default command from getCommand when no command provided', () => {
+        const args = ['--root-path', '/home/user/project'];
+        const result = parseArgs(args);
+        expect(result.getCommand()).toEqual(['typescript-language-server', '--stdio']);
+      });
+
+      it('should return custom command from getCommand when provided', () => {
+        const args = ['--', 'rust-analyzer'];
+        const result = parseArgs(args);
+        expect(result.getCommand()).toEqual(['rust-analyzer']);
+      });
+    });
   });
 });
